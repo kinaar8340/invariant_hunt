@@ -1,0 +1,40 @@
+# JetBrains
+.idea/
+
+# Bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+.hypothesis/
+
+# Build
+dist/
+build/
+*.egg-info/
+*.whl
+
+# Virtual envs
+venv/
+ENV/
+.env
+.python-version
+
+# Generated outputs (keep directory via .gitkeep)
+outputs/**
+!outputs/.gitkeep
+
+# LaTeX
+papers/*.aux
+papers/*.log
+papers/*.out
+
+# Temp
+temp.py
+temp*.py
+temp.md
+*.tmp
