@@ -141,10 +141,18 @@ Core locks frozen; pre-merger freeze closed.
 4. ~~**Close-out + integration snapshot**~~ → `docs/MILESTONE_PHASE3_CLOSEOUT.md`  
    `python scripts/integration_status.py --run-gates`
 
-### Active: predictive freeze only
+### Prediction mode — true held-out scorecard (closed for band claim)
 
-- True held-out BBH (not in demotion/NULL list) via `premerger_core_predict.py`  
-- In-catalog reaffirmation (e.g. GW170823 → NULL) does not reopen freeze  
+| Event | Verdict |
+|-------|---------|
+| GW170809 | **FALSIFY** |
+| GW170729 | **NULL** |
+| GW151012 | **FALSIFY** |
+
+**0 SUCCESS / 2 FALSIFY / 1 NULL → universal α-band forward claim demoted.**  
+Band and core locks **not** re-fit. See `docs/MILESTONE_HELD_OUT_TRUE_BBH.md`.  
+
+Active: optional PE systematics on FALSIFY events; new pre-registered mapping only under fresh freeze cycle.  
 
 ### Later
 

@@ -162,6 +162,46 @@ GW170823 = PublicGWEvent(
     notes="Heavy BBH SNR≈11.5; mass similar to GW150914.",
 )
 
+# --- True held-out BBHs (not used in freeze demotion/NULL campaign) ----------
+GW151012 = PublicGWEvent(
+    name="GW151012",
+    gps=1128678900.4,
+    mass_final_solar=35.7,  # GWTC-1 approx remnant
+    mass1_solar=23.3,
+    mass2_solar=13.6,
+    f_ring_hz=round(_f_ring_scale(35.7), 1),
+    detectors=("H1", "L1"),
+    f_low_hz=40.0,
+    f_high_hz=500.0,
+    notes="True held-out BBH (prediction mode). SNR≈9.7. Not in freeze demotion list.",
+)
+
+GW170729 = PublicGWEvent(
+    name="GW170729",
+    gps=1185389807.3,
+    mass_final_solar=79.5,
+    mass1_solar=50.2,
+    mass2_solar=34.0,
+    f_ring_hz=round(_f_ring_scale(79.5), 1),
+    detectors=("H1", "L1"),
+    f_low_hz=40.0,
+    f_high_hz=300.0,
+    notes="True held-out BBH (prediction mode). Heavy; SNR≈10.8.",
+)
+
+GW170809 = PublicGWEvent(
+    name="GW170809",
+    gps=1186302519.8,
+    mass_final_solar=56.3,
+    mass1_solar=35.0,
+    mass2_solar=23.8,
+    f_ring_hz=round(_f_ring_scale(56.3), 1),
+    detectors=("H1", "L1"),
+    f_low_hz=40.0,
+    f_high_hz=350.0,
+    notes="True held-out BBH (prediction mode). SNR≈12.4. Preferred first score.",
+)
+
 GW170817 = PublicGWEvent(
     name="GW170817",
     gps=1187008882.4,
@@ -176,16 +216,19 @@ GW170817 = PublicGWEvent(
 
 CATALOG: dict[str, PublicGWEvent] = {
     GW150914.name: GW150914,
+    GW151012.name: GW151012,
     GW151226.name: GW151226,
     GW170104.name: GW170104,
     GW170608.name: GW170608,
+    GW170729.name: GW170729,
+    GW170809.name: GW170809,
     GW170814.name: GW170814,
     GW170818.name: GW170818,
     GW170823.name: GW170823,
     GW170817.name: GW170817,
 }
 
-# Preferred multi-event Gate P set (H1+L1 BBHs)
+# Preferred multi-event Gate P set (H1+L1 BBHs) — freeze campaign set
 GATE_P_EVENTS: tuple[str, ...] = (
     "GW150914",
     "GW170104",
@@ -194,6 +237,13 @@ GATE_P_EVENTS: tuple[str, ...] = (
     "GW170814",
     "GW170818",
     "GW170823",
+)
+
+# True held-out BBHs for prediction-mode scoring (not in demotion/NULL training)
+HELD_OUT_BBH_EVENTS: tuple[str, ...] = (
+    "GW151012",
+    "GW170729",
+    "GW170809",
 )
 
 
@@ -284,6 +334,39 @@ GWOSC_32S: dict[str, dict[str, Any]] = {
             "L1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW170823/v1/L-L1_GWOSC_4KHZ_R1-1187529241-32.hdf5",
         },
         "gps_start": 1187529241,
+        "duration": 32,
+        "sample_rate": 4096,
+    },
+    "GW151012": {
+        "H1": "H-H1_GWOSC_4KHZ_R1-1128678885-32.hdf5",
+        "L1": "L-L1_GWOSC_4KHZ_R1-1128678885-32.hdf5",
+        "urls": {
+            "H1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW151012/v3/H-H1_GWOSC_4KHZ_R1-1128678885-32.hdf5",
+            "L1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW151012/v3/L-L1_GWOSC_4KHZ_R1-1128678885-32.hdf5",
+        },
+        "gps_start": 1128678885,
+        "duration": 32,
+        "sample_rate": 4096,
+    },
+    "GW170729": {
+        "H1": "H-H1_GWOSC_4KHZ_R1-1185389792-32.hdf5",
+        "L1": "L-L1_GWOSC_4KHZ_R1-1185389792-32.hdf5",
+        "urls": {
+            "H1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW170729/v1/H-H1_GWOSC_4KHZ_R1-1185389792-32.hdf5",
+            "L1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW170729/v1/L-L1_GWOSC_4KHZ_R1-1185389792-32.hdf5",
+        },
+        "gps_start": 1185389792,
+        "duration": 32,
+        "sample_rate": 4096,
+    },
+    "GW170809": {
+        "H1": "H-H1_GWOSC_4KHZ_R1-1186302504-32.hdf5",
+        "L1": "L-L1_GWOSC_4KHZ_R1-1186302504-32.hdf5",
+        "urls": {
+            "H1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW170809/v1/H-H1_GWOSC_4KHZ_R1-1186302504-32.hdf5",
+            "L1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW170809/v1/L-L1_GWOSC_4KHZ_R1-1186302504-32.hdf5",
+        },
+        "gps_start": 1186302504,
         "duration": 32,
         "sample_rate": 4096,
     },

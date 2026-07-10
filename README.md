@@ -227,8 +227,14 @@ falsify the core invariants. Full write-up:
 
 ```bash
 python scripts/integration_status.py --run-gates
-python scripts/premerger_core_predict.py --predict-event GW170823
+# Prediction mode — true held-outs (band frozen; do not re-fit)
+python scripts/premerger_core_predict.py --predict-event GW170809
+python scripts/premerger_core_predict.py --predict-event GW170729
+python scripts/premerger_core_predict.py --predict-event GW151012
 ```
+
+See `docs/PREDICTION_MODE.md`. True held-outs: **0 SUCCESS / 2 FALSIFY / 1 NULL**  
+(GW170809 FALSIFY, GW170729 NULL, GW151012 FALSIFY). α-band claim demoted; locks frozen.
 
 Next phase: other observables or analytic invariant→signal derivation
 (see [ROADMAP.md](ROADMAP.md)).

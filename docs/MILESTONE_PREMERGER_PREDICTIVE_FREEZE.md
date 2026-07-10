@@ -69,3 +69,19 @@ Supporting milestones: `MILESTONE_PREMERGER_FOLLOWUP.md`, `MILESTONE_GW170608_SC
 3. New PE/data products change corr(r, τ) or approximant stability on a demoted event.
 
 Until then: **stop here** — clean predictive criterion is the deliverable.
+
+---
+
+## Prediction-mode updates (post Phase 3 close-out)
+
+True held-outs: **GW151012**, **GW170729**, **GW170809** (`docs/PREDICTION_MODE.md`).
+
+| Event | Verdict | Notes |
+|-------|---------|--------|
+| GW170823 | NULL | In-catalog reaffirmation |
+| GW170809 | **FALSIFY** | Gate P PASS; α ≫ band upper |
+| GW170729 | **NULL** | Gate P fail; α near core but not PASS |
+| GW151012 | **FALSIFY** | Gate P PASS; α negative |
+
+**Tally: 0 SUCCESS / 2 FALSIFY / 1 NULL → forward α-band claim demoted.**  
+**Do not re-fit the band.** Scorecard: `docs/MILESTONE_HELD_OUT_TRUE_BBH.md`.

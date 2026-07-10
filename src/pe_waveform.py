@@ -23,9 +23,12 @@ from .gw_events import PublicGWEvent, get_event
 # GWTC-1 public PE samples (LIGO-P1800370)
 PE_URLS: dict[str, str] = {
     "GW150914": "https://dcc.ligo.org/public/0157/P1800370/005/GW150914_GWTC-1.hdf5",
+    "GW151012": "https://dcc.ligo.org/public/0157/P1800370/005/GW151012_GWTC-1.hdf5",
     "GW151226": "https://dcc.ligo.org/public/0157/P1800370/005/GW151226_GWTC-1.hdf5",
     "GW170104": "https://dcc.ligo.org/public/0157/P1800370/005/GW170104_GWTC-1.hdf5",
     "GW170608": "https://dcc.ligo.org/public/0157/P1800370/005/GW170608_GWTC-1.hdf5",
+    "GW170729": "https://dcc.ligo.org/public/0157/P1800370/005/GW170729_GWTC-1.hdf5",
+    "GW170809": "https://dcc.ligo.org/public/0157/P1800370/005/GW170809_GWTC-1.hdf5",
     "GW170814": "https://dcc.ligo.org/public/0157/P1800370/005/GW170814_GWTC-1.hdf5",
     "GW170818": "https://dcc.ligo.org/public/0157/P1800370/005/GW170818_GWTC-1.hdf5",
     "GW170823": "https://dcc.ligo.org/public/0157/P1800370/005/GW170823_GWTC-1.hdf5",
