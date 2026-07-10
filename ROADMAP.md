@@ -59,11 +59,18 @@ Each prediction carries a `falsify_if` string. Example checkpoints:
 
 ## Immediate next actions
 
-1. Run `python scripts/meta_optimize_invariants.py --dry-run --trials 50`
-2. Run `python scripts/forward_gw_signal.py --plot`
-3. Run `python scripts/compare_benchmark.py --inject-echoes`
-4. Pick one real public GW event and replace the synthetic `obs` in the benchmark
+1. ~~PE residual on GW150914~~ — near-null (Gate A fail; constructive)
+2. Residual diagnostics + injection recovery (Gate B):
+   ```bash
+   python scripts/inspect_residual.py --plot
+   python scripts/injection_recovery.py --into residual --plot
+   ```
+3. Refine **echo mapping** only if Gate B shows sensitivity (it does: a_inj≳0.6)
+   but Gate A fails — try amp/phase/coherent interference, keep W_g lock
+4. Multi-detector + PSD whitening before strong claims
 5. Port analytic sections from TOE papers into `src/predictions.py`
+
+See `docs/falsification_criteria.md`.
 
 ## Seed lineage
 

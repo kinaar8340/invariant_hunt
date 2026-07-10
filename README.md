@@ -66,6 +66,18 @@ Outputs: `outputs/benchmarks/`, `outputs/predictions/`.
 
 **Caveat:** PE baseline is a **median point estimate** (IMRPhenomD) with lag+(A+,Ax) fit under band-limited white noise — not a full PSD-whitened multi-detector PE. Use results as a transparent residual test, not a discovery claim.
 
+### Residual diagnostics & injection recovery
+
+After a PE benchmark, quantify *why* Δχ² is small and *how loud* an echo must be to recover:
+
+```bash
+python scripts/inspect_residual.py --plot
+python scripts/injection_recovery.py --into residual --plot
+python scripts/injection_recovery.py --into noise --plot
+```
+
+Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).
+
 Full conduit evaluation (from TOE):
 
 ```bash
