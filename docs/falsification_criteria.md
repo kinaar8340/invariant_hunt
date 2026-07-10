@@ -207,6 +207,16 @@ python scripts/premerger_bayes_factor.py --events GW170809,GW170729,GW151012
 Complements \(\Delta\chi^2\); does **not** restore the demoted band or free locks.  
 Doc: `docs/PREMERGER_BAYES_FACTOR.md`.
 
+### Gate S-1 — PE systematics on FALSIFY events
+
+```bash
+python scripts/premerger_falsify_systematics.py --event GW170809 --plot
+```
+
+Multi-approximant + jitter + PE draws + corr(r,τ).  
+Verdicts: `SYSTEMATICS_RISK` | `ROBUST_ANOMALY` | `INCONCLUSIVE`.  
+Doc: `docs/MILESTONE_FALSIFY_SYSTEMATICS.md`.
+
 ### Gate B-P — pre-merger injection recovery
 
 - Background α_inj=0: false Gate P rate should be low  

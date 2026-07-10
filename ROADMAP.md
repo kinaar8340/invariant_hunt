@@ -157,6 +157,10 @@ Active: optional PE systematics on FALSIFY events; new pre-registered mapping on
 Bayes factor complement (no band re-fit): `scripts/premerger_bayes_factor.py`  
 → `docs/PREMERGER_BAYES_FACTOR.md`  
 
+**Highest priority:** Gate S-1 PE systematics on FALSIFY events  
+`scripts/premerger_falsify_systematics.py --event GW170809`  
+→ `docs/MILESTONE_FALSIFY_SYSTEMATICS.md`  
+
 ### Later
 
 - Matched-filter post-merger at \(f_{\mathrm{phys}}(M)\) with \(10^{-6}\) relative amp  

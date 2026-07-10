@@ -235,6 +235,10 @@ python scripts/premerger_core_predict.py --predict-event GW151012
 # Bayes factor B_10 = Z(topo)/Z(GR) — complement to Δχ² (prior σ_α=1e-3)
 python scripts/premerger_bayes_factor.py --event GW150914 --calibrate
 python scripts/premerger_bayes_factor.py --events GW170809,GW170729,GW151012
+
+# Gate S-1: PE systematics deep-dive on FALSIFY events (highest priority)
+python scripts/premerger_falsify_systematics.py --event GW170809 --plot
+python scripts/premerger_falsify_systematics.py --events GW170809,GW151012 --n-draws 12
 ```
 
 See `docs/PREDICTION_MODE.md`. True held-outs: **0 SUCCESS / 2 FALSIFY / 1 NULL**  
