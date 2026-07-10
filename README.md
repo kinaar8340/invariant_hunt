@@ -85,7 +85,8 @@ python scripts/coherent_echo_scan.py --event GW150914 --plot
 python scripts/coherent_echo_scan.py --no-scan   # s=1 only
 ```
 
-Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).
+Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  
+Milestone (GW150914 PE residual v1→v2 null): [`docs/MILESTONE_GW150914_v2.md`](docs/MILESTONE_GW150914_v2.md).
 
 Full conduit evaluation (from TOE):
 

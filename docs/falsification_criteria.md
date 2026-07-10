@@ -26,8 +26,14 @@ On one event with PE residual + **coherent** echo train (`coherent_echo_scan.py`
 
 At **nominal** delay scale \(s=1\) (pure geometric). No look-elsewhere credit.
 
-**Status on GW150914 H1 (independent map):** fail (Δχ²≈0.04, a₁≈0).  
-**Status after coherent map:** re-run `coherent_echo_scan.py` (see latest JSON).
+**Status on GW150914 H1:**
+
+| Map | Δχ² @ s=1 | Strength | Gate A |
+|-----|-----------|----------|--------|
+| v1 independent | ~0.04 | a₁≈0 | **Fail** |
+| v2 coherent | **0.45** | MF SNR≈0.77 | **Fail** |
+
+See `docs/MILESTONE_GW150914_v2.md`.
 
 ### Gate A′ — Delay-scale scan (with LEE)
 
