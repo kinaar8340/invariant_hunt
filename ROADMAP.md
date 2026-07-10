@@ -62,8 +62,9 @@ Each prediction carries a `falsify_if` string. Example checkpoints:
 1. ~~PE residual on GW150914~~ — near-null (Gate A fail; constructive)
 2. ~~Residual diagnostics + injection recovery~~ (Gate B pass)
 3. ~~Coherent complex amp + delay-scale scan with LEE~~ (`coherent_echo_scan.py`)
-4. Multi-detector + PSD whitening before strong claims
-5. Port analytic sections from TOE papers into `src/predictions.py`
+4. ~~Whitened H1+L1 network likelihood~~ (`network_whiten_scan.py`, Gate C)
+5. Multi-event Gate D; amp-structure mapping variants
+6. Port analytic sections from TOE papers into `src/predictions.py`
 
 See `docs/falsification_criteria.md`.
 

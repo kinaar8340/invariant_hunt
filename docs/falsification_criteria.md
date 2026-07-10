@@ -53,18 +53,40 @@ Using `scripts/injection_recovery.py`:
 - Injected signals with \(a_{\mathrm{inj}} \ge a_{\mathrm{thr}}\) must recover \(a_1 / a_{\mathrm{inj}} \in [0.5, 1.5]\) and Δχ² ≥ 4
 - If real-data \(|a_1|\) is well below \(a_{\mathrm{thr}}\), the null is **expected**, not a pipeline bug
 
-### Gate C — Multi-event (stronger; not yet implemented)
+### Gate C — Whitened multi-detector (stronger single-event)
 
-- Gates A on ≥ 3 BBH events, or coherent H1+L1 with shared ladder
-- Look-elsewhere correction for delay/κ scans if those are free
+On whitened H1+L1 network PE residual (`network_whiten_scan.py`):
 
-### Gate D — Mapping revision triggers
+- Same numerical bars as Gate A (Δχ² ≥ 4, network MF SNR ≥ 2) at \(s=1\)
+- Optional Gate A′ delay scan with LEE on the **network** Δχ²
+- Noise model: Welch PSD (pre-merger) → FD whitening → unit-variance white in-band
+
+**Status on GW150914 H1+L1 (full-file Welch whitening, coherent map):**
+
+| Check | Value | Result |
+|-------|-------|--------|
+| Δχ² @ s=1 | 4.16 | ≥4 ✓ |
+| network MF SNR | 2.04 | ≥2 ✓ |
+| Gate C nominal | — | **marginal PASS** (at threshold) |
+| best s + LEE (thr≈10.1) | Δχ²_max=4.86 @ s=0.96 | **FAIL** |
+
+PE recovery after whitening: H1 SNR≈54, L1 SNR≈39 (healthy).  
+See `outputs/benchmarks/GW150914_H1-L1_whitened_network.json`.
+
+**Caveat:** Gate C nominal does **not** include a trials factor for the 2-dof complex amplitude. Treat as a weak single-event bar; LEE applies to the delay scan. Marginal pass is not a discovery claim.
+
+### Gate D — Multi-event (not yet implemented)
+
+- Gate C on ≥ 3 BBH events
+- Look-elsewhere for free delay/κ scans across events
+
+### Gate E — Mapping revision triggers
 
 Revise the **echo mapping** (not necessarily the invariant locks) if:
 
-1. Gate A fails on GW150914-class events **and** injection shows the pipeline would have seen a physical echo of comparable literature amplitude, **or**
+1. Gate A **and** Gate C fail on GW150914-class events **and** injection shows the pipeline would have seen a physical echo of comparable literature amplitude, **or**
 2. Residual diagnostics show local Δχ² only at control (off-ladder) times, **or**
-3. Best-fit \(a_1 < 0\) consistently (anti-template)
+3. Best-fit echo amplitude consistent with zero / anti-template across H1 and network
 
 Preserve \(W_g\), κ, braiding locks unless independent meta-optimization / analytic work moves them.
 
@@ -88,7 +110,8 @@ It **does** mean:
 | Script | Role |
 |--------|------|
 | `compare_benchmark.py --baseline pe` | End-to-end PE residual (legacy independent train) |
-| `coherent_echo_scan.py` | Coherent complex amp + delay scan + LEE |
+| `coherent_echo_scan.py` | Coherent complex amp + delay scan + LEE (H1) |
+| `network_whiten_scan.py` | Whitened H1+L1 network likelihood (Gate C) |
 | `inspect_residual.py` | Per-echo local Δχ², MF SNR, control windows |
 | `injection_recovery.py` | Sensitivity / Gate B |
 
@@ -97,10 +120,11 @@ It **does** mean:
 | Version | Template | Status |
 |---------|----------|--------|
 | v1 independent | per-step fixed phase, single real a₁ | Gate A fail on GW150914 |
-| v2 coherent | shared complex (a_c, a_s) over train | `coherent_echo_scan.py` |
-| v2+scan | coherent + s∈[0.8,1.2] with LEE | same script |
+| v2 coherent | shared complex (a_c, a_s) over train | Gate A fail (Δχ²=0.45, SNR=0.77) |
+| v2+scan | coherent + s∈[0.8,1.2] with LEE | best s=1.00; Gate A′ fail |
 
-Core locks \(W_g\), κ unchanged across mapping versions.
+Core locks \(W_g\), κ unchanged across mapping versions. Milestone write-up:
+`docs/MILESTONE_GW150914_v2.md`.
 
 ## Suggested next refinements (if Gate A still fails)
 

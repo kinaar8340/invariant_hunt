@@ -85,8 +85,17 @@ python scripts/coherent_echo_scan.py --event GW150914 --plot
 python scripts/coherent_echo_scan.py --no-scan   # s=1 only
 ```
 
+### Whitened H1+L1 network (Gate C)
+
+Welch PSD → FD whitening → per-detector PE residual → network coherent \((a_c,a_s)\):
+
+```bash
+python scripts/network_whiten_scan.py --event GW150914 --detectors H1,L1 --plot
+```
+
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  
-Milestone (GW150914 PE residual v1→v2 null): [`docs/MILESTONE_GW150914_v2.md`](docs/MILESTONE_GW150914_v2.md).
+Milestones: [`docs/MILESTONE_GW150914_v2.md`](docs/MILESTONE_GW150914_v2.md) (H1 band-lim null),  
+[`docs/MILESTONE_WHITENED_NETWORK.md`](docs/MILESTONE_WHITENED_NETWORK.md) (H1+L1 whitened Gate C).
 
 Full conduit evaluation (from TOE):
 
