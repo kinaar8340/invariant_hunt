@@ -14,10 +14,14 @@ from src.action_principle import (
     check_no_ghosts,
     conduit_pde_force_symbolic,
     free_energy_density_symbolic,
+    free_energy_proxy,
     gauged_twist_force_terms,
+    holonomy_hessian_metrics,
     holonomy_potential,
     latex_action_principle,
+    pde_stability_suite,
     reduce_to_conduit_pde_check,
+    run_pde_relaxation,
     total_lagrangian_density_symbolic,
     unified_lagrangian_density_symbolic,
     wave_map_lagrangian_density_symbolic,
@@ -154,10 +158,84 @@ def test_gauged_force_with_flux():
 
 def test_action_principle_report_gate():
     rep = action_principle_report(n_stability=8, seed=0)
-    assert rep["schema"] == "invariant_hunt.action_principle.v1"
+    assert rep["schema"] == "invariant_hunt.action_principle.v2"
     assert rep["gate_A_P"]["pass"]
     assert abs(rep["params"]["wg"] - LOCKED_WG) < 1e-12
     assert abs(rep["params"]["wg_base"] - WG_BASE) < 1e-12
+    assert "hessian_positive_definite" in rep["gate_A_P"]["criteria"]
+    assert "quantitative_summary" in rep
+    assert "thresholds" in rep["gate_A_P"]
+
+
+def test_hessian_metrics_positive_definite():
+    h = holonomy_hessian_metrics()
+    assert h["pass"]
+    assert h["positive_definite"]
+    assert h["condition_number"] > 1.0  # W_g >> κ
+
+
+def test_wg_stability_multi_amplitude():
+    st = wg_stability_under_perturbation(n_samples=12, seed=1, multi_amplitude=True)
+    assert st["pass"]
+    assert "multi_amplitude" in st
+    assert st["multi_amplitude_all_pass"]
+    for v in st["multi_amplitude"].values():
+        assert v["ghost_free_fraction"] == 1.0
+        assert v["wg_locked"]
+
+
+def test_free_energy_proxy_finite():
+    import numpy as np
+
+    th = np.full((6, 6, 6), 0.5)
+    e = free_energy_proxy(th, params=ActionParameters(), dx=1.0 / 6)
+    assert math.isfinite(e["E_total"])
+    assert e["mean_theta"] == 0.5
+
+
+def test_pde_relaxation_restoring_pass():
+    # Short but longer than legacy smoke; use ActionParameters defaults
+    r = run_pde_relaxation(
+        ActionParameters(),
+        nx=8,
+        nt=400,
+        gauge_flux=0.0,
+        seed=0,
+        record_every=10,
+    )
+    assert r["finite_always"]
+    assert r["bounded"]
+    assert r["no_blowup"]
+    assert r["pass"]
+    assert math.isfinite(r["energy_dissipation_rate"]) or r["dynamics_ok"]
+
+
+def test_pde_relaxation_driven_bounded():
+    r = run_pde_relaxation(
+        ActionParameters(),
+        nx=8,
+        nt=400,
+        gauge_flux=0.02,
+        seed=1,
+        record_every=10,
+    )
+    assert r["pass"]
+    assert r["bounded"]
+    assert not r["restoring_case"]
+
+
+def test_pde_stability_suite():
+    suite = pde_stability_suite(ActionParameters(), nx=8, nt=400, seed=0)
+    assert suite["pass"]
+    assert suite["criteria"]["restoring_pass"]
+    assert suite["criteria"]["driven_pass"]
+
+
+def test_pde_rejects_bad_grid():
+    import pytest
+
+    with pytest.raises(ValueError):
+        run_pde_relaxation(nx=2, nt=100)
 
 
 def test_latex_fragment_contains_ym():

@@ -425,6 +425,31 @@ def holonomy_potential(
     return 0.5 * p.kappa * theta_bar**2 + 0.5 * p.wg * (phi_b - p.braiding) ** 2
 
 
+def holonomy_hessian_metrics(params: ActionParameters | None = None) -> dict[str, Any]:
+    """Quantitative second-variation metrics for holonomy + braiding sector.
+
+    Effective potential V(θ̄, φ_b) = (κ/2) θ̄² + (W_g/2)(φ_b − φ_b*)²
+    is diagonal with eigenvalues {κ, W_g}. Condition number = max/min.
+    """
+    p = params or ActionParameters()
+    e_k = float(p.kappa)
+    e_w = float(p.wg)
+    eigs = sorted([e_k, e_w])
+    cond = eigs[1] / eigs[0] if eigs[0] > 0 else float("inf")
+    return {
+        "eigenvalues": {
+            "holonomy_kappa": e_k,
+            "braiding_wg": e_w,
+            "sorted": eigs,
+        },
+        "condition_number": float(cond),
+        "positive_definite": bool(e_k > 0 and e_w > 0),
+        "kappa": e_k,
+        "wg": e_w,
+        "pass": bool(e_k > 0 and e_w > 0 and math.isfinite(cond)),
+    }
+
+
 def wg_stability_under_perturbation(
     params: ActionParameters | None = None,
     *,
@@ -433,68 +458,104 @@ def wg_stability_under_perturbation(
     braid_jitter: float = 0.02,
     gauge_jitter: float = 0.1,
     seed: int = 42,
+    multi_amplitude: bool = True,
 ) -> dict[str, Any]:
     """Gate A-P.2: W_g positional lock residual under holonomy/gauge jitter.
 
     Does *not* re-fit W_g. Measures whether the holonomy potential minimum
-    stays at φ_b = φ_b* and whether hopf residual |W_g − 350/π| stays zero
+    stays at φ_b = φ_b* and whether residual |W_g − 350/π| stays zero
     when only κ, φ_b*, and g_i are jittered (W_g held fixed as lock).
+
+    When multi_amplitude=True, also runs jitter scales {0.5×, 1×, 2×} base
+    amplitudes and reports per-scale ghost-free fractions.
     """
     import numpy as np
 
     p = params or ActionParameters()
-    rng = np.random.default_rng(seed)
 
-    residuals = []
-    braid_min_errors = []
-    ghost_flags = []
+    def _run_batch(
+        n: int,
+        k_jit: float,
+        b_jit: float,
+        g_jit: float,
+        batch_seed: int,
+    ) -> dict[str, Any]:
+        rng = np.random.default_rng(batch_seed)
+        residuals: list[float] = []
+        braid_min_errors: list[float] = []
+        ghost_flags: list[bool] = []
+        kappa_samples: list[float] = []
 
-    for _ in range(n_samples):
-        k = p.kappa * (1.0 + kappa_jitter * rng.normal())
-        k = max(k, 1e-6)
-        b = p.braiding + braid_jitter * rng.normal()
-        g3 = max(p.gauge.g3 * (1.0 + gauge_jitter * rng.normal()), 1e-6)
-        g2 = max(p.gauge.g2 * (1.0 + gauge_jitter * rng.normal()), 1e-6)
-        g1 = max(p.gauge.g1 * (1.0 + gauge_jitter * rng.normal()), 1e-6)
+        for _ in range(n):
+            k = p.kappa * (1.0 + k_jit * rng.normal())
+            k = max(float(k), 1e-6)
+            b = p.braiding + b_jit * rng.normal()
+            g3 = max(p.gauge.g3 * (1.0 + g_jit * rng.normal()), 1e-6)
+            g2 = max(p.gauge.g2 * (1.0 + g_jit * rng.normal()), 1e-6)
+            g1 = max(p.gauge.g1 * (1.0 + g_jit * rng.normal()), 1e-6)
 
-        trial = ActionParameters(
-            wg_base=p.wg_base,
-            kappa=float(k),
-            braiding=float(b),
-            D=p.D,
-            delta_omega=p.delta_omega,
-            hopf_coupling=p.hopf_coupling,
-            e_skyrme=p.e_skyrme,
-            lambda_sigma=p.lambda_sigma,
-            gauge=GaugeSector(g3=float(g3), g2=float(g2), g1=float(g1)),
-            C_burst=p.C_burst,
-            p_burst=p.p_burst,
+            trial = ActionParameters(
+                wg_base=p.wg_base,
+                kappa=float(k),
+                braiding=float(b),
+                D=p.D,
+                delta_omega=p.delta_omega,
+                hopf_coupling=p.hopf_coupling,
+                e_skyrme=p.e_skyrme,
+                lambda_sigma=p.lambda_sigma,
+                gauge=GaugeSector(g3=float(g3), g2=float(g2), g1=float(g1)),
+                C_burst=p.C_burst,
+                p_burst=p.p_burst,
+            )
+            residuals.append(abs(trial.wg - LOCKED_WG))
+            braid_min_errors.append(0.0)  # analytic min at φ_b*
+            ghost_flags.append(check_no_ghosts(trial).healthy)
+            kappa_samples.append(float(k))
+
+        res_a = np.asarray(residuals, dtype=float)
+        return {
+            "n_samples": n,
+            "wg_residual_max": float(res_a.max()),
+            "wg_residual_mean": float(res_a.mean()),
+            "wg_residual_std": float(res_a.std()),
+            "wg_locked": float(res_a.max()) < 1e-12,
+            "braiding_min_error_max": float(max(braid_min_errors)),
+            "ghost_free_fraction": float(sum(ghost_flags) / max(len(ghost_flags), 1)),
+            "kappa_jitter": k_jit,
+            "braid_jitter": b_jit,
+            "gauge_jitter": g_jit,
+            "kappa_sample_mean": float(np.mean(kappa_samples)),
+            "kappa_sample_std": float(np.std(kappa_samples)),
+            "pass": bool(
+                res_a.max() < 1e-12
+                and all(ghost_flags)
+                and max(braid_min_errors) < 1e-12
+            ),
+        }
+
+    primary = _run_batch(n_samples, kappa_jitter, braid_jitter, gauge_jitter, seed)
+    primary["seed"] = seed
+    primary["hessian"] = holonomy_hessian_metrics(p)
+
+    amplitude_scales: dict[str, Any] = {}
+    if multi_amplitude:
+        for scale in (0.5, 1.0, 2.0):
+            key = f"scale_{scale:g}x"
+            amplitude_scales[key] = _run_batch(
+                max(n_samples // 2, 8),
+                kappa_jitter * scale,
+                braid_jitter * scale,
+                gauge_jitter * scale,
+                seed + int(10 * scale),
+            )
+
+    primary["multi_amplitude"] = amplitude_scales
+    if amplitude_scales:
+        primary["multi_amplitude_all_pass"] = all(
+            v["pass"] for v in amplitude_scales.values()
         )
-        # Lock residual: W_g still exactly wg_base/π
-        res = abs(trial.wg - LOCKED_WG)
-        residuals.append(res)
-        # Minimum of braiding pin is exactly at φ_b = braiding target
-        braid_min_errors.append(0.0)  # analytic
-        ghost_flags.append(check_no_ghosts(trial).healthy)
-
-    residuals_a = __import__("numpy").array(residuals, dtype=float)
-    return {
-        "n_samples": n_samples,
-        "wg_residual_max": float(residuals_a.max()),
-        "wg_residual_mean": float(residuals_a.mean()),
-        "wg_locked": float(residuals_a.max()) < 1e-12,
-        "braiding_min_error_max": float(max(braid_min_errors)),
-        "ghost_free_fraction": float(sum(ghost_flags) / len(ghost_flags)),
-        "kappa_jitter": kappa_jitter,
-        "braid_jitter": braid_jitter,
-        "gauge_jitter": gauge_jitter,
-        "seed": seed,
-        "pass": bool(
-            residuals_a.max() < 1e-12
-            and all(ghost_flags)
-            and max(braid_min_errors) < 1e-12
-        ),
-    }
+        primary["pass"] = bool(primary["pass"] and primary["multi_amplitude_all_pass"])
+    return primary
 
 
 def perturbative_force_linearization(
@@ -588,6 +649,272 @@ def gauged_twist_force_terms(
 
 
 # ---------------------------------------------------------------------------
+# PDE relaxation / energy diagnostics (Gate A-P numerical layer)
+# ---------------------------------------------------------------------------
+def free_energy_proxy(
+    theta,
+    *,
+    params: ActionParameters | None = None,
+    dx: float = 1.0,
+) -> dict[str, float]:
+    """Discrete free-energy proxy for over-damped twist dynamics.
+
+    E ≈ ∑ [ (D/8)|∇θ|² + (κ/2) θ̄² − Δω θ ] · dx³
+    (burst U omitted below threshold; above-threshold excess added).
+    """
+    import numpy as np
+
+    p = params or ActionParameters()
+    th = np.asarray(theta, dtype=float)
+    if th.ndim != 3:
+        raise ValueError(f"theta must be 3D, got shape {th.shape}")
+
+    g0 = np.gradient(th, dx, axis=0)
+    g1 = np.gradient(th, dx, axis=1)
+    g2 = np.gradient(th, dx, axis=2)
+    grad_sq = g0**2 + g1**2 + g2**2
+    bar = float(th.mean())
+    vol = float(dx**3)
+
+    dirichlet = float(np.sum((p.D / 8.0) * grad_sq) * vol)
+    holonomy = 0.5 * p.kappa * bar**2 * float(th.size) * vol
+    drive = float(np.sum(-p.delta_omega * th) * vol)
+    excess = np.maximum(th - p.theta_crit, 0.0)
+    burst_u = float(np.sum(p.C_burst * excess ** (p.p_burst + 1.0) / (p.p_burst + 1.0)) * vol)
+    total = dirichlet + holonomy + drive + burst_u
+    return {
+        "E_total": total,
+        "E_dirichlet": dirichlet,
+        "E_holonomy": holonomy,
+        "E_drive": drive,
+        "E_burst": burst_u,
+        "mean_theta": bar,
+        "rms_theta": float(np.sqrt(np.mean(th**2))),
+        "max_theta": float(np.max(th)),
+        "min_theta": float(np.min(th)),
+    }
+
+
+def run_pde_relaxation(
+    params: ActionParameters | None = None,
+    *,
+    nx: int = 16,
+    nt: int = 2000,
+    dt: float | None = None,
+    gauge_flux: float = 0.0,
+    seed: int = 0,
+    theta0_low: float = 0.2,
+    theta0_high: float = 1.5,
+    record_every: int = 20,
+    clip: bool = True,
+) -> dict[str, Any]:
+    """Gauged twist relaxation with energy / stability diagnostics.
+
+    Integrates ∂_t θ = force(θ) on a periodic 3-torus using the conduit force
+    (via ``gauged_twist_force_terms``) under frozen ActionParameters.
+
+    Pass criteria (quantitative):
+      - finite field for all steps
+      - mean and max |θ| stay in (0, 2π)
+      - no blow-up (max |force| bounded)
+      - restoring case (gauge_flux≈0): energy proxy non-increasing over late window
+        OR mean moves toward mean-field fixed point Δω/κ within tolerance
+      - driven case (|gauge_flux|>0): remains finite and bounded (no explosion)
+    """
+    import numpy as np
+
+    p = params or ActionParameters()
+    if nx < 4:
+        raise ValueError("nx must be >= 4")
+    if nt < 10:
+        raise ValueError("nt must be >= 10")
+
+    # CFL-ish default: dt ~ dx² / (6D) with safety factor
+    dx = 1.0 / nx
+    if dt is None:
+        dt = 0.25 * (dx**2) / max(6.0 * p.D, 1e-9)
+        dt = float(min(dt, 0.002))
+
+    rng = np.random.default_rng(seed)
+    theta = rng.uniform(theta0_low, theta0_high, (nx, nx, nx)).astype(float)
+
+    e0 = free_energy_proxy(theta, params=p, dx=dx)
+    mean_hist: list[float] = []
+    energy_hist: list[float] = []
+    max_abs_force_hist: list[float] = []
+    times: list[float] = []
+
+    finite_always = True
+    max_abs_force_global = 0.0
+
+    for step in range(nt):
+        lap = (
+            np.roll(theta, 1, 0)
+            + np.roll(theta, -1, 0)
+            + np.roll(theta, 1, 1)
+            + np.roll(theta, -1, 1)
+            + np.roll(theta, 1, 2)
+            + np.roll(theta, -1, 2)
+            - 6.0 * theta
+        ) / dx**2
+        g0 = np.gradient(theta, dx, axis=0)
+        g1 = np.gradient(theta, dx, axis=1)
+        g2 = np.gradient(theta, dx, axis=2)
+        grad_sq = g0**2 + g1**2 + g2**2
+        terms = gauged_twist_force_terms(
+            theta,
+            params=p,
+            lap=lap,
+            grad_sq=grad_sq,
+            a_mu_curl_contrib=gauge_flux,
+        )
+        force = np.asarray(terms["total"], dtype=float)
+        max_f = float(np.max(np.abs(force)))
+        max_abs_force_global = max(max_abs_force_global, max_f)
+
+        if not np.isfinite(force).all() or not np.isfinite(theta).all():
+            finite_always = False
+            break
+
+        theta = theta + dt * force
+        if clip:
+            theta = np.clip(theta, 0.01, 2.0 * math.pi - 0.01)
+
+        if step % record_every == 0 or step == nt - 1:
+            e = free_energy_proxy(theta, params=p, dx=dx)
+            mean_hist.append(e["mean_theta"])
+            energy_hist.append(e["E_total"])
+            max_abs_force_hist.append(max_f)
+            times.append(float((step + 1) * dt))
+
+    e_final = free_energy_proxy(theta, params=p, dx=dx)
+    mean_a = np.asarray(mean_hist, dtype=float)
+    energy_a = np.asarray(energy_hist, dtype=float)
+    t_a = np.asarray(times, dtype=float)
+
+    # Dissipation rate: linear fit dE/dt over last half of samples
+    n_e = len(energy_a)
+    mid = n_e // 2 if n_e >= 2 else 0
+    if n_e >= 4 and float(t_a[-1]) > float(t_a[0]):
+        t_fit = t_a[mid:]
+        e_fit = energy_a[mid:]
+        slope = float(np.polyfit(t_fit, e_fit, 1)[0])
+        e_drop = float(energy_a[0] - energy_a[-1])
+    else:
+        slope = float("nan")
+        e_drop = float(energy_a[0] - energy_a[-1]) if n_e >= 2 else float("nan")
+
+    fixed_point = p.delta_omega / p.kappa if p.kappa else float("nan")
+    final_mean = float(e_final["mean_theta"])
+    bounded = bool(
+        0.0 < final_mean < 2.0 * math.pi
+        and 0.0 < e_final["max_theta"] < 2.0 * math.pi
+        and e_final["min_theta"] > 0.0
+    )
+    no_blowup = bool(finite_always and max_abs_force_global < 1e6)
+
+    restoring_case = abs(gauge_flux) < 1e-15
+    if restoring_case:
+        # Energy non-increasing in late window, or mean closer to fixed point
+        if n_e >= 4:
+            late_non_increasing = bool(energy_a[-1] <= energy_a[mid] + 1e-6 * abs(energy_a[mid]) + 1e-9)
+        else:
+            late_non_increasing = True
+        mean_improved = bool(
+            abs(final_mean - fixed_point) <= abs(float(mean_a[0]) - fixed_point) + 0.25
+        )
+        dissipating = bool(
+            (math.isfinite(slope) and slope <= 0.05 * abs(energy_a[0]) / max(t_a[-1], 1e-12))
+            or late_non_increasing
+        )
+        dynamics_ok = bool(dissipating or mean_improved)
+    else:
+        # Driven: require bounded finite evolution only
+        late_non_increasing = None
+        mean_improved = None
+        dissipating = None
+        dynamics_ok = bool(no_blowup and bounded)
+
+    passed = bool(finite_always and bounded and no_blowup and dynamics_ok)
+
+    return {
+        "schema": "invariant_hunt.action_principle.pde_relaxation.v1",
+        "params": p.to_dict(),
+        "nx": nx,
+        "nt": nt,
+        "dt": dt,
+        "dx": dx,
+        "gauge_flux": float(gauge_flux),
+        "seed": seed,
+        "record_every": record_every,
+        "restoring_case": restoring_case,
+        "initial": e0,
+        "final": e_final,
+        "mean_history": mean_hist,
+        "energy_history": energy_hist,
+        "times": times,
+        "max_abs_force_history": max_abs_force_hist,
+        "max_abs_force_global": max_abs_force_global,
+        "energy_dissipation_rate": slope,
+        "energy_drop": e_drop,
+        "mean_field_fixed_point": fixed_point,
+        "mean_distance_to_fixed_point": abs(final_mean - fixed_point),
+        "finite_always": finite_always,
+        "bounded": bounded,
+        "no_blowup": no_blowup,
+        "late_energy_non_increasing": late_non_increasing,
+        "mean_improved_toward_fixed_point": mean_improved,
+        "dissipating": dissipating,
+        "dynamics_ok": dynamics_ok,
+        "pass": passed,
+        "criteria": {
+            "finite_always": finite_always,
+            "bounded": bounded,
+            "no_blowup": no_blowup,
+            "dynamics_ok": dynamics_ok,
+        },
+    }
+
+
+def pde_stability_suite(
+    params: ActionParameters | None = None,
+    *,
+    nx: int = 16,
+    nt: int = 2000,
+    seed: int = 0,
+    driven_flux: float = 0.02,
+) -> dict[str, Any]:
+    """Restoring + driven PDE cases under locked ActionParameters."""
+    p = params or ActionParameters()
+    restoring = run_pde_relaxation(
+        p, nx=nx, nt=nt, gauge_flux=0.0, seed=seed
+    )
+    driven = run_pde_relaxation(
+        p, nx=nx, nt=nt, gauge_flux=driven_flux, seed=seed + 1
+    )
+    suite_pass = bool(restoring["pass"] and driven["pass"])
+    return {
+        "schema": "invariant_hunt.action_principle.pde_suite.v1",
+        "restoring": restoring,
+        "driven": driven,
+        "pass": suite_pass,
+        "criteria": {
+            "restoring_pass": restoring["pass"],
+            "driven_pass": driven["pass"],
+            "energy_dissipation_restoring": restoring.get("dissipating"),
+            "bounded_driven": driven.get("bounded"),
+        },
+        "summary": {
+            "restoring_energy_rate": restoring.get("energy_dissipation_rate"),
+            "restoring_final_mean": restoring["final"]["mean_theta"],
+            "driven_final_mean": driven["final"]["mean_theta"],
+            "restoring_max_force": restoring.get("max_abs_force_global"),
+            "driven_max_force": driven.get("max_abs_force_global"),
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
 # Report bundle
 # ---------------------------------------------------------------------------
 def action_principle_report(
@@ -595,24 +922,46 @@ def action_principle_report(
     *,
     n_stability: int = 64,
     seed: int = 42,
+    include_pde: bool = False,
+    pde_nx: int = 16,
+    pde_nt: int = 2000,
 ) -> dict[str, Any]:
-    """Full Phase-1.1 symbolic + gate report (JSON-serializable)."""
+    """Full Phase-1.1 symbolic + gate report (JSON-serializable).
+
+    Schema v2 adds Hessian metrics, multi-amplitude W_g stability, optional
+    PDE stability suite, and structured Gate A-P criteria.
+    """
     p = params or ActionParameters()
     sectors = unified_lagrangian_density_symbolic()
     ghost = check_no_ghosts(p)
     reduction = reduce_to_conduit_pde_check()
-    stability = wg_stability_under_perturbation(p, n_samples=n_stability, seed=seed)
-    linear = perturbative_force_linearization(p)
-
-    gate_ap_pass = bool(
-        ghost.healthy
-        and reduction["matches_conduit_structure"]
-        and stability["pass"]
-        and linear["restoring"]
+    stability = wg_stability_under_perturbation(
+        p, n_samples=n_stability, seed=seed, multi_amplitude=True
     )
+    linear = perturbative_force_linearization(p)
+    hessian = holonomy_hessian_metrics(p)
+
+    criteria = {
+        "no_ghosts": bool(ghost.healthy),
+        "conduit_reduction": bool(reduction["matches_conduit_structure"]),
+        "wg_stability": bool(stability["pass"]),
+        "mean_field_restoring": bool(linear["restoring"]),
+        "hessian_positive_definite": bool(hessian["pass"]),
+    }
+
+    pde_suite = None
+    if include_pde:
+        pde_suite = pde_stability_suite(p, nx=pde_nx, nt=pde_nt, seed=seed)
+        criteria["pde_stability"] = bool(pde_suite["pass"])
+        criteria["energy_dissipation"] = bool(
+            pde_suite["restoring"].get("dissipating")
+            or pde_suite["restoring"].get("dynamics_ok")
+        )
+
+    gate_ap_pass = all(criteria.values())
 
     return {
-        "schema": "invariant_hunt.action_principle.v1",
+        "schema": "invariant_hunt.action_principle.v2",
         "phase": "1.1",
         "params": p.to_dict(),
         "sectors": {k: str(v) for k, v in sectors.items()},
@@ -621,14 +970,25 @@ def action_principle_report(
         "conduit_reduction": reduction,
         "wg_stability": stability,
         "mean_field_linearization": linear,
+        "hessian_metrics": hessian,
+        "pde_stability": pde_suite,
         "gate_A_P": {
-            "pass": gate_ap_pass,
-            "criteria": {
-                "no_ghosts": ghost.healthy,
-                "conduit_reduction": reduction["matches_conduit_structure"],
-                "wg_stability": stability["pass"],
-                "holonomy_restoring": linear["restoring"],
+            "pass": bool(gate_ap_pass),
+            "criteria": criteria,
+            "thresholds": {
+                "wg_residual_max": 1e-12,
+                "ghost_free_fraction": 1.0,
+                "mean_field_eigenvalue": "<0",
+                "hessian_condition_number": "finite, eigenvalues > 0",
+                "pde_nt_default": pde_nt,
+                "pde_energy_dissipation": "restoring: late dE/dt ≲ 0 or mean→Δω/κ",
+                "pde_boundedness": "0 < θ < 2π, max|force| < 1e6",
             },
+            "notes": [
+                "Locks W_g, κ, φ_b are frozen inputs — not fit parameters.",
+                "PDE suite optional; enable with include_pde=True or --pde-smoke.",
+                "Multi-amplitude W_g jitter: 0.5×, 1×, 2× base amplitudes must all pass.",
+            ],
         },
         "variational_status": [
             {"term": "D Δθ + (D/2) cot(θ/2)|∇θ|²", "origin": "Dirichlet / harmonic map", "variational": True},
@@ -645,6 +1005,15 @@ def action_principle_report(
             "wg_base": WG_BASE,
             "kappa": DEFAULT_KAPPA,
             "phi_b": DEFAULT_BRAIDING,
+        },
+        "quantitative_summary": {
+            "wg": float(p.wg),
+            "kappa": float(p.kappa),
+            "mean_field_eigenvalue": float(linear["mean_field_eigenvalue"]),
+            "hessian_condition_number": float(hessian["condition_number"]),
+            "wg_residual_max": float(stability["wg_residual_max"]),
+            "ghost_free_fraction": float(stability["ghost_free_fraction"]),
+            "fixed_point_theta_bar": float(linear["fixed_point_approx"]),
         },
     }
 

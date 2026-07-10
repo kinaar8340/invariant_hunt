@@ -5,14 +5,15 @@ Phase 1.1 — Gate A-P check for the unified action principle.
 Verifies:
   1. No unphysical ghosts (healthy kinetic / Hessian signs)
   2. Free-energy variation reduces to conduit PDE structure
-  3. W_g lock stable under holonomy / gauge coupling jitter
+  3. W_g lock stable under multi-amplitude holonomy / gauge jitter
   4. Mean-field holonomy eigenvalue restoring (−κ < 0)
-
-Optional: short gauged PDE relaxation smoke test.
+  5. Holonomy+braiding Hessian positive definite (quantitative)
+  6. Optional: PDE stability suite (restoring + driven) with energy diagnostics
 
 Usage:
   python scripts/action_principle_check.py
-  python scripts/action_principle_check.py --pde-smoke --nx 16 --nt 200
+  python scripts/action_principle_check.py --pde-smoke
+  python scripts/action_principle_check.py --pde-smoke --nx 16 --nt 2000
   python scripts/action_principle_check.py --latex
 """
 
@@ -21,10 +22,9 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import traceback
 from datetime import datetime, timezone
 from pathlib import Path
-
-import numpy as np
 
 project_root = Path(__file__).resolve().parent.parent
 if str(project_root) not in sys.path:
@@ -33,8 +33,8 @@ if str(project_root) not in sys.path:
 from src.action_principle import (  # noqa: E402
     ActionParameters,
     action_principle_report,
-    gauged_twist_force_terms,
     latex_action_principle,
+    pde_stability_suite,
 )
 from src.invariants import DEFAULT_KAPPA, LOCKED_WG, WG_BASE  # noqa: E402
 
@@ -42,77 +42,34 @@ OUTPUT_DIR = project_root / "outputs" / "action_principle"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def pde_smoke(
-    nx: int = 16,
-    nt: int = 200,
-    dt: float = 0.001,
-    gauge_flux: float = 0.0,
-    seed: int = 0,
-) -> dict:
-    """Short 3-torus relaxation with optional constant gauge-flux source."""
-    rng = np.random.default_rng(seed)
-    params = ActionParameters()
-    theta = rng.uniform(0.1, 2.0, (nx, nx, nx))
-    mean_hist: list[float] = []
-    dx = 1.0 / nx
-
-    for _ in range(nt):
-        lap = (
-            np.roll(theta, 1, 0)
-            + np.roll(theta, -1, 0)
-            + np.roll(theta, 1, 1)
-            + np.roll(theta, -1, 1)
-            + np.roll(theta, 1, 2)
-            + np.roll(theta, -1, 2)
-            - 6 * theta
-        ) / dx**2
-        g0 = np.gradient(theta, axis=0)
-        g1 = np.gradient(theta, axis=1)
-        g2 = np.gradient(theta, axis=2)
-        grad_sq = g0**2 + g1**2 + g2**2
-        terms = gauged_twist_force_terms(
-            theta,
-            params=params,
-            lap=lap,
-            grad_sq=grad_sq,
-            a_mu_curl_contrib=gauge_flux,
-        )
-        theta = theta + dt * terms["total"]
-        theta = np.clip(theta, 0.01, 2 * np.pi - 0.01)
-        mean_hist.append(float(theta.mean()))
-
-    final_mean = mean_hist[-1]
-    # Healthy: mean twist stays finite and does not explode
-    finite = bool(np.isfinite(final_mean) and np.isfinite(theta).all())
-    bounded = bool(0.0 < final_mean < 2 * np.pi)
-    # Mild relaxation expected under restoring holonomy when gauge_flux=0
-    relaxed = True if gauge_flux != 0.0 else final_mean < mean_hist[0] + 0.5
-
-    return {
-        "nx": nx,
-        "nt": nt,
-        "dt": dt,
-        "gauge_flux": gauge_flux,
-        "seed": seed,
-        "initial_mean": mean_hist[0],
-        "final_mean": final_mean,
-        "finite": finite,
-        "bounded": bounded,
-        "relaxed_or_driven_ok": relaxed,
-        "pass": finite and bounded and relaxed,
-        "kappa": DEFAULT_KAPPA,
-        "wg": LOCKED_WG,
-    }
-
-
 def main() -> int:
     parser = argparse.ArgumentParser(description="Phase 1.1 action principle Gate A-P")
     parser.add_argument("--n-stability", type=int, default=64)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--pde-smoke", action="store_true", help="Run short gauged PDE smoke")
-    parser.add_argument("--nx", type=int, default=16)
-    parser.add_argument("--nt", type=int, default=200)
-    parser.add_argument("--gauge-flux", type=float, default=0.0)
+    parser.add_argument(
+        "--pde-smoke",
+        action="store_true",
+        help="Run PDE stability suite (restoring + driven) with energy diagnostics",
+    )
+    parser.add_argument("--nx", type=int, default=16, help="PDE grid size per side")
+    parser.add_argument(
+        "--nt",
+        type=int,
+        default=2000,
+        help="PDE timesteps (default 2000; was 200 in the weak smoke)",
+    )
+    parser.add_argument(
+        "--driven-flux",
+        type=float,
+        default=0.02,
+        help="Gauge flux for driven PDE case",
+    )
+    parser.add_argument(
+        "--gauge-flux",
+        type=float,
+        default=None,
+        help="(deprecated alias) if set without suite, run single-flux note only",
+    )
     parser.add_argument("--latex", action="store_true", help="Print LaTeX action fragment")
     parser.add_argument(
         "--out",
@@ -126,9 +83,26 @@ def main() -> int:
         print(latex_action_principle())
         return 0
 
+    params = ActionParameters()  # frozen locks defaults
+
     print("=== Phase 1.1 Action Principle — Gate A-P ===")
     print(f"  locks: W_g={LOCKED_WG:.6f} (base {WG_BASE}), κ={DEFAULT_KAPPA}")
-    report = action_principle_report(n_stability=args.n_stability, seed=args.seed)
+    print(f"  ActionParameters: W_g={params.wg:.6f}, κ={params.kappa}, φ_b={params.braiding}")
+
+    try:
+        report = action_principle_report(
+            params,
+            n_stability=args.n_stability,
+            seed=args.seed,
+            include_pde=False,  # suite added below for clearer printing
+            pde_nx=args.nx,
+            pde_nt=args.nt,
+        )
+    except Exception as exc:
+        print(f"ERROR: action_principle_report failed: {exc}")
+        traceback.print_exc()
+        return 2
+
     gate = report["gate_A_P"]
 
     print("\n--- Sector densities (symbolic) ---")
@@ -145,45 +119,118 @@ def main() -> int:
     red = report["conduit_reduction"]
     print(f"  matches structure: {red['matches_conduit_structure']}")
 
-    print("\n--- W_g stability under jitter ---")
+    print("\n--- W_g stability under multi-amplitude jitter ---")
     st = report["wg_stability"]
     print(f"  residual max: {st['wg_residual_max']:.3e}")
     print(f"  ghost-free fraction: {st['ghost_free_fraction']:.3f}")
-    print(f"  pass: {st['pass']}")
+    print(f"  primary pass: {st['pass']}")
+    for scale_name, scale_res in (st.get("multi_amplitude") or {}).items():
+        print(
+            f"    {scale_name}: ghost-free={scale_res['ghost_free_fraction']:.3f} "
+            f"wg_res={scale_res['wg_residual_max']:.1e} pass={scale_res['pass']}"
+        )
+
+    print("\n--- Hessian metrics (holonomy + braiding) ---")
+    hess = report["hessian_metrics"]
+    print(f"  eigenvalues: κ={hess['kappa']:.4f}, W_g={hess['wg']:.4f}")
+    print(f"  condition number: {hess['condition_number']:.4f}")
+    print(f"  positive definite: {hess['positive_definite']}")
 
     print("\n--- Mean-field linearization ---")
     lin = report["mean_field_linearization"]
-    print(f"  eigenvalue: {lin['mean_field_eigenvalue']:.4f}  restoring={lin['restoring']}")
+    print(
+        f"  eigenvalue: {lin['mean_field_eigenvalue']:.4f}  "
+        f"restoring={lin['restoring']}  "
+        f"fixed_point≈{lin['fixed_point_approx']:.4f}"
+    )
+
+    print("\n--- Quantitative summary ---")
+    for k, v in report.get("quantitative_summary", {}).items():
+        print(f"  {k}: {v}")
 
     if args.pde_smoke:
-        print("\n--- PDE smoke (gauged force hook) ---")
-        smoke = pde_smoke(
-            nx=args.nx,
-            nt=args.nt,
-            gauge_flux=args.gauge_flux,
-            seed=args.seed,
+        print("\n--- PDE stability suite (restoring + driven) ---")
+        print(f"  nx={args.nx}  nt={args.nt}  driven_flux={args.driven_flux}")
+        if args.gauge_flux is not None:
+            print(
+                f"  note: --gauge-flux={args.gauge_flux} ignored for suite; "
+                f"use --driven-flux (default {args.driven_flux})"
+            )
+        try:
+            suite = pde_stability_suite(
+                params,
+                nx=args.nx,
+                nt=args.nt,
+                seed=args.seed,
+                driven_flux=args.driven_flux,
+            )
+        except Exception as exc:
+            print(f"  ERROR: PDE suite failed: {exc}")
+            traceback.print_exc()
+            suite = {
+                "pass": False,
+                "error": str(exc),
+                "criteria": {"restoring_pass": False, "driven_pass": False},
+            }
+
+        report["pde_stability"] = suite
+        # Merge PDE into gate criteria
+        gate = dict(report["gate_A_P"])
+        crit = dict(gate.get("criteria", {}))
+        crit["pde_stability"] = bool(suite.get("pass"))
+        rest = suite.get("restoring") or {}
+        crit["energy_dissipation"] = bool(
+            rest.get("dissipating") or rest.get("dynamics_ok")
         )
-        report["pde_smoke"] = smoke
-        print(
-            f"  mean {smoke['initial_mean']:.4f} → {smoke['final_mean']:.4f}  "
-            f"pass={smoke['pass']}"
-        )
-        if not smoke["pass"]:
-            gate = dict(gate)
-            gate["pass"] = False
-            gate["criteria"] = dict(gate["criteria"])
-            gate["criteria"]["pde_smoke"] = False
-            report["gate_A_P"] = gate
+        gate["criteria"] = crit
+        gate["pass"] = all(crit.values())
+        report["gate_A_P"] = gate
+
+        if "restoring" in suite:
+            r = suite["restoring"]
+            d = suite["driven"]
+            print(
+                f"  restoring: mean {r['initial']['mean_theta']:.4f}→"
+                f"{r['final']['mean_theta']:.4f}  "
+                f"dE/dt={r['energy_dissipation_rate']:.3e}  "
+                f"pass={r['pass']}"
+            )
+            print(
+                f"  driven:    mean {d['initial']['mean_theta']:.4f}→"
+                f"{d['final']['mean_theta']:.4f}  "
+                f"max|F|={d['max_abs_force_global']:.3e}  "
+                f"pass={d['pass']}"
+            )
+            print(f"  suite pass: {suite['pass']}")
+            # Drop bulky histories from saved JSON for readability
+            for key in ("restoring", "driven"):
+                block = suite.get(key)
+                if isinstance(block, dict):
+                    for hist in (
+                        "mean_history",
+                        "energy_history",
+                        "times",
+                        "max_abs_force_history",
+                    ):
+                        if hist in block and len(block[hist]) > 20:
+                            block[hist + "_len"] = len(block[hist])
+                            block[hist + "_head"] = block[hist][:3]
+                            block[hist + "_tail"] = block[hist][-3:]
+                            del block[hist]
 
     print("\n=== Gate A-P ===")
     print(f"  PASS: {report['gate_A_P']['pass']}")
     for k, v in report["gate_A_P"]["criteria"].items():
         print(f"    {k}: {v}")
+    thr = report["gate_A_P"].get("thresholds") or {}
+    if thr:
+        print("  thresholds:")
+        for k, v in thr.items():
+            print(f"    {k}: {v}")
 
     ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     out = args.out or (OUTPUT_DIR / f"action_principle_{ts}.json")
     out.parent.mkdir(parents=True, exist_ok=True)
-    # Latest pointer
     latest = OUTPUT_DIR / "action_principle_latest.json"
     text = json.dumps(report, indent=2, default=str)
     out.write_text(text)

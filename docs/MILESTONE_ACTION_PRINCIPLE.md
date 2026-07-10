@@ -39,7 +39,7 @@ Preserve invariant_hunt discipline: locks frozen; no universal SM/GR claims; gat
 
 ```bash
 python scripts/action_principle_check.py
-python scripts/action_principle_check.py --pde-smoke
+python scripts/action_principle_check.py --pde-smoke --nt 2000
 python -m pytest tests/test_action_principle.py -q
 ```
 
@@ -47,10 +47,15 @@ python -m pytest tests/test_action_principle.py -q
 |-----------|----------------|
 | **No ghosts** | \(D,g_i,e_S,\kappa,W_g,\lambda>0\); holonomy Hessian \(\kappa>0\); braiding pin \(W_g>0\) |
 | **Conduit reduction** | Free-energy / force structure contains \(\Delta\omega\), \(-\kappa\bar\theta\), Dirichlet \(D\) |
-| **\(W_g\) stability** | Under κ / φ_b / g_i jitter, residual \(\|W_g-350/\pi\|=0\); all trials ghost-free |
+| **\(W_g\) stability** | Multi-amplitude κ / φ_b / g_i jitter (0.5×, 1×, 2×); residual \(\|W_g-350/\pi\|=0\); all trials ghost-free |
 | **Holonomy restoring** | Mean-field eigenvalue \(-\kappa<0\) |
+| **Hessian PD** | Eigenvalues \(\{\kappa,W_g\}>0\); finite condition number |
+| **PDE stability** (optional `--pde-smoke`) | Restoring + driven suite: finite, bounded, no blow-up; restoring energy dissipates or mean→Δω/κ |
+| **Energy dissipation** (with PDE) | Late-window \(dE/dt\lesssim 0\) or mean improved toward fixed point |
 | **GW consistency** | Locks used by `premerger_core_predict.py` unchanged |
 
+Schema: `invariant_hunt.action_principle.v2`  
+PDE: `run_pde_relaxation` / `pde_stability_suite` in `src/action_principle.py`  
 Artifact: `outputs/action_principle/action_principle_latest.json`.
 
 ## What this is *not*
