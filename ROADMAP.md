@@ -171,6 +171,10 @@ unless a *new physical variable* is separately pre-registered (`docs/PREREG_*.md
 
 **Archive:** `docs/ARCHIVE_PREMERGER_BULK_PE_MAPPING.md` — chapter closed; repro index frozen.
 
+**Mapping v4 remnant mass \(M_f\):** executed → **FALSIFY** (Unify \(z\approx 30.6\));  
+family closed — `docs/MILESTONE_PREMERGER_MAPPING_V4.md`.  
+Further mapping only via new physical-variable PREREG.
+
 ### Later
 
 - Matched-filter post-merger at \(f_{\mathrm{phys}}(M)\) with \(10^{-6}\) relative amp  

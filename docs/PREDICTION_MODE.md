@@ -87,9 +87,10 @@ unification. Family closed; stretch stopped.
 | Archive | `docs/ARCHIVE_PREMERGER_BULK_PE_MAPPING.md` |
 | Mode | Score-only; locks frozen; band remains demoted |
 | Exception | New physical variable only via fresh `docs/PREREG_*.md` |
+| V4 remnant \(M_f\) | **FALSIFY** / family closed — `docs/MILESTONE_PREMERGER_MAPPING_V4.md` |
 
 Do **not** re-open mild bulk PE powers or unregistered exponents (e.g. \(d_L^3\))
-to force ratio ~12.
+to force ratio ~12. V4 is a separate pre-reg (remnant mass), not a rescue of closed forms.
 
 ## Artifacts
 

@@ -62,6 +62,14 @@ python scripts/premerger_bayes_factor.py --event GW170809
 | Design set | No GW151012; prefer blind holdouts after form freeze |
 | Honesty | Pre-run predicted β ratios vs empirical ~12 must be stated |
 
+### Successor remnant-mass family (executed → closed)
+
+| Campaign | Variable | Verdict |
+|----------|----------|---------|
+| Mapping v4 | Remnant \(M_f\), \(p=1\) | **FALSIFY** Unify (\(z\approx 30.6\)); family **closed** |
+
+See `docs/MILESTONE_PREMERGER_MAPPING_V4.md`. Not a reopening of closed \(M_{\mathrm{tot}}\) / SNR / distance.
+
 ## Explicit non-claims
 
 - Not a claim that the GW170809 residual is non-physical  

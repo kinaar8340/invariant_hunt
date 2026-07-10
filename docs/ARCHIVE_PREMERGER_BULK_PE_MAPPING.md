@@ -79,7 +79,9 @@ JSON score dumps land under `outputs/mapping_v2/` and `outputs/mapping_v3/`
 2. **Do not** adopt unregistered exponents (e.g. \(d_L^3\)) to hit α ratio ~12.  
 3. **Do not** design on GW151012.  
 4. **Do** re-score under frozen template for consistency or new BBHs (score-only).  
-5. **Do** require a new `docs/PREREG_*.md` naming a **new physical variable** before any mapping v4+.
+5. **Do** require a new `docs/PREREG_*.md` naming a **new physical variable** before any further mapping.  
+   Remnant mass \(M_f\) (v4) executed → **FALSIFY / family closed**  
+   (`docs/MILESTONE_PREMERGER_MAPPING_V4.md`).
 
 ## What this archive is *not*
 
