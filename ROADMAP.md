@@ -60,13 +60,8 @@ Each prediction carries a `falsify_if` string. Example checkpoints:
 ## Immediate next actions
 
 1. ~~PE residual on GW150914~~ — near-null (Gate A fail; constructive)
-2. Residual diagnostics + injection recovery (Gate B):
-   ```bash
-   python scripts/inspect_residual.py --plot
-   python scripts/injection_recovery.py --into residual --plot
-   ```
-3. Refine **echo mapping** only if Gate B shows sensitivity (it does: a_inj≳0.6)
-   but Gate A fails — try amp/phase/coherent interference, keep W_g lock
+2. ~~Residual diagnostics + injection recovery~~ (Gate B pass)
+3. ~~Coherent complex amp + delay-scale scan with LEE~~ (`coherent_echo_scan.py`)
 4. Multi-detector + PSD whitening before strong claims
 5. Port analytic sections from TOE papers into `src/predictions.py`
 

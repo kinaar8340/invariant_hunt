@@ -18,13 +18,26 @@ phase), not to the existence of \(W_g \approx 350/\pi\) as a lattice lock.
 
 ### Gate A — Single-event support (weak)
 
-On one event with `--baseline pe`:
+On one event with PE residual + **coherent** echo train (`coherent_echo_scan.py`):
 
-- \(\Delta\chi^2 = \chi^2_{\mathrm{base}} - \chi^2_{\mathrm{toe}} \ge 4\) **and**
-- best-fit \(a_1 > 0\) **and**
-- at least one echo window with matched-filter \|SNR\| ≥ 2
+- \(\Delta\chi^2 = \chi^2_{\mathrm{RD}} - \chi^2_{\mathrm{RD+echoes}} \ge 4\) **and**
+- overall complex amplitude \(|A| = \sqrt{a_c^2+a_s^2} > 0\) (prefer cos-phase aligned with train) **and**
+- coherent 2-dof matched-filter SNR ≥ 2
 
-**Status on GW150914 H1 (2026-07):** fail (Δχ²≈0.04, a₁≈0).
+At **nominal** delay scale \(s=1\) (pure geometric). No look-elsewhere credit.
+
+**Status on GW150914 H1 (independent map):** fail (Δχ²≈0.04, a₁≈0).  
+**Status after coherent map:** re-run `coherent_echo_scan.py` (see latest JSON).
+
+### Gate A′ — Delay-scale scan (with LEE)
+
+Optional controlled scan \(s \in [0.8, 1.2]\) on \(\delta t_n \to s\cdot\delta t_n\):
+
+- Report max \(\Delta\chi^2\) over \(N\) grid points
+- **LEE-corrected threshold** (approx.): \(\ thr' = thr + 2\ln N\ \)
+- Pass only if max \(\Delta\chi^2 \ge thr'\) and \(|A|>0\)
+
+This tests small timing corrections without claiming \(s\neq 1\) as a new free law.
 
 ### Gate B — Injection recovery (sensitivity)
 
@@ -68,13 +81,23 @@ It **does** mean:
 
 | Script | Role |
 |--------|------|
-| `compare_benchmark.py --baseline pe` | End-to-end PE residual test |
+| `compare_benchmark.py --baseline pe` | End-to-end PE residual (legacy independent train) |
+| `coherent_echo_scan.py` | Coherent complex amp + delay scan + LEE |
 | `inspect_residual.py` | Per-echo local Δχ², MF SNR, control windows |
 | `injection_recovery.py` | Sensitivity / Gate B |
 
-## Suggested next refinements (mapping only)
+## Mapping versions
+
+| Version | Template | Status |
+|---------|----------|--------|
+| v1 independent | per-step fixed phase, single real a₁ | Gate A fail on GW150914 |
+| v2 coherent | shared complex (a_c, a_s) over train | `coherent_echo_scan.py` |
+| v2+scan | coherent + s∈[0.8,1.2] with LEE | same script |
+
+Core locks \(W_g\), κ unchanged across mapping versions.
+
+## Suggested next refinements (if Gate A still fails)
 
 1. Tie amp decay to braiding / flux rather than fixed 0.35ⁿ  
-2. Coherent primary–echo interference in one complex amplitude  
-3. Small scan in delay scale around geometric prediction (with look-elsewhere)  
-4. Whitened multi-detector likelihood before claiming Gate A/C  
+2. Whitened multi-detector likelihood before claiming Gate A/C  
+3. Alternate observable domain (not only post-merger echoes)

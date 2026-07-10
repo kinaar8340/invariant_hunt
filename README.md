@@ -76,6 +76,15 @@ python scripts/injection_recovery.py --into residual --plot
 python scripts/injection_recovery.py --into noise --plot
 ```
 
+### Coherent mapping + delay-scale scan (v2)
+
+Shared complex amplitude for the whole ladder; optional \(s\) scan around geometric \(\delta t_1\) with LEE threshold. Core \(W_g\), κ fixed.
+
+```bash
+python scripts/coherent_echo_scan.py --event GW150914 --plot
+python scripts/coherent_echo_scan.py --no-scan   # s=1 only
+```
+
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).
 
 Full conduit evaluation (from TOE):
