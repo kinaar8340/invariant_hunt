@@ -25,6 +25,7 @@ from typing import Any, Literal
 
 import numpy as np
 
+from .amp_structure import AmpStructure, normalize_weights, step_weight
 from .gw_events import T_M_SUN, PublicGWEvent
 from .invariants import InvariantSet
 from .positional import PositionalPhase
@@ -72,22 +73,51 @@ def build_ladder(
     mode: SpacingMode = "geometric",
     amp0: float = 0.35,
     rel_uncertainty: float = 0.15,
+    amp_structure: AmpStructure = "geometric",
+    normalize_amps: bool = True,
 ) -> list[EchoStep]:
-    """Build the echo ladder for a public event + locked invariants."""
+    """Build the echo ladder for a public event + locked invariants.
+
+    ``amp_structure`` selects relative step weights (see ``src/amp_structure.py``).
+    Delays still use geometric / phase_unit spacing from W_g, κ.
+    """
     inv = inv or InvariantSet()
-    steps: list[EchoStep] = []
+    raw: list[tuple[int, float, float, float, float, float]] = []
+    weights: list[float] = []
     for n in range(1, n_echoes + 1):
         delay = echo_delay_seconds(n, event.mass_final_solar, inv, mode=mode)
         phase = PositionalPhase(wg=inv.wg, lattice_index=n)
+        w = step_weight(
+            n,
+            braiding_angle=phase.braiding_angle,
+            inv=inv,
+            amp0=amp0,
+            structure=amp_structure,
+        )
+        weights.append(w)
+        raw.append(
+            (
+                n,
+                delay,
+                rel_uncertainty * delay,
+                phase.fiber_angle,
+                phase.lattice_phase_unit,
+                phase.braiding_angle,
+            )
+        )
+    if normalize_amps:
+        weights = normalize_weights(weights)
+    steps: list[EchoStep] = []
+    for (n, delay, unc, fib, punit, braid), w in zip(raw, weights):
         steps.append(
             EchoStep(
                 n=n,
                 delay_s=delay,
-                uncertainty_s=rel_uncertainty * delay,
-                amp_prior=amp0**n,
-                fiber_angle=phase.fiber_angle,
-                phase_unit=phase.lattice_phase_unit,
-                braiding_angle=phase.braiding_angle,
+                uncertainty_s=unc,
+                amp_prior=float(w),
+                fiber_angle=fib,
+                phase_unit=punit,
+                braiding_angle=braid,
             )
         )
     return steps
@@ -194,12 +224,20 @@ def primary_and_echo_basis(
     mode: SpacingMode = "geometric",
     tau_scale: float = 0.015,
     amp0: float = 0.35,
+    amp_structure: AmpStructure = "geometric",
 ) -> tuple[np.ndarray, np.ndarray, list[EchoStep]]:
     """Separate primary ringdown and weighted echo train (unit primary)."""
     inv = inv or InvariantSet()
     tau = tau_scale * (event.mass_final_solar / 30.0)
     primary = baseline_ringdown(t, event, tau_scale=tau_scale)
-    steps = build_ladder(event, inv, n_echoes=n_echoes, mode=mode, amp0=amp0)
+    steps = build_ladder(
+        event,
+        inv,
+        n_echoes=n_echoes,
+        mode=mode,
+        amp0=amp0,
+        amp_structure=amp_structure,
+    )
     echoes = np.zeros_like(t, dtype=np.float64)
     for step in steps:
         echoes = echoes + step.amp_prior * ringdown_template(

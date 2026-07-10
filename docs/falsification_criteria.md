@@ -139,9 +139,10 @@ It **does** mean:
 | v1 independent | per-step fixed phase, single real a₁ | Gate A fail on GW150914 |
 | v2 coherent | shared complex (a_c, a_s) over train | Gate A fail (Δχ²=0.45, SNR=0.77) |
 | v2+scan | coherent + s∈[0.8,1.2] with LEE | best s=1.00; Gate A′ fail |
+| v3 amp structure | braiding / flux / hopf weights | Gate D still 1/3 strict all structures |
 
-Core locks \(W_g\), κ unchanged across mapping versions. Milestone write-up:
-`docs/MILESTONE_GW150914_v2.md`.
+Core locks \(W_g\), κ unchanged across mapping versions.  
+Milestones: `MILESTONE_GW150914_v2.md`, `MILESTONE_AMP_STRUCTURE.md`.
 
 ## Suggested next refinements (if Gate A still fails)
 

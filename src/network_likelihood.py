@@ -19,6 +19,7 @@ from typing import Any
 
 import numpy as np
 
+from .amp_structure import AmpStructure
 from .coherent_echo import (
     CoherentFitResult,
     coherent_echo_basis,
@@ -322,6 +323,7 @@ def fit_network_coherent(
     delay_scale: float = 1.0,
     f_low: float = 50.0,
     f_high: float = 300.0,
+    amp_structure: AmpStructure = "geometric",
 ) -> NetworkCoherentResult:
     """Network LS: per-det a0 + shared (a_c, a_s) on whitened residual."""
     inv = inv or InvariantSet()
@@ -342,6 +344,7 @@ def fit_network_coherent(
             mode=mode,
             amp0=amp0,
             delay_scale=delay_scale,
+            amp_structure=amp_structure,
         )
         steps_ref = steps
         # Templates generated on post-merger grid only — whiten via zero-pad to full window
@@ -471,6 +474,7 @@ def _whitened_echo_bases(
     delay_scale: float = 1.0,
     f_low: float = 50.0,
     f_high: float = 300.0,
+    amp_structure: AmpStructure = "geometric",
 ) -> tuple[np.ndarray, list[np.ndarray], list[np.ndarray], list[np.ndarray], list[EchoStep]]:
     """Return t_post, primaries_w, e_cos_w, e_sin_w, steps for network."""
     inv = inv or InvariantSet()
@@ -486,6 +490,7 @@ def _whitened_echo_bases(
             mode=mode,
             amp0=amp0,
             delay_scale=delay_scale,
+            amp_structure=amp_structure,
         )
         steps_ref = steps
         primaries_w.append(
@@ -512,6 +517,7 @@ def network_unit_echo_train(
     f_low: float = 50.0,
     f_high: float = 300.0,
     phase: float = 0.0,
+    amp_structure: AmpStructure = "geometric",
 ) -> list[np.ndarray]:
     """Per-detector whitened unit echo train with peak network RMS = 1.
 
@@ -528,6 +534,7 @@ def network_unit_echo_train(
         delay_scale=delay_scale,
         f_low=f_low,
         f_high=f_high,
+        amp_structure=amp_structure,
     )
     c, s = math.cos(phase), math.sin(phase)
     trains = [c * ec + s * es for ec, es in zip(e_cos_w, e_sin_w)]
@@ -549,6 +556,7 @@ def fit_network_on_residuals(
     delay_scale: float = 1.0,
     f_low: float = 50.0,
     f_high: float = 300.0,
+    amp_structure: AmpStructure = "geometric",
 ) -> NetworkCoherentResult:
     """Like fit_network_coherent but with explicit post-merger residual lists."""
     # temporarily swap residual_w on shallow copies
@@ -592,6 +600,7 @@ def fit_network_on_residuals(
         delay_scale=delay_scale,
         f_low=f_low,
         f_high=f_high,
+        amp_structure=amp_structure,
     )
 
 
@@ -612,6 +621,7 @@ def network_injection_recovery(
     seed: int = 42,
     gate_delta_chi2: float = 6.0,
     gate_mf_snr: float = 2.0,
+    amp_structure: AmpStructure = "geometric",
 ) -> dict[str, Any]:
     """Inject coherent train into whitened network residuals; recover Δχ² / SNR.
 
@@ -631,6 +641,7 @@ def network_injection_recovery(
         f_low=f_low,
         f_high=f_high,
         phase=phase,
+        amp_structure=amp_structure,
     )
 
     if into == "noise":
@@ -659,6 +670,7 @@ def network_injection_recovery(
             delay_scale=delay_scale,
             f_low=f_low,
             f_high=f_high,
+            amp_structure=amp_structure,
         )
         # recovered amplitude in unit-train units: |A| relative to unit
         # fit returns a_c, a_s on un-normalized E_cos/E_sin, not unit train.
@@ -690,6 +702,7 @@ def network_injection_recovery(
         "detectors": names,
         "phase_inj": phase,
         "delay_scale": delay_scale,
+        "amp_structure": amp_structure,
         "gate_delta_chi2": gate_delta_chi2,
         "gate_mf_snr": gate_mf_snr,
         "detection_threshold_a_inj": thr_a,
@@ -716,6 +729,7 @@ def network_delay_scan(
     gate_a_threshold: float = 4.0,
     f_low: float = 50.0,
     f_high: float = 300.0,
+    amp_structure: AmpStructure = "geometric",
 ) -> dict[str, Any]:
     inv = inv or InvariantSet()
     scales = list(np.linspace(scan_min, scan_max, n_scales))
@@ -736,6 +750,7 @@ def network_delay_scan(
                 delay_scale=float(s),
                 f_low=f_low,
                 f_high=f_high,
+                amp_structure=amp_structure,
             )
         )
     best = max(results, key=lambda r: r.delta_chi2)

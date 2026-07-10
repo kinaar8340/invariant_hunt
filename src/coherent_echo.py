@@ -21,6 +21,7 @@ from typing import Any, Literal
 
 import numpy as np
 
+from .amp_structure import AmpStructure
 from .echo_ladder import (
     EchoStep,
     SpacingMode,
@@ -122,10 +123,18 @@ def scaled_ladder(
     mode: SpacingMode = "geometric",
     amp0: float = 0.35,
     delay_scale: float = 1.0,
+    amp_structure: AmpStructure = "geometric",
 ) -> list[EchoStep]:
     """Ladder with δt_n → delay_scale · δt_n; braiding from site index unchanged."""
     inv = inv or InvariantSet()
-    base = build_ladder(event, inv, n_echoes=n_echoes, mode=mode, amp0=amp0)
+    base = build_ladder(
+        event,
+        inv,
+        n_echoes=n_echoes,
+        mode=mode,
+        amp0=amp0,
+        amp_structure=amp_structure,
+    )
     out: list[EchoStep] = []
     for step in base:
         out.append(
@@ -153,12 +162,13 @@ def coherent_echo_basis(
     amp0: float = 0.35,
     delay_scale: float = 1.0,
     use_braiding_offset: bool = True,
+    amp_structure: AmpStructure = "geometric",
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, list[EchoStep]]:
     """Build (primary, E_cos, E_sin, steps) for coherent complex fit.
 
     Each step n contributes:
-      amp0^n · exp(−(t−t_n)/τ) · sin(2π f t + ψ_n + φ)
-    with shared φ. Expand:
+      w_n · exp(−(t−t_n)/τ) · sin(2π f t + ψ_n + φ)
+    with shared φ and structure-dependent w_n (amp_structure). Expand:
       sin(ωt + ψ_n + φ) = cos φ · sin(ωt+ψ_n) + sin φ · cos(ωt+ψ_n)
     so E_cos uses sin(·+ψ_n), E_sin uses cos(·+ψ_n).
     """
@@ -166,7 +176,13 @@ def coherent_echo_basis(
     tau = tau_scale * (event.mass_final_solar / 30.0)
     primary = baseline_ringdown(t, event, tau_scale=tau_scale)
     steps = scaled_ladder(
-        event, inv, n_echoes=n_echoes, mode=mode, amp0=amp0, delay_scale=delay_scale
+        event,
+        inv,
+        n_echoes=n_echoes,
+        mode=mode,
+        amp0=amp0,
+        delay_scale=delay_scale,
+        amp_structure=amp_structure,
     )
     e_cos = np.zeros_like(t, dtype=np.float64)
     e_sin = np.zeros_like(t, dtype=np.float64)
@@ -220,6 +236,7 @@ def fit_coherent_echoes(
     mode: SpacingMode = "geometric",
     amp0: float = 0.35,
     delay_scale: float = 1.0,
+    amp_structure: AmpStructure = "geometric",
 ) -> CoherentFitResult:
     """3-param fit: a0·RD + a_c·E_cos + a_s·E_sin at fixed delay_scale."""
     inv = inv or InvariantSet()
@@ -231,6 +248,7 @@ def fit_coherent_echoes(
         mode=mode,
         amp0=amp0,
         delay_scale=delay_scale,
+        amp_structure=amp_structure,
     )
     a0_only = fit_amplitude(residual, primary, sigma)
     pred_base = a0_only * primary
@@ -284,6 +302,7 @@ def delay_scale_scan(
     scan_max: float = 1.20,
     n_scales: int = 21,
     gate_a_threshold: float = 4.0,
+    amp_structure: AmpStructure = "geometric",
 ) -> DelayScanResult:
     """Grid scan delay_scale; report best Δχ² with LEE-corrected threshold."""
     inv = inv or InvariantSet()
@@ -306,6 +325,7 @@ def delay_scale_scan(
                 mode=mode,
                 amp0=amp0,
                 delay_scale=float(s),
+                amp_structure=amp_structure,
             )
         )
 

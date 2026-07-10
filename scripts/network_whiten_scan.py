@@ -42,6 +42,12 @@ def main() -> None:
     p.add_argument("--detectors", default="H1,L1")
     p.add_argument("--n-echoes", type=int, default=5)
     p.add_argument("--amp0", type=float, default=0.35)
+    p.add_argument(
+        "--amp-structure",
+        default="geometric",
+        choices=["geometric", "braiding", "braiding_lock", "flux_kappa", "hopf_winding"],
+        help="Relative step amplitude mapping (core locks fixed)",
+    )
     p.add_argument("--spacing", choices=("geometric", "phase_unit"), default="geometric")
     p.add_argument("--no-scan", action="store_true")
     p.add_argument("--scan-min", type=float, default=0.80)
@@ -93,9 +99,13 @@ def main() -> None:
         delay_scale=1.0,
         f_low=f_low,
         f_high=f_high,
+        amp_structure=args.amp_structure,
     )
     print("=" * 60)
-    print(f"Whitened network coherent echoes @ s=1 — {event.name} {detectors}")
+    print(
+        f"Whitened network coherent echoes @ s=1 — {event.name} {detectors}  "
+        f"amp={args.amp_structure}"
+    )
     print(f"  a0 per det: { {k: f'{v:.3e}' for k,v in nom.a0_per_det.items()} }")
     print(f"  |A|={nom.amp:.3e}  φ={nom.phase:.3f}  a_c={nom.a_cos:.3e}  a_s={nom.a_sin:.3e}")
     print(f"  χ² base/toe = {nom.chi2_base:.2f} / {nom.chi2_toe:.2f}")
@@ -123,6 +133,7 @@ def main() -> None:
             gate_a_threshold=args.gate_a_thr,
             f_low=f_low,
             f_high=f_high,
+            amp_structure=args.amp_structure,
         )
         scan_payload = scan
         best_d = scan["best"]
@@ -156,6 +167,7 @@ def main() -> None:
             delay_scale=best_d["delay_scale"],
             f_low=f_low,
             f_high=f_high,
+            amp_structure=args.amp_structure,
         )
     print("=" * 60)
 
@@ -176,6 +188,7 @@ def main() -> None:
         "pe_params": params.to_dict(),
         "detector_details": [d.to_dict() for d in dets],
         "echo_model": "coherent_complex_network",
+        "amp_structure": args.amp_structure,
         "invariants_fixed": {"wg": inv.wg, "kappa": inv.kappa},
         "nominal": nom.to_dict(),
         "best": best.to_dict(),

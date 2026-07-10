@@ -65,8 +65,9 @@ Each prediction carries a `falsify_if` string. Example checkpoints:
 4. ~~Whitened H1+L1 network likelihood~~ (`network_whiten_scan.py`, Gate C)
 5. ~~Multi-event Gate D~~ (`multi_event_network.py`) — **FAIL** (1/3 strict)
 6. ~~GW151226 stress test~~ — does **not** hold (off-band excess)
-7. Amplitude-structure mapping (next physics lever) or other observables
-8. Port analytic sections from TOE papers into `src/predictions.py`
+7. ~~Amplitude-structure mapping~~ — low leverage (all structures Gate D fail)
+8. New observable domain / analytic invariant→signal map
+9. Port analytic sections from TOE papers into `src/predictions.py`
 
 See `docs/falsification_criteria.md`.
 
