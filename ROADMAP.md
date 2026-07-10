@@ -30,8 +30,9 @@ or falls on quantitative, falsifiable forecasts.
 
 - [x] Synthetic head-to-head scaffold (`scripts/compare_benchmark.py`)
 - [x] Map ladder → GW150914 + public GWOSC H1 strain (`map_event_echoes`, `--event GW150914`)
-- [ ] NR / published GR PE baselines (replace toy damped-sinusoid family)
+- [x] PE residual baseline: GWTC-1 medians → IMRPhenomD (`--baseline pe`)
 - [ ] Whitened likelihood with official PSD; multi-detector coherence
+- [ ] Full bilby/LALInference posterior predictive waveforms (vs median point estimate)
 - [ ] Pulsar timing / QPO bands (~350–600 Hz overlap) statistical comparison
 
 ## 5. Propose new tests

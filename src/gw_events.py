@@ -52,17 +52,17 @@ class PublicGWEvent:
 GW150914 = PublicGWEvent(
     name="GW150914",
     gps=1126259462.4,
-    mass_final_solar=62.0,
-    mass1_solar=36.0,
-    mass2_solar=29.0,
+    mass_final_solar=63.1,  # GWTC-1 PE median final_mass_source
+    mass1_solar=35.6,  # source-frame PE median (catalog); detector-frame from PE file
+    mass2_solar=30.6,
     f_ring_hz=250.0,
     detectors=("H1", "L1"),
     duration_post_s=0.20,
-    duration_pre_s=0.05,
+    duration_pre_s=0.25,  # enough pre-merger for IMR PE template fit
     notes=(
         "First BBH detection. Public 32 s @ 4096 Hz release on GWOSC. "
-        "Remnant ~62 M_sun; ringdown ~250 Hz. Echo searches often probe "
-        "post-merger ms–tens-of-ms delays."
+        "GWTC-1 PE: M_final≈63.1 M_sun, d_L≈440 Mpc; ringdown ~250 Hz. "
+        "Echo searches often probe post-merger ms–tens-of-ms delays."
     ),
 )
 

@@ -119,6 +119,8 @@ def load_event_segment(
     f_low: float = 50.0,
     f_high: float = 300.0,
     apply_bandpass: bool = True,
+    duration_pre_s: float | None = None,
+    duration_post_s: float | None = None,
 ) -> StrainSegment:
     """Load public strain and cut a window around merger."""
     if isinstance(event, str):
@@ -131,8 +133,8 @@ def load_event_segment(
 
     # time of each sample relative to merger
     t_full = gps_start + np.arange(strain.size) / sample_rate - ev.gps
-    t0 = -ev.duration_pre_s
-    t1 = ev.duration_post_s
+    t0 = -(duration_pre_s if duration_pre_s is not None else ev.duration_pre_s)
+    t1 = duration_post_s if duration_post_s is not None else ev.duration_post_s
     mask = (t_full >= t0) & (t_full < t1)
     t_rel = t_full[mask]
     h = strain[mask].copy()

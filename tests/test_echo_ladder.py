@@ -15,14 +15,14 @@ from src.invariants import InvariantSet
 def test_get_event_gw150914():
     ev = get_event("gw150914")
     assert ev.name == "GW150914"
-    assert ev.mass_final_solar == 62.0
+    assert abs(ev.mass_final_solar - 63.1) < 0.2
     assert ev.t_m > 0
 
 
 def test_geometric_delay_resolvable():
     inv = InvariantSet()
-    dt = echo_delay_seconds(1, 62.0, inv, mode="geometric")
-    # ~ few ms for 62 M_sun
+    dt = echo_delay_seconds(1, 63.1, inv, mode="geometric")
+    # ~ few ms for ~63 M_sun
     assert 1e-3 < dt < 2e-2
     # 4096 Hz sample duration
     assert dt > 1.0 / 4096.0
@@ -30,8 +30,8 @@ def test_geometric_delay_resolvable():
 
 def test_phase_unit_smaller_than_geometric():
     inv = InvariantSet()
-    d_g = echo_delay_seconds(1, 62.0, inv, mode="geometric")
-    d_p = echo_delay_seconds(1, 62.0, inv, mode="phase_unit")
+    d_g = echo_delay_seconds(1, 63.1, inv, mode="geometric")
+    d_p = echo_delay_seconds(1, 63.1, inv, mode="phase_unit")
     assert d_p < d_g
     assert d_p / d_g < 0.05  # roughly 1/W_g
 

@@ -31,8 +31,10 @@ python scripts/forward_gw_signal.py --mass 30 --sites 5 --plot
 # Synthetic benchmark: baseline ringdown vs positional echoes
 python scripts/compare_benchmark.py --inject-echoes
 
-# Map ladder → public GW150914 and compare on GWOSC H1 strain
+# Map ladder → public GW150914; PE residual vs positional echoes
 python scripts/map_event_echoes.py --event GW150914 --benchmark --plot
+# equivalent:
+python scripts/compare_benchmark.py --event GW150914 --baseline pe --detector H1 --plot
 
 # Unit tests (core math; no torch required)
 python -m pytest tests/ -q
@@ -48,12 +50,21 @@ The positional echo ladder is evaluated at the published remnant mass (~62 M☉)
 | `phase_unit` | \(\delta t_n=(GM/c^3)\,2\pi\,(n/W_g)\,(1+\kappa)\) | ~µs (sub-sample @ 4 kHz) |
 
 ```bash
-python scripts/compare_benchmark.py --event GW150914 --detector H1 --plot
+# Recommended: GWTC-1 PE medians → IMRPhenomD residual + echo ladder
+python scripts/compare_benchmark.py --event GW150914 --baseline pe --detector H1 --plot
+
+# Legacy toy ringdown (no PE subtraction)
+python scripts/compare_benchmark.py --event GW150914 --baseline toy --detector H1 --plot
 ```
 
-Strain is cached under `data/gwosc/` (downloaded from GWOSC on first run).
-Outputs land in `outputs/benchmarks/` and `outputs/predictions/`.
-**Caveat:** templates are amplitude-fitted damped sinusoids, not NR PE waveforms.
+Data caches (gitignored; auto-downloaded):
+
+- `data/gwosc/` — public strain (GWOSC)
+- `data/pe/` — GWTC-1 posterior samples (LIGO-P1800370)
+
+Outputs: `outputs/benchmarks/`, `outputs/predictions/`.
+
+**Caveat:** PE baseline is a **median point estimate** (IMRPhenomD) with lag+(A+,Ax) fit under band-limited white noise — not a full PSD-whitened multi-detector PE. Use results as a transparent residual test, not a discovery claim.
 
 Full conduit evaluation (from TOE):
 

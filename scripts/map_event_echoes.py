@@ -39,6 +39,12 @@ def main() -> None:
     )
     parser.add_argument("--benchmark", action="store_true",
                         help="Also run compare_benchmark on GWOSC strain")
+    parser.add_argument(
+        "--baseline",
+        choices=("toy", "pe"),
+        default="pe",
+        help="GR baseline for benchmark (default: pe = GWTC-1→IMRPhenomD)",
+    )
     parser.add_argument("--detector", type=str, default="H1")
     parser.add_argument("--plot", action="store_true")
     args = parser.parse_args()
@@ -108,10 +114,12 @@ def main() -> None:
             str(args.n_echoes),
             "--spacing",
             args.spacing,
+            "--baseline",
+            args.baseline,
         ]
         if args.plot:
             cmd.append("--plot")
-        print("\nRunning public-strain benchmark…")
+        print(f"\nRunning public-strain benchmark (baseline={args.baseline})…")
         subprocess.check_call(cmd)
 
 
