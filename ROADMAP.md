@@ -29,7 +29,9 @@ or falls on quantitative, falsifiable forecasts.
 ## 4. Test against existing data
 
 - [x] Synthetic head-to-head scaffold (`scripts/compare_benchmark.py`)
-- [ ] Real GW events (public LIGO/Virgo strain) with published baselines
+- [x] Map ladder → GW150914 + public GWOSC H1 strain (`map_event_echoes`, `--event GW150914`)
+- [ ] NR / published GR PE baselines (replace toy damped-sinusoid family)
+- [ ] Whitened likelihood with official PSD; multi-detector coherence
 - [ ] Pulsar timing / QPO bands (~350–600 Hz overlap) statistical comparison
 
 ## 5. Propose new tests

@@ -12,4 +12,4 @@ __all__ = [
     "phase_to_timing_offset",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

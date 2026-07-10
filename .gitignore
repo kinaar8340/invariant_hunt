@@ -28,6 +28,11 @@ ENV/
 outputs/**
 !outputs/.gitkeep
 
+# GWOSC strain cache (large; download via scripts)
+data/gwosc/*.hdf5
+data/gwosc/*.gwf
+data/gwosc/*.txt.gz
+
 # LaTeX
 papers/*.aux
 papers/*.log

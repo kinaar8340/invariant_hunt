@@ -31,9 +31,29 @@ python scripts/forward_gw_signal.py --mass 30 --sites 5 --plot
 # Synthetic benchmark: baseline ringdown vs positional echoes
 python scripts/compare_benchmark.py --inject-echoes
 
+# Map ladder → public GW150914 and compare on GWOSC H1 strain
+python scripts/map_event_echoes.py --event GW150914 --benchmark --plot
+
 # Unit tests (core math; no torch required)
 python -m pytest tests/ -q
 ```
+
+### Public event mapping (GW150914)
+
+The positional echo ladder is evaluated at the published remnant mass (~62 M☉):
+
+| Mode | Formula | First delay (GW150914) |
+|------|---------|-------------------------|
+| `geometric` (default) | \(\delta t_n=(GM/c^3)\,2\pi\,n\,(1+\kappa)\) | ~3.5 ms (LIGO-resolvable) |
+| `phase_unit` | \(\delta t_n=(GM/c^3)\,2\pi\,(n/W_g)\,(1+\kappa)\) | ~µs (sub-sample @ 4 kHz) |
+
+```bash
+python scripts/compare_benchmark.py --event GW150914 --detector H1 --plot
+```
+
+Strain is cached under `data/gwosc/` (downloaded from GWOSC on first run).
+Outputs land in `outputs/benchmarks/` and `outputs/predictions/`.
+**Caveat:** templates are amplitude-fitted damped sinusoids, not NR PE waveforms.
 
 Full conduit evaluation (from TOE):
 
