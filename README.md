@@ -91,6 +91,8 @@ Welch PSD → FD whitening → per-detector PE residual → network coherent \((
 
 ```bash
 python scripts/network_whiten_scan.py --event GW150914 --detectors H1,L1 --plot
+python scripts/network_injection_recovery.py --into residual --plot
+python scripts/network_injection_recovery.py --into noise --plot
 ```
 
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  

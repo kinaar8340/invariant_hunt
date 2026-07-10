@@ -460,6 +460,248 @@ def _network_echo_mf_snr(
     return float(math.sqrt(max(snr2, 0.0)))
 
 
+def _whitened_echo_bases(
+    dets: list[DetectorWhitened],
+    event: PublicGWEvent,
+    inv: InvariantSet | None = None,
+    *,
+    n_echoes: int = 5,
+    mode: SpacingMode = "geometric",
+    amp0: float = 0.35,
+    delay_scale: float = 1.0,
+    f_low: float = 50.0,
+    f_high: float = 300.0,
+) -> tuple[np.ndarray, list[np.ndarray], list[np.ndarray], list[np.ndarray], list[EchoStep]]:
+    """Return t_post, primaries_w, e_cos_w, e_sin_w, steps for network."""
+    inv = inv or InvariantSet()
+    t, _residuals, _names = _align_post_merger(dets)
+    primaries_w, e_cos_w, e_sin_w = [], [], []
+    steps_ref: list[EchoStep] = []
+    for d in dets:
+        primary, e_cos, e_sin, steps = coherent_echo_basis(
+            t,
+            event,
+            inv,
+            n_echoes=n_echoes,
+            mode=mode,
+            amp0=amp0,
+            delay_scale=delay_scale,
+        )
+        steps_ref = steps
+        primaries_w.append(
+            _whiten_on_detector_grid(primary, t, d, f_low=f_low, f_high=f_high)
+        )
+        e_cos_w.append(
+            _whiten_on_detector_grid(e_cos, t, d, f_low=f_low, f_high=f_high)
+        )
+        e_sin_w.append(
+            _whiten_on_detector_grid(e_sin, t, d, f_low=f_low, f_high=f_high)
+        )
+    return t, primaries_w, e_cos_w, e_sin_w, steps_ref
+
+
+def network_unit_echo_train(
+    dets: list[DetectorWhitened],
+    event: PublicGWEvent,
+    inv: InvariantSet | None = None,
+    *,
+    n_echoes: int = 5,
+    mode: SpacingMode = "geometric",
+    amp0: float = 0.35,
+    delay_scale: float = 1.0,
+    f_low: float = 50.0,
+    f_high: float = 300.0,
+    phase: float = 0.0,
+) -> list[np.ndarray]:
+    """Per-detector whitened unit echo train with peak network RMS = 1.
+
+    unit_d = (cos φ E_cos_d + sin φ E_sin_d) / rms_network
+    so a_inj is in units of whitened residual RMS (network-averaged).
+    """
+    _t, _p, e_cos_w, e_sin_w, _ = _whitened_echo_bases(
+        dets,
+        event,
+        inv,
+        n_echoes=n_echoes,
+        mode=mode,
+        amp0=amp0,
+        delay_scale=delay_scale,
+        f_low=f_low,
+        f_high=f_high,
+    )
+    c, s = math.cos(phase), math.sin(phase)
+    trains = [c * ec + s * es for ec, es in zip(e_cos_w, e_sin_w)]
+    # network RMS
+    stack = np.concatenate(trains)
+    rms = float(np.sqrt(np.mean(stack**2))) + 1e-60
+    return [tr / rms for tr in trains]
+
+
+def fit_network_on_residuals(
+    dets: list[DetectorWhitened],
+    residuals_post: list[np.ndarray],
+    event: PublicGWEvent,
+    inv: InvariantSet | None = None,
+    *,
+    n_echoes: int = 5,
+    mode: SpacingMode = "geometric",
+    amp0: float = 0.35,
+    delay_scale: float = 1.0,
+    f_low: float = 50.0,
+    f_high: float = 300.0,
+) -> NetworkCoherentResult:
+    """Like fit_network_coherent but with explicit post-merger residual lists."""
+    # temporarily swap residual_w on shallow copies
+    clones: list[DetectorWhitened] = []
+    t0 = dets[0].t_rel
+    post = t0 >= 0.0
+    for d, r_post in zip(dets, residuals_post):
+        r_full = d.residual_w.copy()
+        if d.t_rel.shape == t0.shape and np.allclose(d.t_rel, t0):
+            r_full[post] = r_post
+        else:
+            # map r_post onto d.t_rel post samples
+            dpost = d.t_rel >= 0.0
+            r_full[dpost] = np.interp(d.t_rel[dpost], t0[post], r_post)
+        clones.append(
+            DetectorWhitened(
+                detector=d.detector,
+                t_rel=d.t_rel,
+                strain_raw=d.strain_raw,
+                strain_w=d.strain_w,
+                residual_w=r_full,
+                pe_template_w=d.pe_template_w,
+                psd=d.psd,
+                whiten_scale=d.whiten_scale,
+                pe_lag_s=d.pe_lag_s,
+                pe_a_plus=d.pe_a_plus,
+                pe_a_cross=d.pe_a_cross,
+                pe_chi2=d.pe_chi2,
+                pe_snr_proxy=d.pe_snr_proxy,
+                sample_rate=d.sample_rate,
+                path=d.path,
+            )
+        )
+    return fit_network_coherent(
+        clones,
+        event,
+        inv,
+        n_echoes=n_echoes,
+        mode=mode,
+        amp0=amp0,
+        delay_scale=delay_scale,
+        f_low=f_low,
+        f_high=f_high,
+    )
+
+
+def network_injection_recovery(
+    dets: list[DetectorWhitened],
+    event: PublicGWEvent,
+    inv: InvariantSet | None = None,
+    *,
+    a_injs: list[float] | None = None,
+    n_echoes: int = 5,
+    mode: SpacingMode = "geometric",
+    amp0: float = 0.35,
+    delay_scale: float = 1.0,
+    f_low: float = 50.0,
+    f_high: float = 300.0,
+    phase: float = 0.0,
+    into: str = "residual",
+    seed: int = 42,
+    gate_delta_chi2: float = 6.0,
+    gate_mf_snr: float = 2.0,
+) -> dict[str, Any]:
+    """Inject coherent train into whitened network residuals; recover Δχ² / SNR.
+
+    a_inj units: network RMS of the unit whitened train (see network_unit_echo_train).
+    into='residual' uses PE residuals; into='noise' uses N(0,1) whitened noise.
+    """
+    inv = inv or InvariantSet()
+    t, residuals0, names = _align_post_merger(dets)
+    units = network_unit_echo_train(
+        dets,
+        event,
+        inv,
+        n_echoes=n_echoes,
+        mode=mode,
+        amp0=amp0,
+        delay_scale=delay_scale,
+        f_low=f_low,
+        f_high=f_high,
+        phase=phase,
+    )
+
+    if into == "noise":
+        rng = np.random.default_rng(seed)
+        backgrounds = [rng.standard_normal(t.shape) for _ in dets]
+    elif into == "residual":
+        backgrounds = [r.copy() for r in residuals0]
+    else:
+        raise ValueError(into)
+
+    if a_injs is None:
+        a_injs = list(np.linspace(0.0, 3.0, 10))
+
+    rows = []
+    thr_a = None
+    for a in a_injs:
+        injected = [b + float(a) * u for b, u in zip(backgrounds, units)]
+        fit = fit_network_on_residuals(
+            dets,
+            injected,
+            event,
+            inv,
+            n_echoes=n_echoes,
+            mode=mode,
+            amp0=amp0,
+            delay_scale=delay_scale,
+            f_low=f_low,
+            f_high=f_high,
+        )
+        # recovered amplitude in unit-train units: |A| relative to unit
+        # fit returns a_c, a_s on un-normalized E_cos/E_sin, not unit train.
+        # Report mf_snr and delta_chi2 as primary recovery stats.
+        row = {
+            "a_inj": float(a),
+            "delta_chi2": fit.delta_chi2,
+            "mf_snr": fit.mf_snr,
+            "amp_raw": fit.amp,
+            "a_cos": fit.a_cos,
+            "a_sin": fit.a_sin,
+            "phase": fit.phase,
+            "passes_gate_c_strict": (
+                fit.delta_chi2 >= gate_delta_chi2 and fit.mf_snr >= gate_mf_snr
+            ),
+        }
+        rows.append(row)
+        if (
+            thr_a is None
+            and a > 0
+            and row["passes_gate_c_strict"]
+        ):
+            thr_a = float(a)
+
+    bg = rows[0] if rows and abs(rows[0]["a_inj"]) < 1e-15 else None
+    return {
+        "schema": "invariant_hunt.network_injection.v1",
+        "into": into,
+        "detectors": names,
+        "phase_inj": phase,
+        "delay_scale": delay_scale,
+        "gate_delta_chi2": gate_delta_chi2,
+        "gate_mf_snr": gate_mf_snr,
+        "detection_threshold_a_inj": thr_a,
+        "background": bg,
+        "rows": rows,
+        "note": (
+            "a_inj multiplies a network-RMS-normalized whitened coherent train. "
+            "Gate C strict default: Δχ²≥6 (2-dof), MF SNR≥2."
+        ),
+    }
+
+
 def network_delay_scan(
     dets: list[DetectorWhitened],
     event: PublicGWEvent,

@@ -29,16 +29,28 @@ python scripts/network_whiten_scan.py --event GW150914 --detectors H1,L1 --plot
 
 - Moving to **whitened multi-detector** likelihood is a real credibility upgrade: PE recovery becomes healthy and the network statistic is well-defined.  
 - The echo mapping **crosses the weak Gate C threshold** by a hair (Δχ²=4.16, SNR=2.04).  
+- Under **Gate C strict** (Δχ²≥6 for 2-dof) it **fails**.  
 - It does **not** survive the **LEE-corrected** delay scan (max Δχ²=4.86 ≪ 10.1).  
 - Core locks \(W_g\), \(\kappa\) still not moved; this is a **mapping + analysis** result.  
 - **Do not claim detection.** Marginal single-event pass without full look-elsewhere on continuous phase, without PSD uncertainty, and without multi-event replication is at best a **follow-up target**.
+
+## Network injection recovery (Gate B-net)
+
+```bash
+python scripts/network_injection_recovery.py --into residual --plot
+python scripts/network_injection_recovery.py --into noise --plot
+```
+
+Places Δχ²≈4.2 on a calibrated a_inj curve; reports a_inj needed for Δχ²≥6.
 
 ## Reproduce
 
 ```bash
 python scripts/network_whiten_scan.py --event GW150914 --detectors H1,L1 --plot
+python scripts/network_injection_recovery.py --into residual --plot
 ```
 
 Outputs:
 - `outputs/benchmarks/GW150914_H1-L1_whitened_network.json`
 - `outputs/benchmarks/GW150914_H1-L1_whitened_network.png`
+- `outputs/benchmarks/GW150914_H1-L1_network_injection_residual.json`

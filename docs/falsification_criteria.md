@@ -57,23 +57,35 @@ Using `scripts/injection_recovery.py`:
 
 On whitened H1+L1 network PE residual (`network_whiten_scan.py`):
 
-- Same numerical bars as Gate A (Δχ² ≥ 4, network MF SNR ≥ 2) at \(s=1\)
-- Optional Gate A′ delay scan with LEE on the **network** Δχ²
-- Noise model: Welch PSD (pre-merger) → FD whitening → unit-variance white in-band
+**Gate C (weak / historical):** Δχ² ≥ 4 and network MF SNR ≥ 2 at \(s=1\).  
+**Gate C strict (preferred, 2-dof):** Δχ² ≥ **6** and network MF SNR ≥ 2 at \(s=1\).  
+(For 2 extra parameters, χ²₂ 95% ≈ 5.99 — so thr=6 is the natural bar.)
+
+- Optional delay scan with LEE on network Δχ² (same as Gate A′)
+- Noise model: Welch PSD → FD whitening → unit-variance white in-band
 
 **Status on GW150914 H1+L1 (full-file Welch whitening, coherent map):**
 
 | Check | Value | Result |
 |-------|-------|--------|
-| Δχ² @ s=1 | 4.16 | ≥4 ✓ |
+| Δχ² @ s=1 | 4.16 | ≥4 ✓, **&lt;6 ✗** |
 | network MF SNR | 2.04 | ≥2 ✓ |
-| Gate C nominal | — | **marginal PASS** (at threshold) |
+| Gate C weak | — | marginal PASS |
+| **Gate C strict** | — | **FAIL** |
 | best s + LEE (thr≈10.1) | Δχ²_max=4.86 @ s=0.96 | **FAIL** |
 
 PE recovery after whitening: H1 SNR≈54, L1 SNR≈39 (healthy).  
 See `outputs/benchmarks/GW150914_H1-L1_whitened_network.json`.
 
-**Caveat:** Gate C nominal does **not** include a trials factor for the 2-dof complex amplitude. Treat as a weak single-event bar; LEE applies to the delay scan. Marginal pass is not a discovery claim.
+**Caveat:** Even Gate C weak does not trial-factor continuous phase. Marginal weak pass is not a discovery claim. Prefer Gate C strict for physics statements.
+
+### Gate B-net — Network injection recovery
+
+Using `scripts/network_injection_recovery.py` on whitened residuals:
+
+- Background a_inj=0: Δχ² should be ≲ few (noise floor)
+- Pipeline must recover Δχ² ≥ 6 and SNR ≥ 2 for some a_inj above threshold
+- Places the real-data excess (Δχ²≈4.2) on a calibrated sensitivity curve
 
 ### Gate D — Multi-event (not yet implemented)
 
@@ -112,8 +124,9 @@ It **does** mean:
 | `compare_benchmark.py --baseline pe` | End-to-end PE residual (legacy independent train) |
 | `coherent_echo_scan.py` | Coherent complex amp + delay scan + LEE (H1) |
 | `network_whiten_scan.py` | Whitened H1+L1 network likelihood (Gate C) |
+| `network_injection_recovery.py` | Network sensitivity / Gate B-net |
 | `inspect_residual.py` | Per-echo local Δχ², MF SNR, control windows |
-| `injection_recovery.py` | Sensitivity / Gate B |
+| `injection_recovery.py` | Single-det sensitivity / Gate B |
 
 ## Mapping versions
 
