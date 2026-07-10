@@ -144,8 +144,13 @@ Artifact: `outputs/gravity/gravity_latest.json`.
 
 FAIL GR-1/GR-2 ⇒ demote the **gravity mapping / matching**, not \(W_g,\kappa,\phi_b\).
 
+## Close-out
+
+Phase 3 closed — see `docs/MILESTONE_PHASE3_CLOSEOUT.md`.  
+Integration: `python scripts/integration_status.py --run-gates`.
+
 ## Next
 
-- 3D lattice metric / coupled twist–Poisson time evolution  
-- Multi-test χ² packaging for public datasets when ready  
-- Optional GW waveform weak-field consistency (without reopening freeze)  
+- True held-out BBH scoring under pre-merger freeze  
+- Optional 3D coupled twist–metric evolution  
+- arXiv packaging polish  

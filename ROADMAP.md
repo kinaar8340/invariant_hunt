@@ -131,21 +131,26 @@ Core locks frozen; pre-merger freeze closed.
 
 SM-1 / SM-2 mass / SM-3 all executable with locks frozen.
 
-### Active: Phase 3 emergent gravity
+### Phase 3 emergent gravity — complete (scaffolding)
 
 Core locks frozen; pre-merger freeze closed.
 
 1. ~~**3.1–3.2** Stress-energy + Einstein scaffold + \(G_N\) schema + Newtonian limit (Gate GR-1)~~  
 2. ~~**3.3** Analytic precision targets (Gate GR-2 structure)~~  
 3. ~~**3.4** Tight SI bridge + lattice→metric Poisson PDE (Gate GR-3)~~  
-   → `docs/GRAVITY_EMERGENCE.md`, `src/gravity_emergence.py`  
-4. **Later:** 3D coupled twist–metric evolution; dataset χ² packs  
+4. ~~**Close-out + integration snapshot**~~ → `docs/MILESTONE_PHASE3_CLOSEOUT.md`  
+   `python scripts/integration_status.py --run-gates`
+
+### Active: predictive freeze only
+
+- True held-out BBH (not in demotion/NULL list) via `premerger_core_predict.py`  
+- In-catalog reaffirmation (e.g. GW170823 → NULL) does not reopen freeze  
 
 ### Later
 
-- True held-out BBH (new catalog event) via `premerger_core_predict.py`  
 - Matched-filter post-merger at \(f_{\mathrm{phys}}(M)\) with \(10^{-6}\) relative amp  
 - Falsifier watch on sync branch (relative amp \(\gg 10^{-5}\))  
+- Phase 4 quantization pathway; arXiv packaging polish  
 
 Core locks \(W_g\), \(\kappa\), braiding attractor remain available for other translations.
 

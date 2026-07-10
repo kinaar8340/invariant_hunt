@@ -219,11 +219,16 @@ falsify the core invariants. Full write-up:
 [docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md](docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md).
 
 **Phase 1 action scaffolding complete** (Gates A-P + H-S).  
-**Phase 2 SM content complete** (SM-1 / SM-2 mass / SM-3).  
-**Phase 3 gravity scaffolding complete** (GR-1 / GR-2 analytic). Locks frozen;
-no full-GR or SI-\(G_N\)-from-first-principles over-claim.
+**Phases 1–3 scaffolding complete** (action, SM, gravity gates).  
+**Pre-merger predictive freeze active.** Locks frozen; no full unification claim.  
+[docs/MILESTONE_PHASE3_CLOSEOUT.md](docs/MILESTONE_PHASE3_CLOSEOUT.md) ·
 [docs/GRAVITY_EMERGENCE.md](docs/GRAVITY_EMERGENCE.md) ·
-[docs/MILESTONE_SM_RG.md](docs/MILESTONE_SM_RG.md).
+[docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md](docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md).
+
+```bash
+python scripts/integration_status.py --run-gates
+python scripts/premerger_core_predict.py --predict-event GW170823
+```
 
 Next phase: other observables or analytic invariant→signal derivation
 (see [ROADMAP.md](ROADMAP.md)).
