@@ -76,7 +76,7 @@ Full scorecard: `docs/MILESTONE_HELD_OUT_TRUE_BBH.md`.
 Only one robust anomaly (GW170809). GW151012 PE-draw instability → systematics narrative.  
 See `docs/MILESTONE_FALSIFY_SYSTEMATICS.md`.
 
-### Mapping stretch v1–v4 — fully closed
+### Mapping stretch v1–v5 — fully closed
 
 | Campaign | Variable | Verdict |
 |----------|----------|---------|
@@ -85,20 +85,22 @@ See `docs/MILESTONE_FALSIFY_SYSTEMATICS.md`.
 | v3a | Inverse network SNR | FALSIFY |
 | v3b | Luminosity distance | FALSIFY |
 | v4 | Remnant mass \(M_f^p\) | FALSIFY |
+| v5 | Hopf-lattice \(\Lambda\) | FALSIFY |
 
 | | |
 |--|--|
 | Close-out | `docs/MILESTONE_BULK_PE_MAPPING_CLOSED.md` |
 | Archive | `docs/ARCHIVE_PREMERGER_BULK_PE_MAPPING.md` |
+| V5 milestone | `docs/MILESTONE_PREMERGER_MAPPING_V5.md` |
 | Mode | **Score-only**; locks frozen; band remains demoted |
 | Exception | Genuinely new physical variable only via fresh `docs/PREREG_*.md` |
 
-Do **not** re-open mild powers of mass / SNR / distance / remnant or unregistered
-exponents (e.g. \(d_L^3\)) to force ratio ~12.
+Do **not** re-open closed forms (mass / SNR / distance / remnant / this Hopf \(\Lambda\))
+or unregistered exponents (e.g. \(d_L^3\)) to force ratio ~12.
 
 ## Artifacts
 
 - `outputs/predictions/premerger_core_prediction.json`  
 - Freeze: `docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md`  
-- Mapping closed: `outputs/mapping_v2/`, `outputs/mapping_v3/`, `outputs/mapping_v4/`  
+- Mapping closed: `outputs/mapping_v2/` … `outputs/mapping_v5/`  
 

@@ -159,7 +159,7 @@ Gate S-1 complete (canonical n_draws≥12):
 - GW170809 → **ROBUST_ANOMALY**  
 - GW151012 → **SYSTEMATICS_RISK**  
 
-Pre-merger mapping stretch **v1–v4 fully closed** (pre-registered):  
+Pre-merger mapping stretch **v1–v5 fully closed** (pre-registered):  
 
 | Campaign | Variable | Verdict |
 |----------|----------|---------|
@@ -167,14 +167,16 @@ Pre-merger mapping stretch **v1–v4 fully closed** (pre-registered):
 | v2 | \(M_{\mathrm{tot}}^p\) | FALSIFY |
 | v3a/b | Inv-SNR / \(d_L\) | FALSIFY |
 | v4 | \(M_f^p\) | FALSIFY |
+| v5 | Hopf \(\Lambda\) | FALSIFY |
 
 Close-out: `docs/MILESTONE_BULK_PE_MAPPING_CLOSED.md`  
 Archive: `docs/ARCHIVE_PREMERGER_BULK_PE_MAPPING.md`  
+V5 milestone: `docs/MILESTONE_PREMERGER_MAPPING_V5.md`  
 
 **Active (pre-merger):** **score-only** under frozen locks; GW170809 stands as
-ROBUST_ANOMALY **without** shared \(\alpha_0\). Further mapping only via a
-*genuinely new physical variable* pre-reg (`docs/PREREG_*.md`) — not mild powers
-of mass / SNR / distance / remnant.
+ROBUST_ANOMALY **without** shared \(\alpha_0\) from v1–v5. Further mapping only
+via a *genuinely new physical variable* pre-reg (`docs/PREREG_*.md`) — not a
+rescue of closed bulk-PE / remnant / Hopf-\(\Lambda\) forms.
 
 ### Later
 
