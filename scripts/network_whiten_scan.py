@@ -48,8 +48,10 @@ def main() -> None:
     p.add_argument("--scan-max", type=float, default=1.20)
     p.add_argument("--n-scales", type=int, default=21)
     p.add_argument("--gate-a-thr", type=float, default=4.0)
-    p.add_argument("--f-low", type=float, default=50.0)
-    p.add_argument("--f-high", type=float, default=300.0)
+    p.add_argument("--f-low", type=float, default=None,
+                   help="Override low band edge (default: event catalog)")
+    p.add_argument("--f-high", type=float, default=None,
+                   help="Override high band edge (default: event catalog)")
     p.add_argument("--plot", action="store_true")
     p.add_argument("--out", type=str, default="")
     args = p.parse_args()
@@ -65,6 +67,11 @@ def main() -> None:
         f_low=args.f_low,
         f_high=args.f_high,
     )
+    # Resolve band used (catalog defaults if CLI None)
+    f_low = float(args.f_low if args.f_low is not None else event.f_low_hz)
+    f_high = float(args.f_high if args.f_high is not None else event.f_high_hz)
+    print(f"  band [{f_low:.0f}, {f_high:.0f}] Hz  f_ring≈{event.f_ring_hz:.0f} Hz  "
+          f"M_final={event.mass_final_solar} M☉")
     print(
         f"  PE medians: m1={params.mass1:.2f} m2={params.mass2:.2f}  "
         f"d_L={params.distance_mpc:.0f} Mpc"
@@ -84,8 +91,8 @@ def main() -> None:
         mode=args.spacing,
         amp0=args.amp0,
         delay_scale=1.0,
-        f_low=args.f_low,
-        f_high=args.f_high,
+        f_low=f_low,
+        f_high=f_high,
     )
     print("=" * 60)
     print(f"Whitened network coherent echoes @ s=1 — {event.name} {detectors}")
@@ -114,8 +121,8 @@ def main() -> None:
             scan_max=args.scan_max,
             n_scales=args.n_scales,
             gate_a_threshold=args.gate_a_thr,
-            f_low=args.f_low,
-            f_high=args.f_high,
+            f_low=f_low,
+            f_high=f_high,
         )
         scan_payload = scan
         best_d = scan["best"]
@@ -147,8 +154,8 @@ def main() -> None:
             mode=args.spacing,
             amp0=args.amp0,
             delay_scale=best_d["delay_scale"],
-            f_low=args.f_low,
-            f_high=args.f_high,
+            f_low=f_low,
+            f_high=f_high,
         )
     print("=" * 60)
 
@@ -162,7 +169,10 @@ def main() -> None:
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "event": event.to_dict(),
         "detectors": detectors,
-        "f_band_hz": [args.f_low, args.f_high],
+        "f_band_hz": [f_low, f_high],
+        "gate_c_strict_delta_chi2": 6.0,
+        "gate_c_strict_pass": bool(nom.delta_chi2 >= 6.0 and nom.mf_snr >= 2.0),
+        "gate_c_weak_pass": bool(nom.delta_chi2 >= 4.0 and nom.mf_snr >= 2.0),
         "pe_params": params.to_dict(),
         "detector_details": [d.to_dict() for d in dets],
         "echo_model": "coherent_complex_network",

@@ -763,10 +763,13 @@ def prepare_network(
     detectors: list[str],
     *,
     project_root: Path,
-    f_low: float = 50.0,
-    f_high: float = 300.0,
+    f_low: float | None = None,
+    f_high: float | None = None,
 ) -> tuple[PublicGWEvent, PEParams, list[DetectorWhitened]]:
     event = get_event(event_name)
+    # Event-dependent analysis band (lighter BBHs need higher f_high)
+    f_lo = float(f_low if f_low is not None else event.f_low_hz)
+    f_hi = float(f_high if f_high is not None else event.f_high_hz)
     pe_dir = project_root / "data" / "pe"
     cache = project_root / "data" / "gwosc"
     params = pe_params_for_event(event.name, pe_dir=pe_dir)
@@ -776,8 +779,8 @@ def prepare_network(
             det,
             params,
             cache_dir=cache,
-            f_low=f_low,
-            f_high=f_high,
+            f_low=f_lo,
+            f_high=f_hi,
         )
         for det in detectors
     ]

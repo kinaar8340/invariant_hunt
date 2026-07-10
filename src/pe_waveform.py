@@ -23,6 +23,8 @@ from .gw_events import PublicGWEvent, get_event
 # GWTC-1 public PE samples (LIGO-P1800370)
 PE_URLS: dict[str, str] = {
     "GW150914": "https://dcc.ligo.org/public/0157/P1800370/005/GW150914_GWTC-1.hdf5",
+    "GW151226": "https://dcc.ligo.org/public/0157/P1800370/005/GW151226_GWTC-1.hdf5",
+    "GW170104": "https://dcc.ligo.org/public/0157/P1800370/005/GW170104_GWTC-1.hdf5",
 }
 
 PE_DATASET_PREFERRED = "Overall_posterior"

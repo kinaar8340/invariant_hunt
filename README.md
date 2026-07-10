@@ -93,11 +93,15 @@ Welch PSD → FD whitening → per-detector PE residual → network coherent \((
 python scripts/network_whiten_scan.py --event GW150914 --detectors H1,L1 --plot
 python scripts/network_injection_recovery.py --into residual --plot
 python scripts/network_injection_recovery.py --into noise --plot
+
+# Multi-event Gate C / D
+python scripts/multi_event_network.py --events GW150914,GW170104,GW151226 --plot
 ```
 
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  
-Milestones: [`docs/MILESTONE_GW150914_v2.md`](docs/MILESTONE_GW150914_v2.md) (H1 band-lim null),  
-[`docs/MILESTONE_WHITENED_NETWORK.md`](docs/MILESTONE_WHITENED_NETWORK.md) (H1+L1 whitened Gate C).
+Milestones: [`docs/MILESTONE_GW150914_v2.md`](docs/MILESTONE_GW150914_v2.md),  
+[`docs/MILESTONE_WHITENED_NETWORK.md`](docs/MILESTONE_WHITENED_NETWORK.md),  
+[`docs/MILESTONE_MULTI_EVENT.md`](docs/MILESTONE_MULTI_EVENT.md).
 
 Full conduit evaluation (from TOE):
 

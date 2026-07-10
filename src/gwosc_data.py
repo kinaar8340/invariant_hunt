@@ -64,7 +64,13 @@ def download_if_needed(
     if path.exists() and path.stat().st_size > 1000:
         return path
 
-    url = meta["base_url"] + fname
+    urls = meta.get("urls") or {}
+    if detector in urls:
+        url = urls[detector]
+    elif "base_url" in meta:
+        url = meta["base_url"] + fname
+    else:
+        raise FileNotFoundError(f"No download URL for {event}/{detector}")
     print(f"Downloading {url} → {path}")
     urllib.request.urlretrieve(url, path)  # noqa: S310 — public GWOSC URL
     return path

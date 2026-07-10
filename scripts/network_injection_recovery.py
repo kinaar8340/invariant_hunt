@@ -48,8 +48,8 @@ def main() -> None:
     p.add_argument("--gate-dchi2", type=float, default=6.0,
                    help="Strict Gate C Δχ² (default 6 for 2-dof)")
     p.add_argument("--gate-snr", type=float, default=2.0)
-    p.add_argument("--f-low", type=float, default=50.0)
-    p.add_argument("--f-high", type=float, default=300.0)
+    p.add_argument("--f-low", type=float, default=None)
+    p.add_argument("--f-high", type=float, default=None)
     p.add_argument("--plot", action="store_true")
     p.add_argument("--out", type=str, default="")
     args = p.parse_args()
@@ -65,6 +65,8 @@ def main() -> None:
         f_low=args.f_low,
         f_high=args.f_high,
     )
+    f_low = float(args.f_low if args.f_low is not None else event.f_low_hz)
+    f_high = float(args.f_high if args.f_high is not None else event.f_high_hz)
     for d in dets:
         print(
             f"  {d.detector}: PE SNR≈{d.pe_snr_proxy:.1f}  "
@@ -91,8 +93,8 @@ def main() -> None:
         n_echoes=args.n_echoes,
         mode=args.spacing,
         amp0=args.amp0,
-        f_low=args.f_low,
-        f_high=args.f_high,
+        f_low=f_low,
+        f_high=f_high,
         phase=args.phase,
         into=args.into,
         gate_delta_chi2=args.gate_dchi2,

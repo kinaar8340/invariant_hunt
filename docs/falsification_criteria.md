@@ -87,10 +87,13 @@ Using `scripts/network_injection_recovery.py` on whitened residuals:
 - Pipeline must recover Δχ² ≥ 6 and SNR ≥ 2 for some a_inj above threshold
 - Places the real-data excess (Δχ²≈4.2) on a calibrated sensitivity curve
 
-### Gate D — Multi-event (not yet implemented)
+### Gate D — Multi-event
 
-- Gate C on ≥ 3 BBH events
-- Look-elsewhere for free delay/κ scans across events
+- Gate C **strict** on ≥ 3 BBH events under the same mapping  
+- Runner: `python scripts/multi_event_network.py`
+
+**Status (GW150914, GW170104, GW151226):** Gate C strict **1/3** → **Gate D FAIL**.  
+See `docs/MILESTONE_MULTI_EVENT.md`.
 
 ### Gate E — Mapping revision triggers
 
