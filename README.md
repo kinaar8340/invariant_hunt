@@ -119,12 +119,18 @@ python scripts/premerger_followup_passers.py --plot --n-draws 8 --inject-events 
 # Locked core band + held-out scoring (SUCCESS / FALSIFY / NULL)
 python scripts/premerger_core_predict.py
 python scripts/premerger_core_predict.py --predict-event GW170823
+
+# Phase 1.1 — unified action principle (Gate A-P; locks frozen)
+python scripts/action_principle_check.py
+python scripts/action_principle_check.py --pde-smoke
+python scripts/pde_relaxation.py --gauge-flux 0 --nt 500 --nx 16 --no-plot
 ```
 
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  
 Campaign close-out: [`docs/CAMPAIGN_ECHO_MAPPING.md`](docs/CAMPAIGN_ECHO_MAPPING.md).  
 Analytic prediction: [`docs/ANALYTIC_ECHO_PREDICTION.md`](docs/ANALYTIC_ECHO_PREDICTION.md).  
-Pre-merger freeze: [`docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md`](docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md).
+Pre-merger freeze: [`docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md`](docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md).  
+Action principle (Phase 1.1): [`docs/MILESTONE_ACTION_PRINCIPLE.md`](docs/MILESTONE_ACTION_PRINCIPLE.md).
 
 Full conduit evaluation (from TOE):
 
@@ -138,23 +144,26 @@ python scripts/run_reproduction.py --trials 30
 ```
 invariant_hunt/
 ├── src/
-│   ├── invariants.py      # W_g, κ, braiding locks & residuals
-│   ├── positional.py      # 350/π as phase / lattice site
-│   ├── predictions.py     # InvariantSet → PredictionRecord
-│   ├── conduit.py         # RubikConeConduit (seeded from toe)
+│   ├── invariants.py         # W_g, κ, braiding locks & residuals
+│   ├── action_principle.py   # Phase 1.1 unified action (SymPy + Gate A-P)
+│   ├── positional.py         # 350/π as phase / lattice site
+│   ├── predictions.py        # InvariantSet → PredictionRecord
+│   ├── conduit.py            # RubikConeConduit (seeded from toe)
 │   ├── config.py
 │   └── relaxation_survival.py
 ├── scripts/
+│   ├── action_principle_check.py     # Gate A-P runner
 │   ├── meta_optimize_invariants.py   # positional meta-optimizer
-│   ├── forward_gw_signal.py          # concrete GW prediction pipeline
-│   ├── compare_benchmark.py          # χ² head-to-head scaffold
-│   ├── epoch_bake_sweep.py           # from toe
-│   ├── pde_relaxation.py
-│   └── run_reproduction.py
+│   ├── premerger_core_predict.py     # held-out SUCCESS/FALSIFY/NULL
+│   ├── pde_relaxation.py             # twist PDE (+ optional gauge_flux)
+│   └── …
 ├── docs/
-│   ├── positional_350_pi.md
-│   └── invariants_to_observables.md
-├── papers/                # Burst-threshold derivation (tex)
+│   ├── MILESTONE_ACTION_PRINCIPLE.md
+│   ├── MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md
+│   └── falsification_criteria.md
+├── papers/
+│   ├── Lagrangian_Derivation.tex     # Phase 1.1 arXiv scaffolding
+│   └── GW_Burst_Threshold.tex
 ├── ROADMAP.md
 └── vendor/SEED.md
 ```
@@ -177,6 +186,15 @@ See `docs/positional_350_pi.md` for the phase/lattice reading of bursts.
 post-merger geometric echo-ladder translation of the locks; they do **not**
 falsify the core invariants. Full write-up:
 [docs/CAMPAIGN_ECHO_MAPPING.md](docs/CAMPAIGN_ECHO_MAPPING.md).
+
+**Pre-merger predictive freeze closed** (in-catalog). Held-out BBHs scored via
+`premerger_core_predict.py`. See
+[docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md](docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md).
+
+**Phase 1.1 action principle scaffolding complete** (Gate A-P). Unified action
+with SU(3)×SU(2)×U(1) + Hopf + holonomy/braiding; locks frozen; no SM/GR claim.
+Next: Phase 1.2 meta-sweeps, 1.3 relativistic completion paper.
+[docs/MILESTONE_ACTION_PRINCIPLE.md](docs/MILESTONE_ACTION_PRINCIPLE.md).
 
 Next phase: other observables or analytic invariant→signal derivation
 (see [ROADMAP.md](ROADMAP.md)).

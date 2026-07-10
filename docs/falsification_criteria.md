@@ -203,8 +203,36 @@ python scripts/premerger_core_predict.py --predict-event <NEW_BBH>
 
 Docs: `docs/PREMERGER_PHASE.md`
 
+## III. Action principle (Gate A-P) — Phase 1
+
+Applies to **new** gauge / Hopf / holonomy terms in the unified action
+(`src/action_principle.py`). Core locks remain frozen inputs.
+
+### Gate A-P
+
+```bash
+python scripts/action_principle_check.py
+python scripts/action_principle_check.py --pde-smoke
+```
+
+Pass only if **all** hold:
+
+| Check | Requirement |
+|-------|-------------|
+| No ghosts | Healthy kinetic / Hessian signs (\(D,g_i,e_S,\kappa,W_g>0\)) |
+| Conduit reduction | Force structure retains \(\Delta\omega\), \(-\kappa\bar\theta\), Dirichlet |
+| \(W_g\) stability | Residual \(\|W_g-350/\pi\|=0\) under κ / φ_b / g_i jitter |
+| Holonomy restoring | Mean-field eigenvalue \(-\kappa<0\) |
+| GW consistency | Pre-merger locks unchanged |
+
+**Fail ⇒ demote** the proposed term (do not promote to papers as physical).  
+**Pass ⇒** scaffolding only — still **not** a claim of SM spectrum or Einstein gravity.
+
+Milestone: `docs/MILESTONE_ACTION_PRINCIPLE.md`.
+
 ## Suggested next refinements (echo ladder — closed)
 
 1. ~~Amp structure / whitened network / multi-event~~ done (mapping constrained)  
-2. Pre-merger Gate P (active)  
-3. Matched-filter quiet post-merger at \(f_{\mathrm{phys}}(M)\) (later)
+2. ~~Pre-merger Gate P~~ predictive freeze closed (held-out BBH later)  
+3. Phase 1.2–1.3 action / relativistic completion  
+4. Matched-filter quiet post-merger at \(f_{\mathrm{phys}}(M)\) (later)

@@ -14,11 +14,20 @@ or falls on quantitative, falsifiable forecasts.
 - [ ] Analytic stability proof / derivation of why \(W_g\) locks (not only numerics)
 - [ ] Wide sweeps: topologies, perturbations, seeds (`epoch_bake_sweep`, `pde_relaxation`)
 
+### Phase 1 — Action principle (SM/GR gap roadmap)
+
+- [x] **1.1** Unified action scaffold: SU(3)×SU(2)×U(1) + Hopf + holonomy/braiding  
+      (`src/action_principle.py`, `scripts/action_principle_check.py`, Gate A-P)  
+      → `docs/MILESTONE_ACTION_PRINCIPLE.md`, `papers/Lagrangian_Derivation.tex`
+- [ ] **1.2** Holonomy / braiding meta-sweeps under gauged perturbations (locks fixed)
+- [ ] **1.3** Relativistic completion `.tex` update (peer-ready equations)
+
 ## 2. Derive invariants → observables
 
 - [x] Prediction record schema + GW delay/spectrum stubs (`src/predictions.py`)
-- [ ] Expand Lagrangian / GW echo paper formulas into code with full coefficients
-- [ ] Particle / spectral maps (where lattice stable configs meet data)
+- [x] Lagrangian free-energy + unified action symbolic densities (Phase 1.1)
+- [ ] Expand GW echo paper formulas into code with full coefficients
+- [ ] Particle / spectral maps (Phase 2 — where lattice stable configs meet data)
 
 ## 3. Generate specific, falsifiable predictions
 
@@ -88,11 +97,21 @@ See `docs/CAMPAIGN_ECHO_MAPPING.md`.
 
 See `docs/PREMERGER_PHASE.md`.
 
+### Active: Phase 1 action principle (SM/GR gap roadmap)
+
+Pre-merger freeze remains closed. Parallel formal work only — **do not** reopen core locks.
+
+1. ~~**1.1** Unified action + Gate A-P~~ → `docs/MILESTONE_ACTION_PRINCIPLE.md`  
+2. **1.2** Meta-sweep holonomy/gauge jitter (invariant stability)  
+3. **1.3** Relativistic completion paper update  
+
 ### Later
 
 - True held-out BBH (new catalog event) via `premerger_core_predict.py`  
 - Matched-filter post-merger at \(f_{\mathrm{phys}}(M)\) with \(10^{-6}\) relative amp  
 - Falsifier watch on sync branch (relative amp \(\gg 10^{-5}\))  
+- Phase 2: SM spectrum / generations / anomalies  
+- Phase 3: emergent gravity + precision tests  
 
 Core locks \(W_g\), \(\kappa\), braiding attractor remain available for other translations.
 

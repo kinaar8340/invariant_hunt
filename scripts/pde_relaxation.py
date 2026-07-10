@@ -7,10 +7,15 @@ Finite-difference solver for the nonlinear twist-field PDE on the 3-torus.
 This script reproduces the continuum limit of the gauged two-gyro Hopf lattice.
 It demonstrates spontaneous relaxation to a globally uniform low-twist domain.
 
+Phase 1.1: optional constant gauge-flux source (U(1) stand-in) via
+``--gauge-flux``, routed through ``src.action_principle.gauged_twist_force_terms``.
+
 Run with:
     python scripts/pde_relaxation.py
+    python scripts/pde_relaxation.py --gauge-flux 0.0
+    python scripts/pde_relaxation.py --normalize-to-lambda-t 2
 
-Outputs saved to: ~/Projects/toe/outputs/pde_relaxation/
+Outputs saved to: outputs/pde_relaxation/
 """
 
 import argparse
@@ -22,12 +27,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 
-# Allow importing relaxation_survival from src/
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
-from relaxation_survival import E_INV2, R_RESIDUAL, simulate_twist_pde_survival
+project_root = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(project_root))
+sys.path.insert(0, str(project_root / "src"))
+
+from relaxation_survival import E_INV2, R_RESIDUAL, simulate_twist_pde_survival  # noqa: E402
+from src.action_principle import ActionParameters, gauged_twist_force_terms  # noqa: E402
+from src.invariants import burst_threshold  # noqa: E402
 
 # === ROBUST OUTPUT DIRECTORY (always relative to project root) ===
-OUTPUT_DIR = Path(__file__).resolve().parent.parent / "outputs" / "pde_relaxation"
+OUTPUT_DIR = project_root / "outputs" / "pde_relaxation"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -38,21 +47,40 @@ def simulate_twist_pde(
     D: float = 0.05,
     kappa: float = 0.85,
     delta_omega: float = 0.002,
-    theta_crit: float = 5.8,  # π(1+κ), κ≈0.85 — see papers/GW_Burst_Threshold.pdf
+    theta_crit: float | None = None,  # default π(1+κ)
+    gauge_flux: float = 0.0,
     save_plot: bool = True,
+    seed: int | None = None,
+    use_action_force: bool = True,
 ):
     """
     Solve the nonlinear twist-field PDE on a periodic 3-torus:
 
-    ∂θ/∂t = D Δθ + (D/2) cot(θ/2) |∇θ|² + Δω - κ θ̄(t) + B(θ)
+    ∂θ/∂t = D Δθ + (D/2) cot(θ/2) |∇θ|² + Δω - κ θ̄(t) + B(θ) + J_gauge
+
+    where J_gauge is an optional weak flux/holonomy source (Phase 1.1).
     """
+    if theta_crit is None:
+        theta_crit = burst_threshold(kappa)
+
     print(f"🚀 Starting PDE relaxation on {nx}³ torus")
-    print(f"   Parameters: D={D}, κ={kappa}, Δω={delta_omega}, θ_crit={theta_crit}")
+    print(
+        f"   Parameters: D={D}, κ={kappa}, Δω={delta_omega}, "
+        f"θ_crit={theta_crit:.4f}, gauge_flux={gauge_flux}"
+    )
     print(f"   Output directory: {OUTPUT_DIR}\n")
 
-    # 3-torus grid + initial random twist field
-    theta = np.random.uniform(0.1, 2.0, (nx, nx, nx))
+    rng = np.random.default_rng(seed)
+    theta = rng.uniform(0.1, 2.0, (nx, nx, nx))
     mean_history = []
+    dx = 1.0 / nx
+    params = ActionParameters(
+        kappa=kappa,
+        D=D,
+        delta_omega=delta_omega,
+        C_burst=50.0,
+        p_burst=1.0,
+    )
 
     for _step in tqdm(range(nt), desc="PDE relaxation"):
         # Laplacian (periodic boundaries)
@@ -64,47 +92,67 @@ def simulate_twist_pde(
             + np.roll(theta, 1, 2)
             + np.roll(theta, -1, 2)
             - 6 * theta
-        ) / (1.0 / nx) ** 2
+        ) / dx**2
 
-        # Nonlinear cotangent term
-        with np.errstate(divide="ignore", invalid="ignore"):
-            cot_term = (
-                (D / 2.0)
-                * np.cos(theta / 2.0)
-                / np.sin(theta / 2.0)
-                * (
-                    np.gradient(theta, axis=0) ** 2
-                    + np.gradient(theta, axis=1) ** 2
-                    + np.gradient(theta, axis=2) ** 2
-                ).sum(axis=0)
+        g0 = np.gradient(theta, axis=0)
+        g1 = np.gradient(theta, axis=1)
+        g2 = np.gradient(theta, axis=2)
+        grad_sq = g0**2 + g1**2 + g2**2
+
+        if use_action_force:
+            terms = gauged_twist_force_terms(
+                theta,
+                params=params,
+                lap=lap,
+                grad_sq=grad_sq,
+                a_mu_curl_contrib=gauge_flux,
             )
+            # Align burst threshold with caller if overridden
+            if abs(theta_crit - params.theta_crit) > 1e-9:
+                excess = np.maximum(theta - theta_crit, 0.0)
+                force = (
+                    D * lap
+                    + (D / 2.0)
+                    * np.nan_to_num(np.cos(theta / 2.0) / np.sin(theta / 2.0))
+                    * grad_sq
+                    + delta_omega
+                    - kappa * float(theta.mean())
+                    - 50.0 * excess
+                    + gauge_flux
+                )
+            else:
+                force = terms["total"]
+            bar_theta = terms["bar_theta"]
+        else:
+            with np.errstate(divide="ignore", invalid="ignore"):
+                cot_term = (
+                    (D / 2.0)
+                    * np.cos(theta / 2.0)
+                    / np.sin(theta / 2.0)
+                    * grad_sq
+                )
+            bar_theta = float(theta.mean())
+            gauge = -kappa * bar_theta
+            burst = np.where(theta > theta_crit, -50.0 * (theta - theta_crit), 0.0)
+            force = D * lap + cot_term + delta_omega + gauge + burst + gauge_flux
 
-        # Global mean-field gauge restoring torque
-        bar_theta = theta.mean()
-        gauge = -kappa * bar_theta
-
-        # Burst sink (strong nonlinear reset)
-        burst = np.where(theta > theta_crit, -50.0 * (theta - theta_crit), 0.0)
-
-        # Update step
-        theta += dt * (D * lap + cot_term + delta_omega + gauge + burst)
-
-        # Physical range clipping
+        theta = theta + dt * force
         theta = np.clip(theta, 0.01, 2 * np.pi - 0.01)
-
         mean_history.append(bar_theta)
 
     final_mean_twist = mean_history[-1]
     print(f"✅ Relaxation complete — final mean twist = {final_mean_twist:.4f} rad")
     print("   → Uniform low-twist domain achieved (matches model prediction)")
 
-    # Save plot
     if save_plot:
         plt.figure(figsize=(10, 6))
         plt.plot(mean_history, color="green", linewidth=1.5)
         plt.xlabel("Time step")
         plt.ylabel("Mean twist ⟨θ⟩ (rad)")
-        plt.title("Gauged Two-Gyro PDE Relaxation on 3-Torus")
+        title = "Gauged Two-Gyro PDE Relaxation on 3-Torus"
+        if gauge_flux != 0.0:
+            title += f" (gauge_flux={gauge_flux:g})"
+        plt.title(title)
         plt.grid(True, alpha=0.3)
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -152,6 +200,15 @@ if __name__ == "__main__":
     parser.add_argument("--kappa", type=float, default=0.85)
     parser.add_argument("--dt", type=float, default=0.001)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument(
+        "--gauge-flux",
+        type=float,
+        default=0.0,
+        help="Phase 1.1 optional constant U(1)/flux source added to force",
+    )
+    parser.add_argument("--nx", type=int, default=24)
+    parser.add_argument("--nt", type=int, default=5000)
+    parser.add_argument("--no-plot", action="store_true")
     args = parser.parse_args()
 
     if args.normalize_to_lambda_t is not None:
@@ -162,6 +219,14 @@ if __name__ == "__main__":
             seed=args.seed,
         )
     else:
-        simulate_twist_pde()
+        simulate_twist_pde(
+            nx=args.nx,
+            nt=args.nt,
+            dt=args.dt,
+            kappa=args.kappa,
+            gauge_flux=args.gauge_flux,
+            save_plot=not args.no_plot,
+            seed=args.seed,
+        )
         print("\n🏆 PDE relaxation verified.")
         print("   The conduit PDE relaxes to a stable low-twist domain as predicted.")

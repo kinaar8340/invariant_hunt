@@ -120,3 +120,21 @@ class InvariantSet:
 def hopf_penalty(geo_w: float, wg_base: float) -> float:
     """Penalty used by meta-optimizer: |geo_w - wg_base/π|."""
     return abs(geo_w - geometric_winding_from_base(wg_base))
+
+
+def holonomy_restoring_eigenvalue(kappa: float = DEFAULT_KAPPA) -> float:
+    """Mean-field holonomy linearization eigenvalue: ∂_t θ̄ ≈ −κ θ̄ + …
+
+    Must be strictly negative for Gate A-P (no runaway / ghost holonomy).
+    """
+    return -float(kappa)
+
+
+def braiding_pin_stiffness(wg: float = LOCKED_WG) -> float:
+    """Quadratic pin stiffness for (φ_b − φ_b*)² term in the action: W_g > 0."""
+    return float(wg)
+
+
+def gauge_group_label() -> str:
+    """Target gauge structure for Phase 1.1 action scaffolding."""
+    return "SU(3)×SU(2)×U(1)"

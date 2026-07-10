@@ -1,0 +1,249 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\title{Unified Action Principle for the Gauged Hopf Lattice\\
+\large with SU(3)$\times$SU(2)$\times$U(1) Scaffolding\\
+\normalsize (Phase~1.1 --- invariant\_hunt extension)}
+\author{Aaron Kinder \\ Independent Researcher}
+\date{April 2026 \\ \small Phase~1.1 extension: July 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The conduit PDE of the gauged two-gyro Hopf lattice is a dissipative first-order
+gradient flow and cannot be derived from a standard time-reversible Lagrangian alone.
+Its clean variational structure is the Dirichlet (harmonic-map) energy on the
+quaternion field $q(x,t)\in S^3$, projected to the scalar twist density
+$\Theta=2\arccos(\operatorname{Re} q)$, plus explicit non-variational forcing for
+the two-gyro drive, global gauge holonomy, and a potential for topological bursts.
+We record the free-energy functional, its $L^2$-gradient flow, the reduction to the
+scalar nonlinear twist PDE, and the conservative wave-map Lagrangian before the
+over-damped limit.
+
+\textbf{Phase~1.1.} We extend this foundation to a unified action with explicit
+Yang--Mills kinetics for $G=\mathrm{SU}(3)\times\mathrm{SU}(2)\times\mathrm{U}(1)$,
+a Hopf topological density, and holonomy/braiding terms tied to the
+\emph{frozen} locks $W_g=350/\pi$, $\kappa\approx 0.85$, $\phi_b^\star\approx 0.8145$.
+Gate~A-P requires healthy kinetic signs (no ghosts), conduit reduction, and
+$W_g$ stability under holonomy/gauge jitter. No claim is made that the SM spectrum
+or Einstein gravity have been derived; those are later-phase gated deliverables.
+\end{abstract}
+
+\section{Underlying field: $q:T^3\times\mathbb{R}\to S^3$}
+
+The microscopic field is a unit quaternion
+\[
+q=w+ix+jy+kz,\qquad w^2+x^2+y^2+z^2=1.
+\]
+Local twist density:
+\[
+\Theta(x,t)=2\arccos(\operatorname{Re} q)=2\arccos(w).
+\]
+Dirichlet energy (harmonic-map action):
+\[
+F[q]=\frac{D}{2}\int_{T^3}|\nabla q|^2\,\mathrm{d}^3x
+\quad(|q|=1).
+\]
+The $L^2$-gradient flow on $S^3$ is the projected Laplacian (harmonic-map heat flow).
+
+\section{Reduction to the scalar twist PDE}
+
+When the rotation axis is aligned with the fixed gauge axis (global pointer),
+$q\approx\cos\phi+\sin\phi\,k$ with $\phi=\Theta/2$ yields
+\[
+F[\Theta]\approx\frac{D}{8}\int_{T^3}|\nabla\Theta|^2\,\mathrm{d}^3x.
+\]
+The geometric Jacobian from the $S^3$ metric supplies the nonlinear term
+$\tfrac{D}{2}\cot(\Theta/2)\,|\nabla\Theta|^2$. The conduit PDE is the effective
+scalar equation obtained by projecting the quaternion harmonic-map flow.
+
+\section{Full free-energy functional}
+
+\begin{equation}
+F[\Theta]
+=\int_{T^3}\Biggl[
+\frac{D}{8}|\nabla\Theta|^2
++U(\Theta)
++\frac{\kappa}{2}\bar\Theta^2
+-\Delta\omega\,\Theta
+\Biggr]\,\mathrm{d}^3x,
+\label{eq:free-energy}
+\end{equation}
+with burst potential
+\[
+U'(\Theta)=-B(\Theta)=-C(\Theta-\theta_{\mathrm{crit}})_+^{p},
+\qquad C\gg 1,\; p>1,
+\]
+and $\theta_{\mathrm{crit}}=\pi(1+\kappa)$ \cite{burst}.
+$L^2$-gradient flow $\partial_t\Theta=-\delta F/\delta\Theta$ recovers
+\begin{equation}
+\partial_t\Theta
+=D\Delta\Theta
++\tfrac{D}{2}\cot(\Theta/2)\,|\nabla\Theta|^2
++\Delta\omega
+-\kappa\bar\Theta
++B(\Theta).
+\label{eq:conduit}
+\end{equation}
+
+\section{Conservative Lagrangian (before over-damping)}
+
+\begin{equation}
+L[q]=\int_{T^3}\Biggl(
+\frac{1}{2}|\partial_t q|^2
+-\frac{D}{2}|\nabla q|^2
+\Biggr)\,\mathrm{d}^3x
+\quad(|q|=1),
+\label{eq:wave-map}
+\end{equation}
+with Euler--Lagrange wave-map equation. Infinite friction recovers~\eqref{eq:conduit}.
+Drive and gauge enter as non-variational external torques, or via a time-dependent
+potential / global Lagrange multiplier for the mean twist.
+
+\section{Phase~1.1: Unified action with SM gauge scaffold}
+
+Define $U\in\mathrm{SU}(2)$ equivalent to $q\in S^3$. The Phase~1.1 action is
+\begin{equation}
+S=S_\sigma+S_{\mathrm{Skyrme}}+S_{\mathrm{YM}}
++S_{\mathrm{Hopf}}+S_{\mathrm{hol}}+S_{\mathrm{drive}}
++S_{\mathrm{burst}}+S_{\mathrm{grav}},
+\label{eq:unified-action}
+\end{equation}
+with sector densities (symbolic module \texttt{src/action\_principle.py}):
+
+\begin{align}
+S_\sigma
+&=\frac{1}{2\lambda^2}\int\mathrm{d}^4x\,\sqrt{-g}\,
+\varepsilon_{\mu\nu}\,\mathrm{Tr}\!\bigl(D^\mu U\,D^\nu U^\dagger\bigr),
+\label{eq:sigma}
+\\
+S_{\mathrm{Skyrme}}
+&=\frac{1}{32\pi^2 e_S^2}\int\mathrm{d}^4x\,\sqrt{-g}\,
+\mathrm{Tr}\!\bigl([D_\mu U U^\dagger,\,D_\nu U U^\dagger]^2\bigr),
+\label{eq:skyrme}
+\\
+S_{\mathrm{YM}}
+&=-\sum_{G\in\{\mathrm{SU}(3),\mathrm{SU}(2),\mathrm{U}(1)\}}
+\frac{1}{4g_G^2}\int\mathrm{d}^4x\,\sqrt{-g}\,
+F_{\mu\nu}^{(G)}F^{(G)\mu\nu},
+\label{eq:ym}
+\\
+S_{\mathrm{Hopf}}
+&=c_H\int H_{\mathrm{Hopf}}[q],
+\qquad \int H_{\mathrm{Hopf}}\in\mathbb{Z},
+\label{eq:hopf}
+\\
+S_{\mathrm{hol}}
+&=-\frac{\kappa}{2}\int\mathrm{d}^4x\,\sqrt{-g}\,\bar\Theta^2
+-\frac{W_g}{2}\int\mathrm{d}^4x\,\sqrt{-g}\,(\phi_b-\phi_b^\star)^2,
+\label{eq:hol}
+\\
+S_{\mathrm{drive}}
+&=-\Delta\omega\int\mathrm{d}^4x\,\sqrt{-g}\,\Theta,
+\label{eq:drive}
+\\
+S_{\mathrm{burst}}
+&=-\int\mathrm{d}^4x\,\sqrt{-g}\,U(\Theta),
+\label{eq:burst-S}
+\\
+S_{\mathrm{grav}}
+&=\frac{1}{16\pi G_N}\int\mathrm{d}^4x\,\sqrt{-g}\,R+\cdots
+\quad\text{(Phase~3 target)}.
+\label{eq:grav}
+\end{align}
+
+\paragraph{Frozen locks (inputs, not fits).}
+\[
+W_g=\frac{350}{\pi},\qquad
+\kappa\approx 0.85,\qquad
+\phi_b^\star\approx 0.8145,\qquad
+\theta_{\mathrm{crit}}=\pi(1+\kappa).
+\]
+Hopf linking saturation
+$\Theta_{\mathrm{link}}=2\pi W_g/(2W_g+1)\approx\pi$ remains geometric
+\cite{burst}.
+
+\paragraph{Scope discipline.}
+Equation~\eqref{eq:ym} is a \emph{scaffold}: it places the correct gauge kinetics
+and healthy signs. Mapping lattice excitations to the full SM spectrum (generations,
+Yukawa, anomalies) is Phase~2. Emergent Einstein limit and precision tests are Phase~3.
+No universal claim is made at Phase~1.1.
+
+\section{Gate A-P (action-principle scrutiny)}
+
+Any new gauge/Hopf term must pass:
+
+\begin{enumerate}
+\item \textbf{No ghosts.} Kinetic coefficients and holonomy Hessians have healthy signs:
+  $D>0$, $g_i>0$, $e_S>0$, $\kappa>0$, $W_g>0$; wave-map time kinetic positive.
+\item \textbf{Conduit reduction.} Over-damped / free-energy limit recovers~\eqref{eq:conduit}
+  structure (drive, holonomy, Dirichlet, burst).
+\item \textbf{$W_g$ stability.} Under jitter of $\kappa$, $\phi_b^\star$, and $g_i$
+  (with $W_g$ held locked), positional residual $|W_g-350/\pi|$ remains zero and
+  ghost checks remain healthy.
+\item \textbf{Analytic consistency with GW pipelines.} New terms must not alter
+  locked pre-merger template inputs ($W_g$, $\kappa$, $\phi_b$) used by
+  \texttt{premerger\_core\_predict.py}.
+\end{enumerate}
+
+Executable check:
+\begin{verbatim}
+python scripts/action_principle_check.py
+python scripts/action_principle_check.py --pde-smoke
+\end{verbatim}
+
+\section{Variational status table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+Term in PDE / action & Origin & Variational? \\
+\midrule
+$D\Delta\Theta+\tfrac{D}{2}\cot(\Theta/2)|\nabla\Theta|^2$
+  & Dirichlet / harmonic map on $S^3$ & Yes \\
+$+\Delta\omega$ & Two-gyro drive mismatch & No (forcing) \\
+$-\kappa\bar\Theta$ & Mean-field gauge holonomy & Yes \\
+$+B(\Theta)$ & Burst potential $U(\Theta)$ & Yes \\
+$S_{\mathrm{YM}}$ & Yang--Mills kinetics & Yes \\
+$S_{\mathrm{Hopf}}$ & Topological Hopf density & Yes \\
+$W_g(\phi_b-\phi_b^\star)^2$ pin & Braiding attractor & Yes \\
+$S_{\mathrm{grav}}$ & Einstein--Hilbert (later) & Yes \\
+\bottomrule
+\end{tabular}
+\caption{Origin and variational status of each term (extends Lagrangian Derivation Table~1).}
+\end{table}
+
+\section{Relation to relativistic completion}
+
+The relativistic Skyrme-like lift~\cite{rel} is recovered by promoting~\eqref{eq:free-energy}
+to Lorentz-invariant form~\eqref{eq:sigma}--\eqref{eq:burst-S}. Observer synchronization
+and one-loop remarks of that paper are unchanged. Phase~1.1 adds the product-group
+Yang--Mills scaffold and an explicit braiding pin without reopening locks.
+
+\section{Conclusion}
+
+The conduit PDE retains its free-energy / wave-map foundation. Phase~1.1 freezes a
+unified action~\eqref{eq:unified-action} with SU(3)$\times$SU(2)$\times$U(1) kinetics,
+Hopf topology, and holonomy/braiding terms compatible with $W_g$, $\kappa$, and
+$\phi_b$. Gate~A-P blocks unphysical ghosts and lock drift. SM particle content and
+emergent gravity remain gated for Phases~2--3.
+
+\begin{thebibliography}{9}
+\bibitem{lag}
+A.~Kinder, \emph{Derive the Lagrangian for the Conduit PDE}, TOE notes, Apr.~2026.
+\bibitem{rel}
+A.~Kinder, \emph{Relativistic Completion + Quantization}, TOE notes, Apr.~2026.
+\bibitem{burst}
+A.~Kinder, \emph{Burst Threshold Derivation in the Gauged Two-Gyro Hopf Lattice},
+invariant\_hunt \texttt{papers/GW\_Burst\_Threshold.tex}, Jun.~2026.
+\bibitem{freeze}
+invariant\_hunt, \emph{Pre-merger predictive freeze},
+\texttt{docs/MILESTONE\_PREMERGER\_PREDICTIVE\_FREEZE.md}, Jul.~2026.
+\end{thebibliography}
+
+\end{document}
