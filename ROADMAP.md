@@ -63,8 +63,12 @@ or falls on quantitative, falsifiable forecasts.
 ## 6. Reproducibility and transparency
 
 - [x] Open scripts, configs, JSON prediction bundles
-- [x] Versioned schema (`invariant_hunt.*.v1`)
-- [ ] Automated CI tests for lock residuals and prediction schema
+- [x] Versioned schema (`invariant_hunt.*.v1` / `.v2`)
+- [x] Automated CI tests for lock residuals and prediction schema  
+      (`.github/workflows/ci.yml`, `src/ci_checks.py`, `scripts/ci_check.py`)  
+      ```bash
+      python scripts/ci_check.py --pytest
+      ```
 - [ ] Modular: optimizer → prediction generator (partially done)
 
 ## 7. Iterate with falsification

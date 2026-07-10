@@ -38,6 +38,9 @@ python scripts/compare_benchmark.py --event GW150914 --baseline pe --detector H1
 
 # Unit tests (core math; no torch required)
 python -m pytest tests/ -q
+
+# Lightweight CI suite (locks + prediction schema; no PE/pycbc)
+python scripts/ci_check.py --pytest
 ```
 
 ### Public event mapping (GW150914)

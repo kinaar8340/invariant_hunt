@@ -36,6 +36,10 @@ include = ["src*"]
 testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "-q"
+markers = [
+    "ci: lightweight tests safe for GitHub Actions (no PE/pycbc/torch)",
+    "heavy: requires PE data, pycbc, torch, or network",
+]
 
 [tool.ruff]
 line-length = 100
