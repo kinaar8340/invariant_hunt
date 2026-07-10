@@ -1,0 +1,301 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\title{Relativistic Completion of the Gauged Hopf Lattice\\
+\large Unified Action, Quantization Pathway, and Low-Energy Limits\\
+\normalsize (Phase~1.3 --- aligned with \texttt{eq:unified-action})}
+\author{Aaron Kinder \\ Independent Researcher}
+\date{April 2026 \\ \small Phase~1.3 revision: July 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We start from the classical free-energy functional whose $L^2$-gradient flow
+reproduces the gauged two-gyro conduit PDE and promote it to a fully relativistic,
+locally Lorentz-invariant action. The resulting theory is a Skyrme-like nonlinear
+sigma model on target $S^3$ with product-group Yang--Mills kinetics
+$G=\mathrm{SU}(3)\times\mathrm{SU}(2)\times\mathrm{U}(1)$, a Hopf topological
+density, mean-field holonomy / braiding pins tied to the \emph{frozen} locks
+$W_g=350/\pi$, $\kappa\approx 0.85$, $\phi_b^\star\approx 0.8145$, and topological
+defect potentials (bursts).
+
+Its non-relativistic over-damped limit is the conduit PDE; its low-energy effective
+theory is intended to recover QED + Einstein--Cartan gravity with $G_N$ fixed by the
+locked invariants---\textbf{claimed only after Phase~3 gates}. Observer
+synchronization---automatic phase-locking of embedded systems to the global
+pointer---explains current nulls for some non-local effects while leaving distinctive
+predictions testable at higher sensitivity. This note is a concrete, falsifiable EFT
+scaffold: ultraviolet completion is a topological sigma-model whose solitons are
+candidate particles (Phase~2 spectrum map).
+\end{abstract}
+
+\section{Scope and discipline}
+
+This document supersedes the April~2026 Relativistic Completion PDF notes by aligning
+every sector with the Phase~1.1 unified action
+\begin{equation}
+S=S_\sigma+S_{\mathrm{Skyrme}}+S_{\mathrm{YM}}
++S_{\mathrm{Hopf}}+S_{\mathrm{hol}}+S_{\mathrm{drive}}
++S_{\mathrm{burst}}+S_{\mathrm{grav}},
+\label{eq:unified-action}
+\end{equation}
+as formalized in \texttt{papers/Lagrangian\_Derivation.tex} and
+\texttt{src/action\_principle.py}.
+
+\paragraph{Frozen inputs (not free fits).}
+\[
+W_g=\frac{350}{\pi},\qquad
+\kappa\approx 0.85,\qquad
+\phi_b^\star\approx 0.8145,\qquad
+\theta_{\mathrm{crit}}=\pi(1+\kappa).
+\]
+Pre-merger GW predictive freeze remains independent
+(\texttt{docs/MILESTONE\_PREMERGER\_PREDICTIVE\_FREEZE.md}).
+
+\paragraph{What this paper does \emph{not} claim.}
+Full SM generations / Yukawa / anomaly cancellation (Phase~2); precision GR tests and
+definitive $G_N$ match (Phase~3); quantization without residual artifacts (Phase~4).
+
+\section{Field content}
+
+Define the quaternion field as a map $q:M^4\to S^3$ (equivalently $U\in\mathrm{SU}(2)$,
+$q=w+ix+jy+kz$). Local twist density:
+\begin{equation}
+\Theta(x)=2\arccos(\operatorname{Re} q).
+\label{eq:theta}
+\end{equation}
+Yang--Mills connections $A_\mu^{(3)}$, $A_\mu^{(2)}$, $A_\mu^{(1)}$ for
+$\mathrm{SU}(3)$, $\mathrm{SU}(2)$, $\mathrm{U}(1)_Y$ enter through standard field
+strengths $F_{\mu\nu}^{(G)}$ and, where relevant, covariant derivatives on $U$.
+
+\section{Relativistic action (sector by sector)}
+
+\subsection{Harmonic-map / wave-map kinetic term}
+\begin{equation}
+S_\sigma
+=\frac{1}{2\lambda^2}\int\mathrm{d}^4x\,\sqrt{-g}\,
+\varepsilon_{\mu\nu}\,\mathrm{Tr}\!\bigl(D^\mu U\,D^\nu U^\dagger\bigr).
+\label{eq:sigma}
+\end{equation}
+Static non-relativistic reduction recovers the Dirichlet piece $\propto D|\nabla\Theta|^2$
+with $D$ identified with the sweep-locked diffusion ($D\approx 0.05$ in lattice codes).
+
+\subsection{Skyrme stabilization}
+\begin{equation}
+S_{\mathrm{Skyrme}}
+=\frac{1}{32\pi^2 e_S^2}\int\mathrm{d}^4x\,\sqrt{-g}\,
+\mathrm{Tr}\!\bigl([D_\mu U U^\dagger,\,D_\nu U U^\dagger]^2\bigr).
+\label{eq:skyrme}
+\end{equation}
+The fourth-order term stabilizes Hopfions and enforces quantized winding at scale $W_g$.
+
+\subsection{Yang--Mills product group (Phase~1.1 scaffold)}
+\begin{equation}
+S_{\mathrm{YM}}
+=-\sum_{G\in\{\mathrm{SU}(3),\mathrm{SU}(2),\mathrm{U}(1)\}}
+\frac{1}{4g_G^2}\int\mathrm{d}^4x\,\sqrt{-g}\,
+F_{\mu\nu}^{(G)}F^{(G)\mu\nu}.
+\label{eq:ym}
+\end{equation}
+Healthy signs $g_G>0$ are required by Gate~A-P (no ghosts). Couplings $g_G$ are
+\emph{not} fitted to precision data here; Phase~1.2 meta-sweeps only test stability of
+locks under jitter of $g_G$, $D$, and weak flux sources.
+
+\subsection{Hopf topological density}
+\begin{equation}
+S_{\mathrm{Hopf}}
+=c_H\int H_{\mathrm{Hopf}}[q],
+\qquad \int_{S^3}H_{\mathrm{Hopf}}\in\mathbb{Z}.
+\label{eq:hopf}
+\end{equation}
+Topological protection: $\pi_3(S^3)=\mathbb{Z}$. One-loop corrections to the winding
+vanish for the same reason (cf.\ \S\ref{sec:oneloop}).
+
+\subsection{Mean-field holonomy and braiding pin}
+\begin{equation}
+S_{\mathrm{hol}}
+=-\frac{\kappa}{2}\int\mathrm{d}^4x\,\sqrt{-g}\,\bar\Theta^2
+-\frac{W_g}{2}\int\mathrm{d}^4x\,\sqrt{-g}\,(\phi_b-\phi_b^\star)^2.
+\label{eq:hol}
+\end{equation}
+The first term is the global pointer holonomy (vacuum $U(1)$ structure in the
+low-energy limit). The second pins the braiding phase to the locked attractor.
+Linearization about $\bar\Theta=0$ yields eigenvalue $-\kappa<0$ (restoring).
+
+\subsection{Drive and burst potential}
+\begin{align}
+S_{\mathrm{drive}}
+&=-\Delta\omega\int\mathrm{d}^4x\,\sqrt{-g}\,\Theta,
+\label{eq:drive}
+\\
+S_{\mathrm{burst}}
+&=-\int\mathrm{d}^4x\,\sqrt{-g}\,U(\Theta),
+\quad
+U'(\Theta)=-C(\Theta-\theta_{\mathrm{crit}})_+^{p}.
+\label{eq:burst}
+\end{align}
+Drive is non-variational forcing in the free-energy picture (two-gyro mismatch).
+Burst potential implements Hopf-charge-preserving flux shedding
+\cite{burst}.
+
+\subsection{Gravity sector (Einstein--Cartan scaffold)}
+\begin{equation}
+S_{\mathrm{grav}}
+=\frac{1}{16\pi G_N}\int\mathrm{d}^4x\,\sqrt{-g}\,R
++\frac{1}{2}\int\mathrm{d}^4x\,\sqrt{-g}\,T_{\alpha\beta\gamma}T^{\alpha\beta\gamma}
++S_{\mathrm{matter}},
+\label{eq:grav}
+\end{equation}
+where torsion $T$ is identified with the antisymmetric part of the spin connection
+generated by $\nabla q$. \textbf{Phase~3} must derive the continuum Einstein limit and
+match $G_N$; Eq.~\eqref{eq:grav} is structural scaffolding only.
+
+\section{Non-relativistic / dissipative limit}
+
+Add Rayleigh dissipation
+\[
+\mathcal{R}=\frac{\gamma}{2}\int(\partial_t\Theta)^2\,\mathrm{d}^3x
+\]
+and take $\gamma\to\infty$. The equations collapse to the conduit PDE
+\begin{equation}
+\partial_t\Theta
+=D\Delta\Theta
++\tfrac{D}{2}\cot(\Theta/2)\,|\nabla\Theta|^2
++\Delta\omega
+-\kappa\bar\Theta
++B(\Theta)
+(+J_{\mathrm{gauge}}),
+\label{eq:conduit}
+\end{equation}
+with optional weak gauge-flux source $J_{\mathrm{gauge}}$ used in
+\texttt{pde\_relaxation.py --gauge-flux} (Phase~1.1/1.2 probes).
+
+\section{Quantization pathway (outline)}
+
+The quantum theory is the Feynman path integral
+\begin{equation}
+Z=\int\mathcal{D}q\,\mathcal{D}g\,\mathcal{D}A\;
+\exp\Bigl(\frac{i}{\hbar}S[q,g,A]\Bigr),
+\label{eq:path-int}
+\end{equation}
+with the $S^3$ Haar measure (topological protection automatic).
+
+In the semiclassical limit $\hbar\to 0$:
+\begin{itemize}
+\item Instantons / solitons (Hopfions on the Clifford torus) carry topological charge
+  quantized in multiples of $W_g=350/\pi$.
+\item Gauge fields $A_\mu^{(G)}$ emerge as dynamical YM bosons (photon in the unbroken
+  $U(1)_{\mathrm{EM}}$ combination after Phase~2 electroweak map).
+\item Fermionic defects (skyrmions / Hopfions) inherit half-integer spin from the double
+  cover $S^3\to\mathrm{SO}(3)$ and couple to $A_\mu$ with charges to be derived in Phase~2.
+\end{itemize}
+Full lattice$\to$QFT regularization without unphysical artifacts is a Phase~4 gate.
+
+\section{Low-energy effective limits (provisional)}
+
+\subsection{QED-like limit (energies $\ll 1/\Lambda$, weak fields)}
+Gauge sector + charged solitons yield Maxwell + Dirac structure at leading order.
+Historical note: earlier drafts identified $\alpha$ with a braiding-phase resonance ratio
+and $m_e$ with Hopfion inertial energy $\sim I_{\mathrm{eff}}\Delta\omega$.
+Those equalities are \textbf{not} promoted to claims until Phase~2 mass/mixing gates pass.
+
+\subsection{GR-like limit (long wavelength)}
+Torsion $T\sim\nabla q$ sources curvature via Einstein--Cartan equations. Integrating out
+short-wavelength twist fluctuations is intended to produce an Einstein--Hilbert term with
+a schematic relation of the form
+\begin{equation}
+G_N \;\sim\; \frac{8\pi\lambda\Delta\omega}{\kappa\,W_g^2}\times f(\langle\Theta\rangle),
+\label{eq:GN-schema}
+\end{equation}
+where $f$ is $\mathcal{O}(1)$ after continuum matching. Equation~\eqref{eq:GN-schema} is a
+\textbf{target identity} for Phase~3, not a present precision result.
+
+Electromagnetic interactions remain strong and short-range relative to gravity (integrated
+torsion) if the hierarchy of stiffnesses in~\eqref{eq:sigma}--\eqref{eq:ym} is preserved---
+again, to be stress-tested in Phase~3.
+
+\section{Why this is consistent with existing invariants}
+
+\begin{itemize}
+\item $W_g=350/\pi$ sets the topological scale for charge quantization and enters
+  holonomy / braiding pins and schematic $G_N$.
+\item $\kappa$ fixes holonomy restoration, $\theta_{\mathrm{crit}}$, and mean-field decay rate
+  $\lambda\approx\kappa$ in survival benchmarks.
+\item $\phi_b^\star$ anchors braiding-phase clustering observed in lattice islands.
+\item 3--6--9 vortex structure and Clifford projection survive as discrete symmetries of
+  the Skyrme / lattice sector (implementation: conduit flags).
+\item Observer synchronization---phase-locking to the global pointer---continues to imply
+  strong suppression of some non-local residual signatures for embedded detectors
+  (consistent with closed post-merger echo-ladder nulls under Gate~C/D).
+\end{itemize}
+
+\section{One-loop remarks}
+\label{sec:oneloop}
+
+Background-field expansion on $S^3$:
+\[
+\Gamma[q]=S[q_{\mathrm{cl}}]+\Gamma^{(1)}[q]+\mathcal{O}(\hbar^2).
+\]
+Coleman--Weinberg-type corrections to the vacuum potential are
+\begin{equation}
+V_{\mathrm{eff}}^{(1)}(\Theta)
+=\frac{1}{64\pi^2}\Bigl[
+m^4(\Theta)\log\frac{m^2(\Theta)}{\mu^2}-\tfrac{3}{2}m^4(\Theta)
+\Bigr]
++\frac{1}{2}\mathrm{Tr}\bigl(R_{ab}\log\Delta\bigr)+\cdots
+\label{eq:cw}
+\end{equation}
+With sweep-locked values, shifts are expected small relative to the braiding cluster width;
+the topological winding $W_g$ receives zero one-loop correction from $\pi_3(S^3)=\mathbb{Z}$.
+Quantitative one-loop spectra remain Phase~2/4 work.
+
+\section{Executable gates (invariant\_hunt)}
+
+\begin{center}
+\begin{tabular}{@{}llp{0.45\textwidth}@{}}
+\toprule
+Gate & Command & Role \\
+\midrule
+A-P & \texttt{python scripts/action\_principle\_check.py} &
+  ghosts, conduit reduction, symbolic $W_g$ stability \\
+H-S & \texttt{python scripts/meta\_optimize\_invariants.py --locks-fixed --dry-run} &
+  holonomy/gauge Monte Carlo or Optuna with locks frozen \\
+P freeze & \texttt{python scripts/premerger\_core\_predict.py} &
+  held-out BBH SUCCESS/FALSIFY/NULL (independent) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Phase~1.2 requires Gate~H-S pass (all sampled trials ghost-free, $W_g$ residual zero,
+holonomy restoring). Failure $\Rightarrow$ demote the offending gauge/Hopf deformation.
+
+\section{Conclusion}
+
+The relativistic completion is now equation-aligned with~\eqref{eq:unified-action}:
+Skyrme $\sigma$-model + product YM + Hopf + holonomy/braiding + drive/burst + gravity
+scaffold. Classical limit: conduit PDE. Quantum outline: path integral on $S^3$.
+Low-energy QED/GR limits are \emph{structured targets}, gated by later phases.
+Locks remain frozen; pre-merger freeze remains closed; no universal claim is made.
+
+\begin{thebibliography}{9}
+\bibitem{lag}
+A.~Kinder, \emph{Unified Action Principle for the Gauged Hopf Lattice},
+invariant\_hunt \texttt{papers/Lagrangian\_Derivation.tex}, Jul.~2026.
+\bibitem{rel0}
+A.~Kinder, \emph{Relativistic Completion + Quantization} (PDF notes), TOE, Apr.~2026.
+\bibitem{burst}
+A.~Kinder, \emph{Burst Threshold Derivation in the Gauged Two-Gyro Hopf Lattice},
+\texttt{papers/GW\_Burst\_Threshold.tex}, Jun.~2026.
+\bibitem{ap}
+invariant\_hunt, \emph{Phase 1.1 Action Principle},
+\texttt{docs/MILESTONE\_ACTION\_PRINCIPLE.md}, Jul.~2026.
+\bibitem{freeze}
+invariant\_hunt, \emph{Pre-merger predictive freeze},
+\texttt{docs/MILESTONE\_PREMERGER\_PREDICTIVE\_FREEZE.md}, Jul.~2026.
+\end{thebibliography}
+
+\end{document}

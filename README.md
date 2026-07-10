@@ -124,6 +124,10 @@ python scripts/premerger_core_predict.py --predict-event GW170823
 python scripts/action_principle_check.py
 python scripts/action_principle_check.py --pde-smoke
 python scripts/pde_relaxation.py --gauge-flux 0 --nt 500 --nx 16 --no-plot
+
+# Phase 1.2 — holonomy/gauge meta-sweep (Gate H-S; locks frozen)
+python scripts/meta_optimize_invariants.py --locks-fixed --dry-run --trials 40
+python scripts/meta_optimize_invariants.py --locks-fixed --monte-carlo --samples 64
 ```
 
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  
@@ -146,6 +150,7 @@ invariant_hunt/
 ├── src/
 │   ├── invariants.py         # W_g, κ, braiding locks & residuals
 │   ├── action_principle.py   # Phase 1.1 unified action (SymPy + Gate A-P)
+│   ├── gauged_meta_sweep.py  # Phase 1.2 locks-fixed holonomy/gauge sweeps
 │   ├── positional.py         # 350/π as phase / lattice site
 │   ├── predictions.py        # InvariantSet → PredictionRecord
 │   ├── conduit.py            # RubikConeConduit (seeded from toe)
@@ -153,16 +158,19 @@ invariant_hunt/
 │   └── relaxation_survival.py
 ├── scripts/
 │   ├── action_principle_check.py     # Gate A-P runner
-│   ├── meta_optimize_invariants.py   # positional meta-optimizer
+│   ├── meta_optimize_invariants.py   # free search + --locks-fixed (H-S)
 │   ├── premerger_core_predict.py     # held-out SUCCESS/FALSIFY/NULL
 │   ├── pde_relaxation.py             # twist PDE (+ optional gauge_flux)
 │   └── …
 ├── docs/
 │   ├── MILESTONE_ACTION_PRINCIPLE.md
+│   ├── MILESTONE_GAUGED_META_SWEEP.md
+│   ├── MILESTONE_RELATIVISTIC_COMPLETION.md
 │   ├── MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md
 │   └── falsification_criteria.md
 ├── papers/
 │   ├── Lagrangian_Derivation.tex     # Phase 1.1 arXiv scaffolding
+│   ├── Relativistic_Completion.tex   # Phase 1.3 peer-ready equations
 │   └── GW_Burst_Threshold.tex
 ├── ROADMAP.md
 └── vendor/SEED.md
@@ -191,10 +199,12 @@ falsify the core invariants. Full write-up:
 `premerger_core_predict.py`. See
 [docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md](docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md).
 
-**Phase 1.1 action principle scaffolding complete** (Gate A-P). Unified action
-with SU(3)×SU(2)×U(1) + Hopf + holonomy/braiding; locks frozen; no SM/GR claim.
-Next: Phase 1.2 meta-sweeps, 1.3 relativistic completion paper.
-[docs/MILESTONE_ACTION_PRINCIPLE.md](docs/MILESTONE_ACTION_PRINCIPLE.md).
+**Phase 1 action scaffolding complete** (Gates A-P + H-S). Unified action,
+locks-fixed gauge meta-sweeps, and peer-ready Lagrangian / Relativistic
+Completion `.tex`. Locks frozen; no SM/GR claim.
+[docs/MILESTONE_ACTION_PRINCIPLE.md](docs/MILESTONE_ACTION_PRINCIPLE.md) ·
+[docs/MILESTONE_GAUGED_META_SWEEP.md](docs/MILESTONE_GAUGED_META_SWEEP.md) ·
+[docs/MILESTONE_RELATIVISTIC_COMPLETION.md](docs/MILESTONE_RELATIVISTIC_COMPLETION.md).
 
 Next phase: other observables or analytic invariant→signal derivation
 (see [ROADMAP.md](ROADMAP.md)).

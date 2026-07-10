@@ -60,19 +60,18 @@ Artifact: `outputs/action_principle/action_principle_latest.json`.
 - Not a license to reopen the pre-merger predictive freeze or demoted events.
 - Not a claim that \(g_3,g_2,g_1\) are fitted to data — they are healthy-sign placeholders.
 
-## Phase 1 remaining (roadmap)
+## Phase 1 status
 
-| Step | Deliverable | Gate |
-|------|-------------|------|
-| **1.1** | Unified action + Gate A-P | **this milestone** |
-| **1.2** | Holonomy/braiding sweeps via `meta_optimize_invariants.py` | Invariant stability under gauged perturbations |
-| **1.3** | Relativistic completion paper update + peer-ready equations | Align `Relativistic_Completion` with unified action |
+| Step | Deliverable | Gate | Status |
+|------|-------------|------|--------|
+| **1.1** | Unified action | A-P | **this milestone** |
+| **1.2** | Holonomy/gauge meta-sweeps (locks fixed) | H-S | `MILESTONE_GAUGED_META_SWEEP.md` |
+| **1.3** | Relativistic completion `.tex` | peer-ready eqs | `MILESTONE_RELATIVISTIC_COMPLETION.md` |
 
 ## Next concrete steps
 
-1. **1.2:** Meta-sweep with holonomy/gauge jitter knobs (extend dry-run loss; locks fixed).
-2. **1.3:** Port / update Relativistic Completion as `.tex` under `papers/` with § matching `eq:unified-action`.
-3. Keep `premerger_core_predict.py` for any new held-out BBH (SUCCESS/FALSIFY/NULL).
+1. Phase 2 planning only after 1.1–1.3 remain green under gates.  
+2. Keep `premerger_core_predict.py` for any new held-out BBH (SUCCESS/FALSIFY/NULL).
 
 ## Reopen / demote rules
 

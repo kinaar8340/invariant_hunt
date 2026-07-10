@@ -230,6 +230,30 @@ Pass only if **all** hold:
 
 Milestone: `docs/MILESTONE_ACTION_PRINCIPLE.md`.
 
+## IV. Holonomy / gauge meta-sweep (Gate H-S) — Phase 1.2
+
+Locks \(W_g\), \(\kappa^\star\), \(\phi_b^\star\) are **frozen**. Free knobs:
+\(g_3,g_2,g_1\), \(D\), hopf coupling, gauge flux, optional \(\kappa\) scale probe.
+
+```bash
+python scripts/meta_optimize_invariants.py --locks-fixed --dry-run --trials 40
+python scripts/meta_optimize_invariants.py --locks-fixed --monte-carlo --samples 64
+```
+
+Pass only if over the sampled band:
+
+| Check | Requirement |
+|-------|-------------|
+| \(W_g\) residual | \(\max=0\) (locks never re-fit) |
+| Ghost-free fraction | \(1.0\) |
+| Holonomy restoring | all trials |
+| Braiding at \(\phi_b^\star\) | all trials |
+| Loss | finite and bounded (\(<10^3\)) |
+
+**Fail ⇒ demote** the gauge/Hopf deformation under test.  
+Milestone: `docs/MILESTONE_GAUGED_META_SWEEP.md`.  
+Relativistic equations: `papers/Relativistic_Completion.tex` (Phase 1.3).
+
 ## Suggested next refinements (echo ladder — closed)
 
 1. ~~Amp structure / whitened network / multi-event~~ done (mapping constrained)  

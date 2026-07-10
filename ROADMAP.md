@@ -19,8 +19,11 @@ or falls on quantitative, falsifiable forecasts.
 - [x] **1.1** Unified action scaffold: SU(3)×SU(2)×U(1) + Hopf + holonomy/braiding  
       (`src/action_principle.py`, `scripts/action_principle_check.py`, Gate A-P)  
       → `docs/MILESTONE_ACTION_PRINCIPLE.md`, `papers/Lagrangian_Derivation.tex`
-- [ ] **1.2** Holonomy / braiding meta-sweeps under gauged perturbations (locks fixed)
-- [ ] **1.3** Relativistic completion `.tex` update (peer-ready equations)
+- [x] **1.2** Holonomy / gauge meta-sweeps with locks fixed (Gate H-S)  
+      (`src/gauged_meta_sweep.py`, `meta_optimize_invariants.py --locks-fixed`)  
+      → `docs/MILESTONE_GAUGED_META_SWEEP.md`
+- [x] **1.3** Relativistic completion peer-ready `.tex` aligned with `eq:unified-action`  
+      → `papers/Relativistic_Completion.tex`, `docs/MILESTONE_RELATIVISTIC_COMPLETION.md`
 
 ## 2. Derive invariants → observables
 
@@ -97,21 +100,21 @@ See `docs/CAMPAIGN_ECHO_MAPPING.md`.
 
 See `docs/PREMERGER_PHASE.md`.
 
-### Active: Phase 1 action principle (SM/GR gap roadmap)
+### Phase 1 action principle — complete (scaffolding)
 
-Pre-merger freeze remains closed. Parallel formal work only — **do not** reopen core locks.
+Pre-merger freeze remains closed. Core locks frozen.
 
 1. ~~**1.1** Unified action + Gate A-P~~ → `docs/MILESTONE_ACTION_PRINCIPLE.md`  
-2. **1.2** Meta-sweep holonomy/gauge jitter (invariant stability)  
-3. **1.3** Relativistic completion paper update  
+2. ~~**1.2** Meta-sweep holonomy/gauge jitter (Gate H-S)~~ → `docs/MILESTONE_GAUGED_META_SWEEP.md`  
+3. ~~**1.3** Relativistic completion paper~~ → `docs/MILESTONE_RELATIVISTIC_COMPLETION.md`  
 
 ### Later
 
 - True held-out BBH (new catalog event) via `premerger_core_predict.py`  
 - Matched-filter post-merger at \(f_{\mathrm{phys}}(M)\) with \(10^{-6}\) relative amp  
 - Falsifier watch on sync branch (relative amp \(\gg 10^{-5}\))  
-- Phase 2: SM spectrum / generations / anomalies  
-- Phase 3: emergent gravity + precision tests  
+- **Phase 2:** SM spectrum / generations / anomalies  
+- **Phase 3:** emergent gravity + precision tests  
 
 Core locks \(W_g\), \(\kappa\), braiding attractor remain available for other translations.
 

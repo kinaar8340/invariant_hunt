@@ -7,11 +7,14 @@ Extends the TOE script meta_optimize_invariants.py with:
   - stability across seeds + optional parameter jitter
   - JSON output for the prediction pipeline
   - optional lightweight mode (no conduit) for CI / dry runs
+  - Phase 1.2: --locks-fixed holonomy/gauge sweeps (W_g, κ*, φ_b* frozen)
 
 Usage:
   python scripts/meta_optimize_invariants.py --trials 30
   python scripts/meta_optimize_invariants.py --trials 100 --positional
   python scripts/meta_optimize_invariants.py --dry-run --trials 20
+  python scripts/meta_optimize_invariants.py --locks-fixed --dry-run --trials 40
+  python scripts/meta_optimize_invariants.py --locks-fixed --monte-carlo --samples 64
 """
 
 from __future__ import annotations
@@ -29,6 +32,10 @@ project_root = Path(__file__).resolve().parent.parent
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
+from src.gauged_meta_sweep import (  # noqa: E402
+    run_locks_fixed_monte_carlo,
+    run_locks_fixed_optuna,
+)
 from src.invariants import (  # noqa: E402
     LOCKED_WG,
     WG_BASE,
@@ -106,7 +113,9 @@ def _evaluate_with_conduit(
             hopf = positional_hopf_residual(geo_w, wg_base)
             phase = PositionalPhase(wg=geo_w if geo_w > 0 else geometric_winding_from_base(wg_base))
             # Prefer low alignment residual + timing structure consistency
-            timing_term = abs(phase_to_timing_offset(phase, base_period=1.0) - (1.0 / max(geo_w, 1e-6)) % 1.0)
+            timing_term = abs(
+                phase_to_timing_offset(phase, base_period=1.0) - (1.0 / max(geo_w, 1e-6)) % 1.0
+            )
             pos_term = 0.5 * phase.alignment_to_canonical() + 0.2 * timing_term
         else:
             hopf = hopf_penalty(geo_w, wg_base)
@@ -187,25 +196,17 @@ def evaluate_trial(
         return out
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Meta-optimize Hopf-lattice invariants")
-    parser.add_argument("--trials", type=int, default=50)
-    parser.add_argument("--positional", action="store_true", default=True,
-                        help="Use positional/phase framing of 350/π (default on)")
-    parser.add_argument("--no-positional", action="store_true",
-                        help="Disable positional terms (legacy temporal framing)")
-    parser.add_argument("--dry-run", action="store_true",
-                        help="Analytic surrogate (no torch conduit)")
-    parser.add_argument("--seeds", type=int, default=3)
-    parser.add_argument("--out", type=str, default="",
-                        help="JSON output path (default outputs/meta_optimize/...)")
-    parser.add_argument("--use-ray", action="store_true")
-    args = parser.parse_args()
+def _default_out_path(prefix: str = "meta_optimize") -> Path:
+    return (
+        project_root
+        / "outputs"
+        / "meta_optimize"
+        / f"{prefix}_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.json"
+    )
 
-    positional = not args.no_positional
-    print("🚀 Meta-Optimizer — Emergent invariants (Wg, κ, braiding_phase)")
-    print(f"   positional={positional}  dry_run={args.dry_run}  trials={args.trials}")
 
+def run_legacy_optuna(args: argparse.Namespace, positional: bool) -> dict:
+    """Original free search over wg_base, κ, braiding_target."""
     try:
         import optuna
     except ImportError as e:
@@ -255,16 +256,10 @@ def main() -> None:
         print("Good convergence — increase trials or widen ranges if needed.")
     print("=" * 60)
 
-    out_path = Path(args.out) if args.out else (
-        project_root
-        / "outputs"
-        / "meta_optimize"
-        / f"meta_optimize_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.json"
-    )
-    out_path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "schema": "invariant_hunt.meta_optimize.v1",
         "created_utc": datetime.now(timezone.utc).isoformat(),
+        "mode": "free_search",
         "positional": positional,
         "dry_run": args.dry_run,
         "trials": args.trials,
@@ -276,13 +271,146 @@ def main() -> None:
         "user_attrs": {k: v for k, v in best.user_attrs.items() if k != "invariant"}
         | {"invariant": best.user_attrs.get("invariant", {})},
     }
-    out_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-    print(f"Wrote {out_path}")
 
     if args.use_ray:
         import ray
 
         ray.shutdown()
+
+    return payload
+
+
+def run_locks_fixed(args: argparse.Namespace, positional: bool) -> dict:
+    """Phase 1.2: holonomy/gauge knobs only; W_g, κ*, φ_b* frozen."""
+    print("\n" + "=" * 60)
+    print("PHASE 1.2 — LOCKS-FIXED HOLONOMY / GAUGE SWEEP")
+    print(f"  locks: W_g={LOCKED_WG:.6f} (base {WG_BASE}), κ*≈0.85, φ_b*≈0.8145")
+    print(f"  free: g3,g2,g1, D, hopf_coupling, gauge_flux, kappa_scale probe")
+    print("=" * 60)
+
+    common = dict(
+        seed=args.seed,
+        gauge_lo=args.gauge_lo,
+        gauge_hi=args.gauge_hi,
+        D_lo=args.D_lo,
+        D_hi=args.D_hi,
+        hopf_lo=args.hopf_lo,
+        hopf_hi=args.hopf_hi,
+        flux_amp=args.flux_amp,
+        kappa_scale_amp=args.kappa_scale_amp,
+        positional=positional,
+        pde_probe=args.pde_probe,
+    )
+
+    if args.monte_carlo:
+        payload = run_locks_fixed_monte_carlo(n_samples=args.samples, **common)
+    else:
+        payload = run_locks_fixed_optuna(n_trials=args.trials, **common)
+
+    payload["created_utc"] = datetime.now(timezone.utc).isoformat()
+    payload["dry_run"] = True  # locks-fixed path is analytic / light PDE by design
+    payload["phase"] = "1.2"
+
+    gate = payload.get("gate_H_S", {})
+    print(f"\nGate H-S: {'PASS' if gate.get('pass') else 'FAIL'}")
+    for k, v in gate.get("criteria", {}).items():
+        print(f"  {k}: {v}")
+    print(f"  ghost_free_fraction: {payload.get('ghost_free_fraction')}")
+    print(f"  wg_residual_max: {payload.get('wg_residual_max')}")
+    if "best_loss" in payload:
+        print(f"  best_loss: {payload['best_loss']}")
+        print(f"  best_params: {payload.get('best_params')}")
+    elif "best" in payload:
+        print(f"  best_loss: {payload['best'].get('loss')}")
+        print(f"  best_knobs: {payload['best'].get('knobs')}")
+    print("=" * 60)
+    return payload
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Meta-optimize Hopf-lattice invariants")
+    parser.add_argument("--trials", type=int, default=50)
+    parser.add_argument(
+        "--positional",
+        action="store_true",
+        default=True,
+        help="Use positional/phase framing of 350/π (default on)",
+    )
+    parser.add_argument(
+        "--no-positional",
+        action="store_true",
+        help="Disable positional terms (legacy temporal framing)",
+    )
+    parser.add_argument("--dry-run", action="store_true", help="Analytic surrogate (no torch conduit)")
+    parser.add_argument("--seeds", type=int, default=3)
+    parser.add_argument("--seed", type=int, default=42, help="RNG / Optuna seed (locks-fixed)")
+    parser.add_argument(
+        "--out",
+        type=str,
+        default="",
+        help="JSON output path (default outputs/meta_optimize/...)",
+    )
+    parser.add_argument("--use-ray", action="store_true")
+
+    # Phase 1.2
+    parser.add_argument(
+        "--locks-fixed",
+        action="store_true",
+        help="Phase 1.2: freeze W_g, κ*, φ_b*; sweep holonomy/gauge knobs only",
+    )
+    parser.add_argument(
+        "--monte-carlo",
+        action="store_true",
+        help="With --locks-fixed: uniform MC sample instead of Optuna",
+    )
+    parser.add_argument("--samples", type=int, default=64, help="MC samples for --monte-carlo")
+    parser.add_argument("--gauge-lo", type=float, default=0.3)
+    parser.add_argument("--gauge-hi", type=float, default=3.0)
+    parser.add_argument("--D-lo", type=float, default=0.02)
+    parser.add_argument("--D-hi", type=float, default=0.12)
+    parser.add_argument("--hopf-lo", type=float, default=0.2)
+    parser.add_argument("--hopf-hi", type=float, default=2.0)
+    parser.add_argument("--flux-amp", type=float, default=0.05, help="|gauge_flux| half-width")
+    parser.add_argument(
+        "--kappa-scale-amp",
+        type=float,
+        default=0.15,
+        help="Probe jitter amplitude for κ_eff = κ* · scale (not a lock re-fit)",
+    )
+    parser.add_argument(
+        "--pde-probe",
+        action="store_true",
+        help="Include short 3-torus PDE stability probe in locks-fixed loss",
+    )
+    args = parser.parse_args()
+
+    positional = not args.no_positional
+    print("🚀 Meta-Optimizer — Emergent invariants (Wg, κ, braiding_phase)")
+    print(
+        f"   positional={positional}  dry_run={args.dry_run}  "
+        f"trials={args.trials}  locks_fixed={args.locks_fixed}"
+    )
+
+    if args.locks_fixed:
+        payload = run_locks_fixed(args, positional)
+        prefix = "meta_optimize_locks_fixed"
+    else:
+        payload = run_legacy_optuna(args, positional)
+        prefix = "meta_optimize"
+
+    out_path = Path(args.out) if args.out else _default_out_path(prefix)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
+    # Latest pointer for Phase 1.2
+    if args.locks_fixed:
+        latest = out_path.parent / "meta_optimize_locks_fixed_latest.json"
+        latest.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
+        print(f"Wrote {latest}")
+    print(f"Wrote {out_path}")
+
+    # Exit non-zero if Gate H-S fails
+    if args.locks_fixed and not payload.get("gate_H_S", {}).get("pass", False):
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":
