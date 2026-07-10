@@ -76,7 +76,24 @@ Full scorecard: `docs/MILESTONE_HELD_OUT_TRUE_BBH.md`.
 Only one robust anomaly (GW170809). GW151012 PE-draw instability → systematics narrative.  
 See `docs/MILESTONE_FALSIFY_SYSTEMATICS.md`.
 
+### Bulk PE-power mapping — stopped
+
+Mass (v2), inverse SNR (v3a), and distance (v3b) all **FALSIFY** shared-\(\alpha_0\)
+unification. Family closed; stretch stopped.
+
+| | |
+|--|--|
+| Close-out | `docs/MILESTONE_BULK_PE_MAPPING_CLOSED.md` |
+| Archive | `docs/ARCHIVE_PREMERGER_BULK_PE_MAPPING.md` |
+| Mode | Score-only; locks frozen; band remains demoted |
+| Exception | New physical variable only via fresh `docs/PREREG_*.md` |
+
+Do **not** re-open mild bulk PE powers or unregistered exponents (e.g. \(d_L^3\))
+to force ratio ~12.
+
 ## Artifacts
 
 - `outputs/predictions/premerger_core_prediction.json`  
 - Freeze: `docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md`  
+- Mapping closed: `outputs/mapping_v2/`, `outputs/mapping_v3/`  
+

@@ -152,14 +152,24 @@ Core locks frozen; pre-merger freeze closed.
 **0 SUCCESS / 2 FALSIFY / 1 NULL → universal α-band forward claim demoted.**  
 Band and core locks **not** re-fit. See `docs/MILESTONE_HELD_OUT_TRUE_BBH.md`.  
 
-Active: optional PE systematics on FALSIFY events; new pre-registered mapping only under fresh freeze cycle.  
-
 Bayes factor complement (no band re-fit): `scripts/premerger_bayes_factor.py`  
 → `docs/PREMERGER_BAYES_FACTOR.md`  
 
-**Highest priority:** Gate S-1 PE systematics on FALSIFY events  
-`scripts/premerger_falsify_systematics.py --event GW170809`  
-→ `docs/MILESTONE_FALSIFY_SYSTEMATICS.md`  
+Gate S-1 complete (canonical n_draws≥12):  
+- GW170809 → **ROBUST_ANOMALY**  
+- GW151012 → **SYSTEMATICS_RISK**  
+
+Bulk PE-power mapping (executed and **stopped**):  
+- v2 mass \(p=1\) → **FALSIFY** (`docs/MILESTONE_PREMERGER_MAPPING_V2.md`)  
+- v3 inv-SNR \(q=1\) + distance \(s=1\) → **FALSIFY**; family closed  
+  (`docs/MILESTONE_PREMERGER_MAPPING_V3.md`)  
+- Close-out: `docs/MILESTONE_BULK_PE_MAPPING_CLOSED.md`  
+
+**Active (pre-merger):** score-only under frozen locks; residual anomaly on GW170809
+stands **without** a shared \(\alpha_0\) map. **No further bulk PE-power mapping**
+unless a *new physical variable* is separately pre-registered (`docs/PREREG_*.md`).
+
+**Archive:** `docs/ARCHIVE_PREMERGER_BULK_PE_MAPPING.md` — chapter closed; repro index frozen.
 
 ### Later
 

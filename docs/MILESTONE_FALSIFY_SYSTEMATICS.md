@@ -99,6 +99,9 @@ Interpretation:
 
 1. ~~S-1 on GW170809~~ → ROBUST_ANOMALY (stable)  
 2. ~~S-1 on GW151012~~ → **SYSTEMATICS_RISK** at n_draws=12 (canonical)  
-3. Optional: more PE draws / systematics on GW170809 only before any new mapping design  
+3. ~~Mapping v2 / v3 bulk PE-power~~ → **FALSIFY**; family **closed**  
+   → `docs/MILESTONE_BULK_PE_MAPPING_CLOSED.md`  
 4. **Do not** open a dual-sign “robust pair” mapping narrative  
-5. Archival / narrative close-out  
+5. **Stopped:** further bulk PE-power stretch without new physical-variable PREREG  
+6. Archival / residual anomaly stands without shared map  
+
