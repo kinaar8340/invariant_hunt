@@ -43,6 +43,9 @@ from src.invariants import (  # noqa: E402
     geometric_winding_from_base,
     hopf_penalty,
 )
+from src.sm_mapping import sm_mode_loss_knobs  # noqa: E402
+from src.sm_yukawa import gate_sm2_mass_report  # noqa: E402
+
 from src.positional import (  # noqa: E402
     PositionalPhase,
     phase_to_frequency,
@@ -311,6 +314,20 @@ def run_locks_fixed(args: argparse.Namespace, positional: bool) -> dict:
     payload["dry_run"] = True  # locks-fixed path is analytic / light PDE by design
     payload["phase"] = "1.2"
 
+    if getattr(args, "sm_mode", False):
+        sm = sm_mode_loss_knobs()
+        payload["sm_mode"] = sm
+        payload["phase"] = "1.2+2.sm"
+        # Combine: H-S must pass and SM structure loss must be zero
+        if payload.get("gate_H_S", {}).get("pass") and sm["loss"] == 0.0:
+            payload["gate_H_S_SM"] = {"pass": True, "sm_loss": sm["loss"]}
+        else:
+            payload["gate_H_S_SM"] = {
+                "pass": False,
+                "sm_loss": sm["loss"],
+                "h_s": payload.get("gate_H_S", {}).get("pass"),
+            }
+
     gate = payload.get("gate_H_S", {})
     print(f"\nGate H-S: {'PASS' if gate.get('pass') else 'FAIL'}")
     for k, v in gate.get("criteria", {}).items():
@@ -323,6 +340,105 @@ def run_locks_fixed(args: argparse.Namespace, positional: bool) -> dict:
     elif "best" in payload:
         print(f"  best_loss: {payload['best'].get('loss')}")
         print(f"  best_knobs: {payload['best'].get('knobs')}")
+    if getattr(args, "sm_mode", False):
+        sm = payload.get("sm_mode", {})
+        print(
+            f"\nSM-mode (locks fixed): loss={sm.get('loss')}  "
+            f"SM-1={sm.get('sm1_pass')} SM-2={sm.get('sm2_pass')} SM-3={sm.get('sm3_pass')}"
+        )
+    print("=" * 60)
+    return payload
+
+
+def run_sm_mode(args: argparse.Namespace) -> dict:
+    """Phase 2: SM structure and optional Yukawa mass/mixing (locks fixed)."""
+    print("\n" + "=" * 60)
+    if getattr(args, "yukawa", False):
+        print("PHASE 2.2 — SM-MODE + YUKAWA MASS/MIXING (LOCKS FIXED)")
+    else:
+        print("PHASE 2 — SM-MODE STRUCTURE SWEEP (LOCKS FIXED)")
+    print(f"  locks: W_g={LOCKED_WG:.6f} (base {WG_BASE}), κ*≈0.85, φ_b*≈0.8145")
+    print("=" * 60)
+
+    if getattr(args, "yukawa", False):
+        print(f"  Yukawa Optuna/sweep trials={args.trials} seed={args.seed}")
+        sm2 = gate_sm2_mass_report(
+            n_trials=args.trials, seed=args.seed, optimize=True
+        )
+        payload = {
+            "schema": "invariant_hunt.meta_optimize.sm_yukawa.v1",
+            "created_utc": datetime.now(timezone.utc).isoformat(),
+            "mode": "sm_mode_yukawa",
+            "phase": "2.2",
+            "trials": args.trials,
+            "dry_run": True,
+            "locks": {
+                "W_g": LOCKED_WG,
+                "wg_base": WG_BASE,
+                "kappa": 0.85,
+                "phi_b": 0.8145,
+            },
+            "gate_SM2": {
+                "pass": sm2["pass"],
+                "grade": sm2["grade"],
+                "criteria": sm2["criteria"],
+            },
+            "chi2_mass_per_dof": sm2["chi2_mass"]["chi2_per_dof"],
+            "chi2_ckm_per_dof": sm2["chi2_ckm"]["chi2_per_dof"],
+            "chi2_total": sm2["chi2_total"],
+            "best_params": sm2["best_params"],
+            "spectrum": sm2["spectrum"],
+            "sm2_report": sm2,
+        }
+        print(f"\nGate SM-2: {'PASS' if sm2['pass'] else 'FAIL'}  grade={sm2['grade']}")
+        for k, v in sm2["criteria"].items():
+            print(f"  {k}: {v}")
+        print(f"  χ²_mass/dof={sm2['chi2_mass']['chi2_per_dof']:.4f}")
+        print(f"  χ²_CKM/dof={sm2['chi2_ckm']['chi2_per_dof']:.4f}")
+        print("=" * 60)
+        return payload
+
+    rows = []
+    for i in range(max(1, args.trials)):
+        # Structure is deterministic; trials document stability of pass under re-eval
+        sm = sm_mode_loss_knobs()
+        rows.append(sm)
+
+    losses = [r["loss"] for r in rows]
+    payload = {
+        "schema": "invariant_hunt.meta_optimize.sm_mode.v1",
+        "created_utc": datetime.now(timezone.utc).isoformat(),
+        "mode": "sm_mode",
+        "phase": "2.1",
+        "trials": args.trials,
+        "dry_run": True,
+        "locks": {
+            "W_g": LOCKED_WG,
+            "wg_base": WG_BASE,
+            "kappa": 0.85,
+            "phi_b": 0.8145,
+        },
+        "loss_mean": float(sum(losses) / len(losses)),
+        "loss_max": float(max(losses)),
+        "loss_min": float(min(losses)),
+        "sm1_pass": all(r["sm1_pass"] for r in rows),
+        "sm2_pass": all(r["sm2_pass"] for r in rows),
+        "sm3_pass": all(r["sm3_pass"] for r in rows),
+        "best": rows[0],
+        "gate_SM_structure": {
+            "pass": all(r["loss"] == 0.0 for r in rows),
+            "criteria": {
+                "sm1": all(r["sm1_pass"] for r in rows),
+                "sm2_structure": all(r["sm2_pass"] for r in rows),
+                "sm3_anomaly": all(r["sm3_pass"] for r in rows),
+            },
+        },
+    }
+    g = payload["gate_SM_structure"]
+    print(f"\nGate SM structure: {'PASS' if g['pass'] else 'FAIL'}")
+    for k, v in g["criteria"].items():
+        print(f"  {k}: {v}")
+    print(f"  loss_mean: {payload['loss_mean']}")
     print("=" * 60)
     return payload
 
@@ -382,16 +498,34 @@ def main() -> None:
         action="store_true",
         help="Include short 3-torus PDE stability probe in locks-fixed loss",
     )
+    parser.add_argument(
+        "--sm-mode",
+        action="store_true",
+        help="Phase 2: SM structure loss (locks fixed); alone or with --locks-fixed",
+    )
+    parser.add_argument(
+        "--yukawa",
+        action="store_true",
+        help="Phase 2.2: with --sm-mode, optimize topological Yukawa vs PDG χ²",
+    )
     args = parser.parse_args()
 
     positional = not args.no_positional
     print("🚀 Meta-Optimizer — Emergent invariants (Wg, κ, braiding_phase)")
     print(
         f"   positional={positional}  dry_run={args.dry_run}  "
-        f"trials={args.trials}  locks_fixed={args.locks_fixed}"
+        f"trials={args.trials}  locks_fixed={args.locks_fixed}  "
+        f"sm_mode={args.sm_mode}  yukawa={args.yukawa}"
     )
 
-    if args.locks_fixed:
+    if args.yukawa and not args.sm_mode:
+        # Convenience: --yukawa alone implies sm-mode
+        args.sm_mode = True
+
+    if args.sm_mode and not args.locks_fixed:
+        payload = run_sm_mode(args)
+        prefix = "meta_optimize_sm_yukawa" if args.yukawa else "meta_optimize_sm_mode"
+    elif args.locks_fixed:
         payload = run_locks_fixed(args, positional)
         prefix = "meta_optimize_locks_fixed"
     else:
@@ -406,11 +540,29 @@ def main() -> None:
         latest = out_path.parent / "meta_optimize_locks_fixed_latest.json"
         latest.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
         print(f"Wrote {latest}")
+    if args.sm_mode and not args.locks_fixed:
+        latest_name = (
+            "meta_optimize_sm_yukawa_latest.json"
+            if args.yukawa
+            else "meta_optimize_sm_mode_latest.json"
+        )
+        latest = out_path.parent / latest_name
+        latest.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
+        print(f"Wrote {latest}")
     print(f"Wrote {out_path}")
 
     # Exit non-zero if Gate H-S fails
     if args.locks_fixed and not payload.get("gate_H_S", {}).get("pass", False):
         raise SystemExit(1)
+    if args.sm_mode and args.yukawa and not args.locks_fixed:
+        if not payload.get("gate_SM2", {}).get("pass", False):
+            raise SystemExit(1)
+    elif args.sm_mode and not args.locks_fixed:
+        if not payload.get("gate_SM_structure", {}).get("pass", False):
+            raise SystemExit(1)
+    if args.sm_mode and args.locks_fixed:
+        if not payload.get("gate_H_S_SM", {}).get("pass", False):
+            raise SystemExit(1)
 
 
 if __name__ == "__main__":

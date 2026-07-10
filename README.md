@@ -128,6 +128,20 @@ python scripts/pde_relaxation.py --gauge-flux 0 --nt 500 --nx 16 --no-plot
 # Phase 1.2 — holonomy/gauge meta-sweep (Gate H-S; locks frozen)
 python scripts/meta_optimize_invariants.py --locks-fixed --dry-run --trials 40
 python scripts/meta_optimize_invariants.py --locks-fixed --monte-carlo --samples 64
+
+# Phase 2.1 — SM lattice mode mapping (Gate SM-1; locks frozen)
+python scripts/sm_mapping.py --mode bosons_fermions --plot
+python scripts/sm_gate_check.py --require SM-1
+python scripts/meta_optimize_invariants.py --sm-mode --trials 8
+
+# Phase 2.2 — topological Yukawa / mass hierarchy (Gate SM-2 mass)
+python scripts/sm_yukawa_ansatz.py --sweep --trials 64 --plot
+python scripts/meta_optimize_invariants.py --sm-mode --yukawa --trials 64
+python scripts/sm_gate_check.py --gates SM-2 --yukawa --require SM-2
+
+# Phase 2.3 — one-loop SM gauge RG (Gate SM-3 complete)
+python scripts/sm_rg_flow.py --plot
+python scripts/sm_gate_check.py --gates SM-3 --require SM-3
 ```
 
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  
@@ -151,6 +165,9 @@ invariant_hunt/
 │   ├── invariants.py         # W_g, κ, braiding locks & residuals
 │   ├── action_principle.py   # Phase 1.1 unified action (SymPy + Gate A-P)
 │   ├── gauged_meta_sweep.py  # Phase 1.2 locks-fixed holonomy/gauge sweeps
+│   ├── sm_mapping.py         # Phase 2.1 SM representations + Gate SM-*
+│   ├── sm_yukawa.py          # Phase 2.2 topological Yukawa + χ²
+│   ├── sm_rg.py              # Phase 2.3 one-loop SM gauge RG
 │   ├── positional.py         # 350/π as phase / lattice site
 │   ├── predictions.py        # InvariantSet → PredictionRecord
 │   ├── conduit.py            # RubikConeConduit (seeded from toe)
@@ -158,19 +175,21 @@ invariant_hunt/
 │   └── relaxation_survival.py
 ├── scripts/
 │   ├── action_principle_check.py     # Gate A-P runner
-│   ├── meta_optimize_invariants.py   # free search + --locks-fixed (H-S)
+│   ├── sm_mapping.py / sm_gate_check.py / sm_yukawa_ansatz.py / sm_rg_flow.py
+│   ├── meta_optimize_invariants.py   # --locks-fixed / --sm-mode / --yukawa
 │   ├── premerger_core_predict.py     # held-out SUCCESS/FALSIFY/NULL
 │   ├── pde_relaxation.py             # twist PDE (+ optional gauge_flux)
 │   └── …
 ├── docs/
-│   ├── MILESTONE_ACTION_PRINCIPLE.md
-│   ├── MILESTONE_GAUGED_META_SWEEP.md
-│   ├── MILESTONE_RELATIVISTIC_COMPLETION.md
+│   ├── MILESTONE_SM_PARTICLE_MAPPING.md
+│   ├── MILESTONE_SM_YUKAWA.md
+│   ├── MILESTONE_SM_RG.md
 │   ├── MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md
 │   └── falsification_criteria.md
 ├── papers/
-│   ├── Lagrangian_Derivation.tex     # Phase 1.1 arXiv scaffolding
-│   ├── Relativistic_Completion.tex   # Phase 1.3 peer-ready equations
+│   ├── Lagrangian_Derivation.tex
+│   ├── Relativistic_Completion.tex
+│   ├── SM_Derivation.tex
 │   └── GW_Burst_Threshold.tex
 ├── ROADMAP.md
 └── vendor/SEED.md
@@ -199,12 +218,12 @@ falsify the core invariants. Full write-up:
 `premerger_core_predict.py`. See
 [docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md](docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md).
 
-**Phase 1 action scaffolding complete** (Gates A-P + H-S). Unified action,
-locks-fixed gauge meta-sweeps, and peer-ready Lagrangian / Relativistic
-Completion `.tex`. Locks frozen; no SM/GR claim.
-[docs/MILESTONE_ACTION_PRINCIPLE.md](docs/MILESTONE_ACTION_PRINCIPLE.md) ·
-[docs/MILESTONE_GAUGED_META_SWEEP.md](docs/MILESTONE_GAUGED_META_SWEEP.md) ·
-[docs/MILESTONE_RELATIVISTIC_COMPLETION.md](docs/MILESTONE_RELATIVISTIC_COMPLETION.md).
+**Phase 1 action scaffolding complete** (Gates A-P + H-S).  
+**Phase 2 SM content complete** (Gates SM-1, SM-2 mass, SM-3 anomaly+RG).
+Locks frozen; no unification/gravity claim.
+[docs/MILESTONE_SM_PARTICLE_MAPPING.md](docs/MILESTONE_SM_PARTICLE_MAPPING.md) ·
+[docs/MILESTONE_SM_YUKAWA.md](docs/MILESTONE_SM_YUKAWA.md) ·
+[docs/MILESTONE_SM_RG.md](docs/MILESTONE_SM_RG.md).
 
 Next phase: other observables or analytic invariant→signal derivation
 (see [ROADMAP.md](ROADMAP.md)).

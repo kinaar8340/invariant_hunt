@@ -29,8 +29,16 @@ or falls on quantitative, falsifiable forecasts.
 
 - [x] Prediction record schema + GW delay/spectrum stubs (`src/predictions.py`)
 - [x] Lagrangian free-energy + unified action symbolic densities (Phase 1.1)
+- [x] **Phase 2.1** SM representations + lattice mode map (Gate SM-1)  
+      (`src/sm_mapping.py`, `scripts/sm_gate_check.py`)  
+      → `docs/MILESTONE_SM_PARTICLE_MAPPING.md`, `papers/SM_Derivation.tex`
+- [x] **Phase 2.2** Topological Yukawa + PDG χ² (Gate SM-2 mass upgrade)  
+      (`src/sm_yukawa.py`, `scripts/sm_yukawa_ansatz.py`)  
+      → `docs/MILESTONE_SM_YUKAWA.md`
+- [x] **Phase 2.3** One-loop SM gauge RG + Gate SM-3 complete  
+      (`src/sm_rg.py`, `scripts/sm_rg_flow.py`)  
+      → `docs/MILESTONE_SM_RG.md`
 - [ ] Expand GW echo paper formulas into code with full coefficients
-- [ ] Particle / spectral maps (Phase 2 — where lattice stable configs meet data)
 
 ## 3. Generate specific, falsifiable predictions
 
@@ -108,12 +116,26 @@ Pre-merger freeze remains closed. Core locks frozen.
 2. ~~**1.2** Meta-sweep holonomy/gauge jitter (Gate H-S)~~ → `docs/MILESTONE_GAUGED_META_SWEEP.md`  
 3. ~~**1.3** Relativistic completion paper~~ → `docs/MILESTONE_RELATIVISTIC_COMPLETION.md`  
 
+### Active: Phase 2 SM particle content
+
+Core locks frozen; pre-merger freeze closed.
+
+1. ~~**2.1** Lattice → boson/fermion representations (Gate SM-1)~~  
+   → `docs/MILESTONE_SM_PARTICLE_MAPPING.md`  
+2. ~~**2.2** Topological Yukawa + PDG χ² (Gate SM-2 mass)~~  
+   → `docs/MILESTONE_SM_YUKAWA.md`  
+3. ~~**2.3** Full anomaly + RG flow simulator (Gate SM-3)~~  
+   → `docs/MILESTONE_SM_RG.md`  
+
+### Phase 2 SM content — complete (scaffolding + gates)
+
+SM-1 / SM-2 mass / SM-3 all executable with locks frozen. No gravity claim.
+
 ### Later
 
 - True held-out BBH (new catalog event) via `premerger_core_predict.py`  
 - Matched-filter post-merger at \(f_{\mathrm{phys}}(M)\) with \(10^{-6}\) relative amp  
 - Falsifier watch on sync branch (relative amp \(\gg 10^{-5}\))  
-- **Phase 2:** SM spectrum / generations / anomalies  
 - **Phase 3:** emergent gravity + precision tests  
 
 Core locks \(W_g\), \(\kappa\), braiding attractor remain available for other translations.

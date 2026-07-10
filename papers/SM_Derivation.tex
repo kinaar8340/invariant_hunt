@@ -1,0 +1,202 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,booktabs}
+\usepackage{hyperref}
+
+\title{SM Particle Content from Gauged Hopf Lattice Modes\\
+\large Phase~2.1 --- Representations and Quantum Numbers\\
+\normalsize (incremental; masses deferred)}
+\author{Aaron Kinder \\ Independent Researcher}
+\date{July 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We record a gated map from excitations of the gauged Hopf lattice
+(product Yang--Mills + Hopfions + holonomy/braiding) onto the Standard Model
+field content under $G=\mathrm{SU}(3)_c\times\mathrm{SU}(2)_L\times\mathrm{U}(1)_Y$.
+Phase~2.1 (Gate~SM-1) requires correct representations and electric charges
+$Q=T_3+Y/2$. Three generation \emph{copies} are listed via braiding-layer index;
+Yukawa hierarchies and RG flow are deferred to Gates~SM-2/SM-3.
+Core locks $W_g=350/\pi$, $\kappa\approx 0.85$, $\phi_b^\star\approx 0.8145$ remain
+frozen. No gravity claim is made.
+\end{abstract}
+
+\section{Discipline and locks}
+
+Frozen inputs:
+\[
+W_g=\frac{350}{\pi},\qquad \kappa\approx 0.85,\qquad \phi_b^\star\approx 0.8145.
+\]
+Unified action~\cite{lag,rel}:
+\begin{equation}
+S=S_\sigma+S_{\mathrm{Skyrme}}+S_{\mathrm{YM}}
++S_{\mathrm{Hopf}}+S_{\mathrm{hol}}+S_{\mathrm{drive}}
++S_{\mathrm{burst}}+S_{\mathrm{grav}}.
+\label{eq:unified-action}
+\end{equation}
+Pre-merger GW freeze is independent and untouched.
+
+\section{Hypercharge convention}
+
+\begin{equation}
+Q = T_3 + \frac{Y}{2}.
+\label{eq:Q}
+\end{equation}
+Assignments (PDG weak hypercharge):
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Multiplet & $Y$ \\
+\midrule
+$Q_L$ & $1/3$ \\
+$u_R$ & $4/3$ \\
+$d_R$ & $-2/3$ \\
+$L_L$ & $-1$ \\
+$e_R$ & $-2$ \\
+$H$ & $1$ \\
+$g,W,B$ & $0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Gauge bosons (adjoint / $U(1)$ modes)}
+
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Field & $({\rm SU}(3),{\rm SU}(2),Y)$ & Lattice mode & Notes \\
+\midrule
+$g$ & $(8,1,0)$ & YM adjoint SU(3) flux flywheel & 8 gluons \\
+$W$ & $(1,3,0)$ & YM adjoint SU(2) holonomy wave & $W^\pm,W^3$ pre-EWSB \\
+$B$ & $(1,1,0)$ & $U(1)$ global pointer seed & mixes $\to\gamma,Z$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Higgs}
+
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Field & $({\rm SU}(3),{\rm SU}(2),Y)$ & Lattice mode & Charges \\
+\midrule
+$H$ & $(1,2,1)$ & Holonomy modulus / pointer VEV & $H^+$ ($Q=1$), $H^0$ ($Q=0$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Fermions (one generation)}
+
+Hopfion solitons inherit spin $1/2$ from the double cover $S^3\to\mathrm{SO}(3)$.
+
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Field & $({\rm SU}(3),{\rm SU}(2),Y)$ & Chirality & Lattice mode stem \\
+\midrule
+$Q_L$ & $(3,2,1/3)$ & $L$ & \texttt{hopfion\_color\_weak\_doublet} \\
+$u_R$ & $(3,1,4/3)$ & $R$ & \texttt{hopfion\_up\_singlet} \\
+$d_R$ & $(3,1,-2/3)$ & $R$ & \texttt{hopfion\_down\_singlet} \\
+$L_L$ & $(1,2,-1)$ & $L$ & \texttt{hopfion\_lepton\_doublet} \\
+$e_R$ & $(1,1,-2)$ & $R$ & \texttt{hopfion\_charged\_lepton\_singlet} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Three generations (structure only)}
+
+Generation index $n_g\in\{1,2,3\}$ labels braiding layers / Hopf winding families
+pinned by $\phi_b^\star$. Gate~SM-1 requires three \emph{identical} representation
+copies.
+
+\section{Phase~2.2: Topological Yukawa ansatz}
+
+Braiding-layer mass hierarchy ($i=0,1,2$ light$\to$heavy, $s\in\{u,d,e\}$):
+\begin{equation}
+m_i^{(s)}
+=\frac{v}{\sqrt{2}}\, y_s\,
+\exp\!\bigl(-\beta_s (2-i)^{p_s}\bigr)\,
+\bigl(1+\varepsilon_s\cos(\phi_b^\star+\psi_s i)\bigr),
+\label{eq:yukawa-mass}
+\end{equation}
+with $v\simeq 246.22\,\mathrm{GeV}$. Free sector params $\{y_s,\beta_s,p_s,\varepsilon_s,\psi_s\}$;
+locks $W_g,\kappa,\phi_b^\star$ frozen (mild dressing only).
+
+CKM via Wolfenstein $(\lambda,A,\bar\rho,\bar\eta)$ with mild $\phi_b^\star$ phase dressing.
+A full $Y_{ij}$ braiding matrix is retained for documentation.
+
+Gate~SM-2 mass: Optuna vs PDG $\ln m$ and $|V_{ij}|$ $\chi^2$.
+Loose thresholds: $\chi^2_{\ln m}/\mathrm{dof}\le 9$,
+$\chi^2_{|V|}/\mathrm{dof}\le 100$. FAIL demotes the \emph{ansatz}, not the locks.
+Executable: \texttt{scripts/sm\_yukawa\_ansatz.py --sweep}.
+
+\section{Anomaly cancellation (Gate~SM-3)}
+
+Per generation, with right-handed fields rewritten as left-handed conjugates, the
+standard SM anomaly coefficients vanish:
+\[
+[{\rm SU}(3)]^2{\rm U}(1),\quad
+[{\rm SU}(2)]^2{\rm U}(1),\quad
+[{\rm U}(1)]^3,\quad
+{\rm grav}\mbox{-}{\rm U}(1)
+\;\;\to\;\; 0.
+\]
+Executable: \texttt{src/sm\_mapping.py::check\_anomaly\_cancellation}.
+
+\section{Phase~2.3: One-loop gauge RG}
+
+GUT-normalized couplings $\alpha_i=g_i^2/(4\pi)$ with one-loop running
+\begin{equation}
+\frac{\mathrm{d}\,\alpha_i^{-1}}{\mathrm{d}\ln\mu}
+= -\frac{b_i}{2\pi},
+\qquad
+b=\Bigl(\tfrac{41}{10},\,-\tfrac{19}{6},\,-7\Bigr)
+\quad (n_g=3,\,n_H=1).
+\label{eq:rg}
+\end{equation}
+Boundary data at $M_Z$: $\alpha_{\mathrm{em}}$, $\sin^2\theta_W$, $\alpha_s$.
+Gate~SM-3 requires asymptotic freedom of $\alpha_s$, Landau-free evolution on
+$[M_Z,10^{16}\,\mathrm{GeV}]$ (one-loop SM), and round-trip consistency.
+\textbf{No unification claim.} Executable: \texttt{scripts/sm\_rg\_flow.py}.
+
+\section{Gates}
+
+\begin{verbatim}
+python scripts/sm_mapping.py --mode bosons_fermions
+python scripts/sm_gate_check.py --require SM-1
+python scripts/sm_yukawa_ansatz.py --sweep --trials 48
+python scripts/sm_rg_flow.py --plot
+python scripts/sm_gate_check.py --gates SM-1,SM-2,SM-3 --yukawa --require SM-1,SM-3
+\end{verbatim}
+
+\begin{center}
+\begin{tabular}{@{}llp{0.42\textwidth}@{}}
+\toprule
+Gate & Status & Requirement \\
+\midrule
+SM-1 & PASS & Representations + $Q=T_3+Y/2$ + mode coverage \\
+SM-2 & PASS (mass) & Structure + Yukawa $\chi^2$ (hierarchical + CKM) \\
+SM-3 & PASS & Anomalies + one-loop SM RG health \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{What is not claimed}
+
+Soliton masses, CKM/PMNS, $\alpha_s$ running, or Einstein gravity. Demote any map
+that fails multi-gate consistency or reopens core locks.
+
+\begin{thebibliography}{9}
+\bibitem{lag}
+A.~Kinder, \emph{Unified Action Principle},
+\texttt{papers/Lagrangian\_Derivation.tex}, Jul.~2026.
+\bibitem{rel}
+A.~Kinder, \emph{Relativistic Completion},
+\texttt{papers/Relativistic\_Completion.tex}, Jul.~2026.
+\bibitem{ms}
+invariant\_hunt, \emph{MILESTONE\_SM\_PARTICLE\_MAPPING.md}, Jul.~2026.
+\end{thebibliography}
+
+\end{document}

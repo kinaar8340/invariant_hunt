@@ -254,6 +254,37 @@ Pass only if over the sampled band:
 Milestone: `docs/MILESTONE_GAUGED_META_SWEEP.md`.  
 Relativistic equations: `papers/Relativistic_Completion.tex` (Phase 1.3).
 
+## V. SM particle mapping (Gates SM-1 / SM-2 / SM-3) — Phase 2
+
+Locks remain frozen. Mappings are demoted if quantum numbers, anomalies, or
+(later) mass hierarchies fail.
+
+```bash
+python scripts/sm_mapping.py --mode bosons_fermions
+python scripts/sm_gate_check.py --gates SM-1,SM-2,SM-3 --require SM-1
+python scripts/meta_optimize_invariants.py --sm-mode --trials 8
+```
+
+| Gate | Pass condition |
+|------|----------------|
+| **SM-1** | Catalog + \(Q=T_3+Y/2\) + lattice mode coverage + locks frozen |
+| **SM-2 structure** | Three identical gen copies |
+| **SM-2 mass** (2.2) | Structure + \(\chi^2_{\ln m}/\mathrm{dof}\le 9\) + \(\chi^2_{\|V\|}/\mathrm{dof}\le 100\) (loose); tighter grades in milestone |
+| **SM-3** | Anomaly coeffs ≈ 0 **and** one-loop SM RG health (AF \(\alpha_s\), round-trip, no Landau pole in window) |
+
+```bash
+python scripts/sm_yukawa_ansatz.py --sweep --trials 64 --plot
+python scripts/sm_gate_check.py --gates SM-2 --yukawa --require SM-2
+python scripts/sm_rg_flow.py --plot
+python scripts/sm_gate_check.py --gates SM-3 --require SM-3
+```
+
+**Fail SM-1 ⇒ demote** the lattice→SM mode map.  
+**Fail SM-2 mass ⇒ demote** the Yukawa ansatz (not core locks).  
+**Fail SM-3 ⇒ demote** RG/content consistency mapping (not core locks).  
+Milestones: `MILESTONE_SM_PARTICLE_MAPPING.md`, `MILESTONE_SM_YUKAWA.md`, `MILESTONE_SM_RG.md`.  
+Paper: `papers/SM_Derivation.tex`.
+
 ## Suggested next refinements (echo ladder — closed)
 
 1. ~~Amp structure / whitened network / multi-event~~ done (mapping constrained)  
