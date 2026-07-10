@@ -102,14 +102,14 @@ python scripts/event_stress_test.py --event GW151226 --plot
 
 # Amplitude-structure mapping scan (core locks fixed)
 python scripts/amp_structure_scan.py --plot
+
+# Analytic: when/whether echoes are expected (Hopf + observer sync)
+python scripts/evaluate_echo_expectation.py
 ```
 
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  
-Milestones: [`docs/MILESTONE_GW150914_v2.md`](docs/MILESTONE_GW150914_v2.md),  
-[`docs/MILESTONE_WHITENED_NETWORK.md`](docs/MILESTONE_WHITENED_NETWORK.md),  
-[`docs/MILESTONE_MULTI_EVENT.md`](docs/MILESTONE_MULTI_EVENT.md),  
-[`docs/MILESTONE_GW151226_STRESS.md`](docs/MILESTONE_GW151226_STRESS.md),  
-[`docs/MILESTONE_AMP_STRUCTURE.md`](docs/MILESTONE_AMP_STRUCTURE.md).
+Campaign close-out: [`docs/CAMPAIGN_ECHO_MAPPING.md`](docs/CAMPAIGN_ECHO_MAPPING.md).  
+Analytic prediction: [`docs/ANALYTIC_ECHO_PREDICTION.md`](docs/ANALYTIC_ECHO_PREDICTION.md).
 
 Full conduit evaluation (from TOE):
 

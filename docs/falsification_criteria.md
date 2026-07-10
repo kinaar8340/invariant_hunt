@@ -121,6 +121,14 @@ It **does** mean:
 
 - This invariant→GW-echo translation needs refinement or a different domain
 
+### Analytic consistency (sync branch)
+
+From `docs/ANALYTIC_ECHO_PREDICTION.md`: observer synchronization implies  
+\(h_{\mathrm{echo}}/h_{\mathrm{main}} \lesssim 10^{-6}\). For SNR_main ~ 10–50,  
+SNR_echo ≪ 2. Therefore **Gate C/D failure for O(1) residual echo templates is  
+predicted**, not anomalous. A true falsifier of the sync branch would be  
+confirmed echoes at relative amplitude \(\gg 10^{-5}\) for embedded detectors.
+
 ## Tools
 
 | Script | Role |

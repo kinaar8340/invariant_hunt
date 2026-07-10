@@ -69,11 +69,16 @@ See `docs/CAMPAIGN_ECHO_MAPPING.md`.
 | Multi-event Gate D | **Fail** (1/3; GW151226 fails band stress) |
 | Amp-structure v3 | Low leverage; Gate D still fail |
 
+### Analytic phase (done)
+
+- ~~Analytic invariant → echo signal~~ (`src/echo_theory.py`, `docs/ANALYTIC_ECHO_PREDICTION.md`)  
+  Sync branch predicts undetectable residual ladders; campaign nulls consistent.
+
 ### Next phase (pick one)
 
-1. **New observable domain** — pre-register gates; reuse whitening/network/injection stack where applicable  
-2. **Analytic invariant → observable derivation** — mass/band conditions for any echo-like signature  
-3. Port analytic sections from TOE papers into `src/predictions.py` once a target observable is defined  
+1. **New observable domain** — or matched-filter search at \(f_{\mathrm{phys}}(M)\) with \(10^{-6}\)-level relative amp  
+2. Port remaining TOE paper formulas into `src/predictions.py` under pre-registered gates  
+3. Falsifier watch: relative echo amp \(\gg 10^{-5}\) would force sync/\(A_0\) revision  
 
 Core locks \(W_g\), \(\kappa\), braiding attractor remain available for other translations.
 

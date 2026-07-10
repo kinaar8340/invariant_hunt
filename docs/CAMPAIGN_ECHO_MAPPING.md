@@ -57,12 +57,21 @@ A gated, reproducible apparatus:
 
 Further fine-tuning of this post-merger echo template is **low leverage**.
 
+## Analytic follow-up (done)
+
+See `docs/ANALYTIC_ECHO_PREDICTION.md` and `src/echo_theory.py`.
+
+Under observer synchronization the model predicts  
+\(h_{\mathrm{echo}}/h_{\mathrm{main}} \lesssim 10^{-6}\).  
+**Gate D failure for loud residual ladders is the expected outcome** of the  
+sync-suppressed branch — consistent with the campaign, not a tension with \(W_g\) or \(\kappa\).
+
 ## Next phase (higher value)
 
-1. **Different observable domain** — pre-merger, polarization, other bands, non-GW  
-2. **Analytic invariant → observable derivation** — when/whether echoes of this type are expected (mass/band dependence) from the gauged Hopf model  
+1. **Different observable domain** — pre-merger, polarization, non-GW, or matched-filter search at \(f_{\mathrm{phys}}(M)\) with \(10^{-6}\)-level relative amp  
+2. **Falsifier of sync branch** — confirmed echoes at relative amp \(\gg 10^{-5}\) for embedded detectors  
 
-Both should reuse the same gated discipline: pre-register gates, injection recovery, multi-event, no free retuning of core locks on single events.
+Reuse gated discipline: pre-register gates, injection recovery, multi-event, no free retuning of core locks on single events.
 
 ## Milestone index
 
