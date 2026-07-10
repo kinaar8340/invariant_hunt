@@ -1,8 +1,14 @@
-# Falsification criteria — positional echo ladder
+# Falsification criteria
 
 These criteria keep the invariant search alive while blocking confirmation bias.
-They apply to the **current** mapping (geometric delays + amp₀ⁿ priors + braiding
-phase), not to the existence of \(W_g \approx 350/\pi\) as a lattice lock.
+They apply to **mappings** of the locked invariants into observables — not to
+the existence of \(W_g \approx 350/\pi\) itself.
+
+---
+
+## I. Post-merger echo ladder (campaign closed)
+
+Criteria below apply to geometric delays + amp structures in post-merger residuals.
 
 ## Setup under test
 
@@ -152,8 +158,31 @@ confirmed echoes at relative amplitude \(\gg 10^{-5}\) for embedded detectors.
 Core locks \(W_g\), κ unchanged across mapping versions.  
 Milestones: `MILESTONE_GW150914_v2.md`, `MILESTONE_AMP_STRUCTURE.md`.
 
-## Suggested next refinements (if Gate A still fails)
+## II. Pre-merger topological phase (Gate P) — active
 
-1. Tie amp decay to braiding / flux rather than fixed 0.35ⁿ  
-2. Whitened multi-detector likelihood before claiming Gate A/C  
-3. Alternate observable domain (not only post-merger echoes)
+**Observable:** cumulative phase drift on inspiral residuals after PE IMR subtraction.
+
+**Template (locks fixed):**
+\[\Delta\phi(t) = \alpha\, W_g\, \Phi_{\mathrm{orb}}(t)\, \cos(\phi_b)\]
+Only \(\alpha\) free. Basis: \(\tau = -W_g\cos\phi_b\,\Phi_{\mathrm{orb}}\,H[h_{\mathrm{GR}}]\).
+
+**Setup:** whitened H1+L1, ~4 s pre-merger; inspiral \(t < -0.05\) s; band 20–100 Hz.
+
+### Gate P
+Pass if \(\Delta\chi^2 \ge 6\), \(|\hat\alpha| > 2\sigma_{\hat\alpha}\), **and**
+H1/L1 same sign when both are significant.
+
+### Gate P-D
+Gate P on ≥ 2 BBHs with **same sign** of network \(\hat\alpha\).
+
+```bash
+python scripts/premerger_phase_scan.py --event GW150914 --plot
+```
+
+Docs: `docs/PREMERGER_PHASE.md`
+
+## Suggested next refinements (echo ladder — closed)
+
+1. ~~Amp structure / whitened network / multi-event~~ done (mapping constrained)  
+2. Pre-merger Gate P (active)  
+3. Matched-filter quiet post-merger at \(f_{\mathrm{phys}}(M)\) (later)

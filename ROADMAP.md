@@ -74,11 +74,18 @@ See `docs/CAMPAIGN_ECHO_MAPPING.md`.
 - ~~Analytic invariant → echo signal~~ (`src/echo_theory.py`, `docs/ANALYTIC_ECHO_PREDICTION.md`)  
   Sync branch predicts undetectable residual ladders; campaign nulls consistent.
 
-### Next phase (pick one)
+### Active: pre-merger topological phase (Gate P)
 
-1. **New observable domain** — or matched-filter search at \(f_{\mathrm{phys}}(M)\) with \(10^{-6}\)-level relative amp  
-2. Port remaining TOE paper formulas into `src/predictions.py` under pre-registered gates  
-3. Falsifier watch: relative echo amp \(\gg 10^{-5}\) would force sync/\(A_0\) revision  
+1. ~~Form + Gate P + scanner~~ (`src/premerger_*.py`, `scripts/premerger_phase_scan.py`)  
+2. Run GW150914 → multi-event; injection recovery for \(\alpha\)  
+3. If Gate P-D fails: polarization / class B modulation forms  
+
+See `docs/PREMERGER_PHASE.md`.
+
+### Later
+
+- Matched-filter post-merger at \(f_{\mathrm{phys}}(M)\) with \(10^{-6}\) relative amp  
+- Falsifier watch on sync branch (relative amp \(\gg 10^{-5}\))  
 
 Core locks \(W_g\), \(\kappa\), braiding attractor remain available for other translations.
 
