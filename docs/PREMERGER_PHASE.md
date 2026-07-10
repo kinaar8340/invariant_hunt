@@ -60,12 +60,26 @@ python scripts/premerger_injection_recovery.py --event GW150914 --plot
 # PE approximant / mass-distance jitter robustness
 python scripts/premerger_pe_robustness.py --event GW150914 --plot
 
-# Mass-scaled multi-event (only helps if ≥2 events pass Gate P)
-python scripts/premerger_mass_scale.py --events GW150914,GW170608,GW170814,GW170818
-
-# Expanded event set + PE posterior draws
+# Expanded set + PE draws; follow-up demotions
 python scripts/premerger_expand_events.py --plot --n-draws 10
+python scripts/premerger_followup_passers.py --plot
+
+# Core (150914+814 only after demoting 608/818)
+python scripts/premerger_core_predict.py
+python scripts/premerger_core_predict.py --predict-event GW170823
+python scripts/premerger_mass_scale.py --events GW150914,GW170814
 ```
+
+## Credible core (locked)
+
+| Event | Status |
+|-------|--------|
+| GW150914 | Core |
+| GW170814 | Core |
+| GW170608 | **Demoted** — high corr(r,τ), approx Δχ² swing, mass sign flip |
+| GW170818 | **Demoted** — PE draws 4/8 |
+
+Forward band: \(\hat\alpha \in [2.88\times10^{-5},\,1.15\times10^{-4}]\) (positive).
 
 ## Relation to analytics
 
