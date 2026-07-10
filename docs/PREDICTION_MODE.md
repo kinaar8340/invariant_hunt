@@ -76,25 +76,29 @@ Full scorecard: `docs/MILESTONE_HELD_OUT_TRUE_BBH.md`.
 Only one robust anomaly (GW170809). GW151012 PE-draw instability → systematics narrative.  
 See `docs/MILESTONE_FALSIFY_SYSTEMATICS.md`.
 
-### Bulk PE-power mapping — stopped
+### Mapping stretch v1–v4 — fully closed
 
-Mass (v2), inverse SNR (v3a), and distance (v3b) all **FALSIFY** shared-\(\alpha_0\)
-unification. Family closed; stretch stopped.
+| Campaign | Variable | Verdict |
+|----------|----------|---------|
+| v1 | Event-independent α band | Demoted |
+| v2 | \(M_{\mathrm{tot}}^p\) | FALSIFY |
+| v3a | Inverse network SNR | FALSIFY |
+| v3b | Luminosity distance | FALSIFY |
+| v4 | Remnant mass \(M_f^p\) | FALSIFY |
 
 | | |
 |--|--|
 | Close-out | `docs/MILESTONE_BULK_PE_MAPPING_CLOSED.md` |
 | Archive | `docs/ARCHIVE_PREMERGER_BULK_PE_MAPPING.md` |
-| Mode | Score-only; locks frozen; band remains demoted |
-| Exception | New physical variable only via fresh `docs/PREREG_*.md` |
-| V4 remnant \(M_f\) | **FALSIFY** / family closed — `docs/MILESTONE_PREMERGER_MAPPING_V4.md` |
+| Mode | **Score-only**; locks frozen; band remains demoted |
+| Exception | Genuinely new physical variable only via fresh `docs/PREREG_*.md` |
 
-Do **not** re-open mild bulk PE powers or unregistered exponents (e.g. \(d_L^3\))
-to force ratio ~12. V4 is a separate pre-reg (remnant mass), not a rescue of closed forms.
+Do **not** re-open mild powers of mass / SNR / distance / remnant or unregistered
+exponents (e.g. \(d_L^3\)) to force ratio ~12.
 
 ## Artifacts
 
 - `outputs/predictions/premerger_core_prediction.json`  
 - Freeze: `docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md`  
-- Mapping closed: `outputs/mapping_v2/`, `outputs/mapping_v3/`  
+- Mapping closed: `outputs/mapping_v2/`, `outputs/mapping_v3/`, `outputs/mapping_v4/`  
 

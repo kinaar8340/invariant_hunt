@@ -159,21 +159,22 @@ Gate S-1 complete (canonical n_draws≥12):
 - GW170809 → **ROBUST_ANOMALY**  
 - GW151012 → **SYSTEMATICS_RISK**  
 
-Bulk PE-power mapping (executed and **stopped**):  
-- v2 mass \(p=1\) → **FALSIFY** (`docs/MILESTONE_PREMERGER_MAPPING_V2.md`)  
-- v3 inv-SNR \(q=1\) + distance \(s=1\) → **FALSIFY**; family closed  
-  (`docs/MILESTONE_PREMERGER_MAPPING_V3.md`)  
-- Close-out: `docs/MILESTONE_BULK_PE_MAPPING_CLOSED.md`  
+Pre-merger mapping stretch **v1–v4 fully closed** (pre-registered):  
 
-**Active (pre-merger):** score-only under frozen locks; residual anomaly on GW170809
-stands **without** a shared \(\alpha_0\) map. **No further bulk PE-power mapping**
-unless a *new physical variable* is separately pre-registered (`docs/PREREG_*.md`).
+| Campaign | Variable | Verdict |
+|----------|----------|---------|
+| v1 | Universal α band | Demoted |
+| v2 | \(M_{\mathrm{tot}}^p\) | FALSIFY |
+| v3a/b | Inv-SNR / \(d_L\) | FALSIFY |
+| v4 | \(M_f^p\) | FALSIFY |
 
-**Archive:** `docs/ARCHIVE_PREMERGER_BULK_PE_MAPPING.md` — chapter closed; repro index frozen.
+Close-out: `docs/MILESTONE_BULK_PE_MAPPING_CLOSED.md`  
+Archive: `docs/ARCHIVE_PREMERGER_BULK_PE_MAPPING.md`  
 
-**Mapping v4 remnant mass \(M_f\):** executed → **FALSIFY** (Unify \(z\approx 30.6\));  
-family closed — `docs/MILESTONE_PREMERGER_MAPPING_V4.md`.  
-Further mapping only via new physical-variable PREREG.
+**Active (pre-merger):** **score-only** under frozen locks; GW170809 stands as
+ROBUST_ANOMALY **without** shared \(\alpha_0\). Further mapping only via a
+*genuinely new physical variable* pre-reg (`docs/PREREG_*.md`) — not mild powers
+of mass / SNR / distance / remnant.
 
 ### Later
 
