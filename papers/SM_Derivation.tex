@@ -1,11 +1,10 @@
 \documentclass[11pt]{article}
 \usepackage[margin=1in]{geometry}
-\usepackage{amsmath,amssymb,booktabs}
-\usepackage{hyperref}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
 
 \title{SM Particle Content from Gauged Hopf Lattice Modes\\
-\large Phase~2.1 --- Representations and Quantum Numbers\\
-\normalsize (incremental; masses deferred)}
+\large Representations, Yukawa Scaffold, Anomalies, and One-Loop Gauge RG}
 \author{Aaron Kinder \\ Independent Researcher}
 \date{July 2026}
 
@@ -16,11 +15,12 @@
 We record a gated map from excitations of the gauged Hopf lattice
 (product Yang--Mills + Hopfions + holonomy/braiding) onto the Standard Model
 field content under $G=\mathrm{SU}(3)_c\times\mathrm{SU}(2)_L\times\mathrm{U}(1)_Y$.
-Phase~2.1 (Gate~SM-1) requires correct representations and electric charges
-$Q=T_3+Y/2$. Three generation \emph{copies} are listed via braiding-layer index;
-Yukawa hierarchies and RG flow are deferred to Gates~SM-2/SM-3.
+Gate~SM-1 requires correct representations and electric charges $Q=T_3+Y/2$.
+Three generation \emph{copies} are listed via braiding-layer index.
+We also record a topological Yukawa mass ansatz (Gate~SM-2 mass structure),
+standard anomaly cancellation, and one-loop SM gauge RG health (Gate~SM-3).
 Core locks $W_g=350/\pi$, $\kappa\approx 0.85$, $\phi_b^\star\approx 0.8145$ remain
-frozen. No gravity claim is made.
+frozen. No gravity or full mass-spectrum discovery claim is made.
 \end{abstract}
 
 \section{Discipline and locks}
@@ -47,9 +47,9 @@ Q = T_3 + \frac{Y}{2}.
 Assignments (PDG weak hypercharge):
 \begin{center}
 \begin{tabular}{@{}ll@{}}
-\toprule
+\hline
 Multiplet & $Y$ \\
-\midrule
+\hline
 $Q_L$ & $1/3$ \\
 $u_R$ & $4/3$ \\
 $d_R$ & $-2/3$ \\
@@ -57,7 +57,7 @@ $L_L$ & $-1$ \\
 $e_R$ & $-2$ \\
 $H$ & $1$ \\
 $g,W,B$ & $0$ \\
-\bottomrule
+\hline
 \end{tabular}
 \end{center}
 
@@ -65,13 +65,13 @@ $g,W,B$ & $0$ \\
 
 \begin{center}
 \begin{tabular}{@{}llll@{}}
-\toprule
+\hline
 Field & $({\rm SU}(3),{\rm SU}(2),Y)$ & Lattice mode & Notes \\
-\midrule
+\hline
 $g$ & $(8,1,0)$ & YM adjoint SU(3) flux flywheel & 8 gluons \\
 $W$ & $(1,3,0)$ & YM adjoint SU(2) holonomy wave & $W^\pm,W^3$ pre-EWSB \\
 $B$ & $(1,1,0)$ & $U(1)$ global pointer seed & mixes $\to\gamma,Z$ \\
-\bottomrule
+\hline
 \end{tabular}
 \end{center}
 
@@ -79,11 +79,11 @@ $B$ & $(1,1,0)$ & $U(1)$ global pointer seed & mixes $\to\gamma,Z$ \\
 
 \begin{center}
 \begin{tabular}{@{}llll@{}}
-\toprule
+\hline
 Field & $({\rm SU}(3),{\rm SU}(2),Y)$ & Lattice mode & Charges \\
-\midrule
+\hline
 $H$ & $(1,2,1)$ & Holonomy modulus / pointer VEV & $H^+$ ($Q=1$), $H^0$ ($Q=0$) \\
-\bottomrule
+\hline
 \end{tabular}
 \end{center}
 
@@ -93,15 +93,15 @@ Hopfion solitons inherit spin $1/2$ from the double cover $S^3\to\mathrm{SO}(3)$
 
 \begin{center}
 \begin{tabular}{@{}llll@{}}
-\toprule
+\hline
 Field & $({\rm SU}(3),{\rm SU}(2),Y)$ & Chirality & Lattice mode stem \\
-\midrule
+\hline
 $Q_L$ & $(3,2,1/3)$ & $L$ & \texttt{hopfion\_color\_weak\_doublet} \\
 $u_R$ & $(3,1,4/3)$ & $R$ & \texttt{hopfion\_up\_singlet} \\
 $d_R$ & $(3,1,-2/3)$ & $R$ & \texttt{hopfion\_down\_singlet} \\
 $L_L$ & $(1,2,-1)$ & $L$ & \texttt{hopfion\_lepton\_doublet} \\
 $e_R$ & $(1,1,-2)$ & $R$ & \texttt{hopfion\_charged\_lepton\_singlet} \\
-\bottomrule
+\hline
 \end{tabular}
 \end{center}
 
@@ -163,40 +163,39 @@ $[M_Z,10^{16}\,\mathrm{GeV}]$ (one-loop SM), and round-trip consistency.
 
 \section{Gates}
 
-\begin{verbatim}
-python scripts/sm_mapping.py --mode bosons_fermions
-python scripts/sm_gate_check.py --require SM-1
-python scripts/sm_yukawa_ansatz.py --sweep --trials 48
-python scripts/sm_rg_flow.py --plot
-python scripts/sm_gate_check.py --gates SM-1,SM-2,SM-3 --yukawa --require SM-1,SM-3
-\end{verbatim}
-
 \begin{center}
 \begin{tabular}{@{}llp{0.42\textwidth}@{}}
-\toprule
+\hline
 Gate & Status & Requirement \\
-\midrule
-SM-1 & PASS & Representations + $Q=T_3+Y/2$ + mode coverage \\
-SM-2 & PASS (mass) & Structure + Yukawa $\chi^2$ (hierarchical + CKM) \\
-SM-3 & PASS & Anomalies + one-loop SM RG health \\
-\bottomrule
+\hline
+SM-1 & PASS (scaffold) & Representations + $Q=T_3+Y/2$ + mode coverage \\
+SM-2 & PASS (mass structure) & Hierarchical Yukawa $\chi^2$ under frozen locks \\
+SM-3 & PASS (scaffold) & Anomalies + one-loop SM RG health (no unification claim) \\
+\hline
 \end{tabular}
 \end{center}
 
+Companion software (optional reproducibility) implements the same gates.
+
 \section{What is not claimed}
 
-Soliton masses, CKM/PMNS, $\alpha_s$ running, or Einstein gravity. Demote any map
-that fails multi-gate consistency or reopens core locks.
+Derived soliton masses from first principles, full CKM/PMNS prediction,
+$\alpha_s$ unification, or Einstein gravity. Demote any map that fails multi-gate
+consistency or reopens core locks.
+
+\paragraph{Series note.}
+This note is Paper~III of the gated scaffold series (Papers~I--IV).
 
 \begin{thebibliography}{9}
 \bibitem{lag}
-A.~Kinder, \emph{Unified Action Principle},
-\texttt{papers/Lagrangian\_Derivation.tex}, Jul.~2026.
+A.~Kinder, \emph{Unified Action Principle for the Gauged Hopf Lattice},
+companion note (Paper~I), Jul.~2026.
 \bibitem{rel}
-A.~Kinder, \emph{Relativistic Completion},
-\texttt{papers/Relativistic\_Completion.tex}, Jul.~2026.
-\bibitem{ms}
-invariant\_hunt, \emph{MILESTONE\_SM\_PARTICLE\_MAPPING.md}, Jul.~2026.
+A.~Kinder, \emph{Relativistic Completion of the Gauged Hopf Lattice},
+companion note (Paper~II), Jul.~2026.
+\bibitem{grav}
+A.~Kinder, \emph{Emergent Gravity from the Gauged Hopf Lattice},
+companion note (Paper~IV), Jul.~2026.
 \end{thebibliography}
 
 \end{document}

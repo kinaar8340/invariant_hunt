@@ -1,14 +1,13 @@
 \documentclass[11pt]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb,amsthm}
-\usepackage{booktabs}
-\usepackage{hyperref}
+
+\usepackage[hidelinks]{hyperref}
 
 \title{Unified Action Principle for the Gauged Hopf Lattice\\
-\large with SU(3)$\times$SU(2)$\times$U(1) Scaffolding\\
-\normalsize (Phase~1.1 --- invariant\_hunt extension)}
+\large with SU(3)$\times$SU(2)$\times$U(1) Scaffolding}
 \author{Aaron Kinder \\ Independent Researcher}
-\date{April 2026 \\ \small Phase~1.1 extension: July 2026}
+\date{April 2026 \\ \small Phase~1.1 extension: July 2026 (Gate~A-P v2)}
 
 \begin{document}
 \maketitle
@@ -113,7 +112,7 @@ S=S_\sigma+S_{\mathrm{Skyrme}}+S_{\mathrm{YM}}
 +S_{\mathrm{burst}}+S_{\mathrm{grav}},
 \label{eq:unified-action}
 \end{equation}
-with sector densities (symbolic module \texttt{src/action\_principle.py}):
+with sector densities (implemented symbolically in companion software):
 
 \begin{align}
 S_\sigma
@@ -182,18 +181,21 @@ Any new gauge/Hopf term must pass:
   $D>0$, $g_i>0$, $e_S>0$, $\kappa>0$, $W_g>0$; wave-map time kinetic positive.
 \item \textbf{Conduit reduction.} Over-damped / free-energy limit recovers~\eqref{eq:conduit}
   structure (drive, holonomy, Dirichlet, burst).
-\item \textbf{$W_g$ stability.} Under jitter of $\kappa$, $\phi_b^\star$, and $g_i$
-  (with $W_g$ held locked), positional residual $|W_g-350/\pi|$ remains zero and
-  ghost checks remain healthy.
-\item \textbf{Analytic consistency with GW pipelines.} New terms must not alter
-  locked pre-merger template inputs ($W_g$, $\kappa$, $\phi_b$) used by
-  \texttt{premerger\_core\_predict.py}.
+\item \textbf{$W_g$ stability.} Under multi-amplitude jitter of $\kappa$, $\phi_b^\star$, and $g_i$
+  (with $W_g$ held locked), residual $|W_g-350/\pi|$ remains zero and all trials remain ghost-free.
+\item \textbf{Hessian positive-definiteness.} Holonomy--braiding second variation has eigenvalues
+  $\{\kappa,W_g\}>0$ and finite condition number.
+\item \textbf{PDE stability (optional numerical layer).} Restoring and driven over-damped
+  evolutions remain finite and bounded; restoring runs dissipate free-energy proxy or
+  approach the mean-field fixed point $\Delta\omega/\kappa$.
+\item \textbf{Consistency with GW prediction pipelines.} New terms must not alter
+  locked pre-merger template inputs ($W_g$, $\kappa$, $\phi_b$).
 \end{enumerate}
 
-Executable check:
+Companion software (optional reproducibility):
 \begin{verbatim}
 python scripts/action_principle_check.py
-python scripts/action_principle_check.py --pde-smoke
+python scripts/action_principle_check.py --pde-smoke --nt 2000
 \end{verbatim}
 
 \section{Variational status table}
@@ -201,9 +203,9 @@ python scripts/action_principle_check.py --pde-smoke
 \begin{table}[h]
 \centering
 \begin{tabular}{@{}lll@{}}
-\toprule
+\hline
 Term in PDE / action & Origin & Variational? \\
-\midrule
+\hline
 $D\Delta\Theta+\tfrac{D}{2}\cot(\Theta/2)|\nabla\Theta|^2$
   & Dirichlet / harmonic map on $S^3$ & Yes \\
 $+\Delta\omega$ & Two-gyro drive mismatch & No (forcing) \\
@@ -213,7 +215,7 @@ $S_{\mathrm{YM}}$ & Yang--Mills kinetics & Yes \\
 $S_{\mathrm{Hopf}}$ & Topological Hopf density & Yes \\
 $W_g(\phi_b-\phi_b^\star)^2$ pin & Braiding attractor & Yes \\
 $S_{\mathrm{grav}}$ & Einstein--Hilbert (later) & Yes \\
-\bottomrule
+\hline
 \end{tabular}
 \caption{Origin and variational status of each term (extends Lagrangian Derivation Table~1).}
 \end{table}
@@ -233,18 +235,25 @@ Hopf topology, and holonomy/braiding terms compatible with $W_g$, $\kappa$, and
 $\phi_b$. Gate~A-P blocks unphysical ghosts and lock drift. SM particle content and
 emergent gravity remain gated for Phases~2--3.
 
+\paragraph{Series note.}
+This note is Paper~I of a gated scaffold series. Companion notes treat relativistic
+completion~\cite{rel}, SM content~\cite{sm}, and emergent gravity~\cite{grav}.
+
 \begin{thebibliography}{9}
-\bibitem{lag}
+\bibitem{lag0}
 A.~Kinder, \emph{Derive the Lagrangian for the Conduit PDE}, TOE notes, Apr.~2026.
 \bibitem{rel}
 A.~Kinder, \emph{Relativistic Completion of the Gauged Hopf Lattice},
-invariant\_hunt \texttt{papers/Relativistic\_Completion.tex}, Jul.~2026.
+companion note (Paper~II), Jul.~2026.
+\bibitem{sm}
+A.~Kinder, \emph{SM Particle Content from Gauged Hopf Lattice Modes},
+companion note (Paper~III), Jul.~2026.
+\bibitem{grav}
+A.~Kinder, \emph{Emergent Gravity from the Gauged Hopf Lattice},
+companion note (Paper~IV), Jul.~2026.
 \bibitem{burst}
 A.~Kinder, \emph{Burst Threshold Derivation in the Gauged Two-Gyro Hopf Lattice},
-invariant\_hunt \texttt{papers/GW\_Burst\_Threshold.tex}, Jun.~2026.
-\bibitem{freeze}
-invariant\_hunt, \emph{Pre-merger predictive freeze},
-\texttt{docs/MILESTONE\_PREMERGER\_PREDICTIVE\_FREEZE.md}, Jul.~2026.
+companion note, Jun.~2026.
 \end{thebibliography}
 
 \end{document}

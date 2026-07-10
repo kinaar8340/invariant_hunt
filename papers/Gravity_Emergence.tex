@@ -1,11 +1,10 @@
 \documentclass[11pt]{article}
 \usepackage[margin=1in]{geometry}
-\usepackage{amsmath,amssymb,booktabs}
-\usepackage{hyperref}
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
 
 \title{Emergent Gravity from the Gauged Hopf Lattice\\
-\large Weak-Field Limit and $G_N$ Schema\\
-\normalsize (Phase~3 --- invariant\_hunt)}
+\large Weak-Field Limit, $G_N$ Schema, and Lattice-to-Metric Bridge}
 \author{Aaron Kinder \\ Independent Researcher}
 \date{July 2026}
 
@@ -30,7 +29,7 @@ W_g=\frac{350}{\pi},\qquad \kappa\approx 0.85,\qquad \phi_b^\star\approx 0.8145.
 \]
 Unified action~\cite{lag,rel} includes
 $S_{\mathrm{grav}}= (16\pi G_N)^{-1}\int\sqrt{-g}\,R+\cdots$.
-Pre-merger freeze: \texttt{premerger\_core\_predict.py}.
+Independent GW pre-merger pipelines are not reopened by this scaffold.
 
 \section{$G_N$ schema and tight SI bridge}
 
@@ -108,36 +107,38 @@ and $\mathrm{corr}(\rho,\Phi)<0$.
 
 \section{Gates}
 
-\begin{verbatim}
-python scripts/gravity_emergence_check.py --gates GR-1,GR-2,GR-3 --plot
-\end{verbatim}
-
 \begin{center}
 \begin{tabular}{@{}llp{0.4\textwidth}@{}}
-\toprule
+\hline
 Gate & Status & Role \\
-\midrule
-GR-1 & PASS & $G_N$ schema, $\rho_{\mathrm{eff}}$, Newton limit, locks \\
-GR-2 & PASS & Analytic GR targets with matched $G$ \\
-GR-3 & PASS & SI bridge $m_\star$ + lattice$\to$metric PDE \\
-\bottomrule
+\hline
+GR-1 & PASS (scaffold) & $G_N$ schema, $\rho_{\mathrm{eff}}$, Newton limit, locks \\
+GR-2 & PASS (structure) & Analytic GR targets with matched $G$ \\
+GR-3 & PASS (scaffold) & SI bridge $m_\star$ + lattice$\to$metric PDE residual \\
+\hline
 \end{tabular}
 \end{center}
+
+Companion software (optional reproducibility) implements GR-1/2/3 checks.
 
 \section{What is not claimed}
 
 Full nonlinear Einstein equivalence, cosmology, or SI $G_N$ without continuum matching.
 FAIL demotes the gravity mapping, not the core locks.
 
+\paragraph{Series note.}
+This note is Paper~IV of the gated scaffold series (Papers~I--IV).
+
 \begin{thebibliography}{9}
 \bibitem{lag}
-A.~Kinder, \emph{Unified Action Principle},
-\texttt{papers/Lagrangian\_Derivation.tex}, Jul.~2026.
+A.~Kinder, \emph{Unified Action Principle for the Gauged Hopf Lattice},
+companion note (Paper~I), Jul.~2026.
 \bibitem{rel}
-A.~Kinder, \emph{Relativistic Completion},
-\texttt{papers/Relativistic\_Completion.tex}, Jul.~2026.
-\bibitem{ms}
-invariant\_hunt, \texttt{docs/GRAVITY\_EMERGENCE.md}, Jul.~2026.
+A.~Kinder, \emph{Relativistic Completion of the Gauged Hopf Lattice},
+companion note (Paper~II), Jul.~2026.
+\bibitem{sm}
+A.~Kinder, \emph{SM Particle Content from Gauged Hopf Lattice Modes},
+companion note (Paper~III), Jul.~2026.
 \end{thebibliography}
 
 \end{document}

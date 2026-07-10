@@ -46,3 +46,10 @@ temp.py
 temp*.py
 temp.md
 *.tmp
+
+# LaTeX build / arXiv packaging artifacts
+papers/*.aux
+papers/*.log
+papers/*.out
+papers/*.pdf
+papers/arxiv_dist/

@@ -182,7 +182,12 @@ rescue of closed bulk-PE / remnant / Hopf-\(\Lambda\) forms.
 
 - Matched-filter post-merger at \(f_{\mathrm{phys}}(M)\) with \(10^{-6}\) relative amp  
 - Falsifier watch on sync branch (relative amp \(\gg 10^{-5}\))  
-- Phase 4 quantization pathway; arXiv packaging polish  
+- Phase 4 quantization pathway  
+- ~~arXiv packaging polish~~ — Papers I–IV + `papers/README_ARXIV.md`, `make package`  
+
+```bash
+cd papers && make package   # PDFs + arxiv_dist/ tarballs
+```
 
 Core locks \(W_g\), \(\kappa\), braiding attractor remain available for other translations.
 

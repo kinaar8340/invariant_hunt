@@ -1,12 +1,11 @@
 \documentclass[11pt]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb,amsthm}
-\usepackage{booktabs}
-\usepackage{hyperref}
+
+\usepackage[hidelinks]{hyperref}
 
 \title{Relativistic Completion of the Gauged Hopf Lattice\\
-\large Unified Action, Quantization Pathway, and Low-Energy Limits\\
-\normalsize (Phase~1.3 --- aligned with \texttt{eq:unified-action})}
+\large Unified Action, Quantization Pathway, and Low-Energy Limits}
 \author{Aaron Kinder \\ Independent Researcher}
 \date{April 2026 \\ \small Phase~1.3 revision: July 2026}
 
@@ -43,8 +42,7 @@ S=S_\sigma+S_{\mathrm{Skyrme}}+S_{\mathrm{YM}}
 +S_{\mathrm{burst}}+S_{\mathrm{grav}},
 \label{eq:unified-action}
 \end{equation}
-as formalized in \texttt{papers/Lagrangian\_Derivation.tex} and
-\texttt{src/action\_principle.py}.
+as formalized in the companion unified-action note~\cite{lag}.
 
 \paragraph{Frozen inputs (not free fits).}
 \[
@@ -53,8 +51,7 @@ W_g=\frac{350}{\pi},\qquad
 \phi_b^\star\approx 0.8145,\qquad
 \theta_{\mathrm{crit}}=\pi(1+\kappa).
 \]
-Pre-merger GW predictive freeze remains independent
-(\texttt{docs/MILESTONE\_PREMERGER\_PREDICTIVE\_FREEZE.md}).
+Independent GW pre-merger prediction pipelines remain closed and are not reopened here.
 
 \paragraph{What this paper does \emph{not} claim.}
 Full SM generations / Yukawa / anomaly cancellation (Phase~2); precision GR tests and
@@ -171,8 +168,8 @@ and take $\gamma\to\infty$. The equations collapse to the conduit PDE
 (+J_{\mathrm{gauge}}),
 \label{eq:conduit}
 \end{equation}
-with optional weak gauge-flux source $J_{\mathrm{gauge}}$ used in
-\texttt{pde\_relaxation.py --gauge-flux} (Phase~1.1/1.2 probes).
+with optional weak gauge-flux source $J_{\mathrm{gauge}}$ (numerical probes of
+Gate~A-P / H-S).
 
 \section{Quantization pathway (outline)}
 
@@ -253,25 +250,23 @@ With sweep-locked values, shifts are expected small relative to the braiding clu
 the topological winding $W_g$ receives zero one-loop correction from $\pi_3(S^3)=\mathbb{Z}$.
 Quantitative one-loop spectra remain Phase~2/4 work.
 
-\section{Executable gates (invariant\_hunt)}
+\section{Executable gates (reproducibility)}
 
 \begin{center}
 \begin{tabular}{@{}llp{0.45\textwidth}@{}}
-\toprule
-Gate & Command & Role \\
-\midrule
-A-P & \texttt{python scripts/action\_principle\_check.py} &
-  ghosts, conduit reduction, symbolic $W_g$ stability \\
-H-S & \texttt{python scripts/meta\_optimize\_invariants.py --locks-fixed --dry-run} &
-  holonomy/gauge Monte Carlo or Optuna with locks frozen \\
-P freeze & \texttt{python scripts/premerger\_core\_predict.py} &
-  held-out BBH SUCCESS/FALSIFY/NULL (independent) \\
-\bottomrule
+\hline
+Gate & Role & Pass condition (summary) \\
+\hline
+A-P & Action / kinetic health & no ghosts; conduit reduction; multi-amplitude $W_g$ lock;
+  Hessian PD; optional PDE energy stability \\
+H-S & Holonomy / gauge meta-sweep & locks fixed; ghost-free trials; $W_g$ residual zero \\
+P freeze & Independent GW score-only & SUCCESS/FALSIFY/NULL under frozen pre-merger template \\
+\hline
 \end{tabular}
 \end{center}
 
-Phase~1.2 requires Gate~H-S pass (all sampled trials ghost-free, $W_g$ residual zero,
-holonomy restoring). Failure $\Rightarrow$ demote the offending gauge/Hopf deformation.
+Phase~1.2 requires Gate~H-S pass. Failure $\Rightarrow$ demote the offending
+gauge/Hopf deformation without floating core locks.
 
 \section{Conclusion}
 
@@ -281,21 +276,24 @@ scaffold. Classical limit: conduit PDE. Quantum outline: path integral on $S^3$.
 Low-energy QED/GR limits are \emph{structured targets}, gated by later phases.
 Locks remain frozen; pre-merger freeze remains closed; no universal claim is made.
 
+\paragraph{Series note.}
+This note is Paper~II of the gated scaffold series (Papers~I--IV: action, relativity, SM, gravity).
+
 \begin{thebibliography}{9}
 \bibitem{lag}
 A.~Kinder, \emph{Unified Action Principle for the Gauged Hopf Lattice},
-invariant\_hunt \texttt{papers/Lagrangian\_Derivation.tex}, Jul.~2026.
+companion note (Paper~I), Jul.~2026.
 \bibitem{rel0}
 A.~Kinder, \emph{Relativistic Completion + Quantization} (PDF notes), TOE, Apr.~2026.
 \bibitem{burst}
 A.~Kinder, \emph{Burst Threshold Derivation in the Gauged Two-Gyro Hopf Lattice},
-\texttt{papers/GW\_Burst\_Threshold.tex}, Jun.~2026.
-\bibitem{ap}
-invariant\_hunt, \emph{Phase 1.1 Action Principle},
-\texttt{docs/MILESTONE\_ACTION\_PRINCIPLE.md}, Jul.~2026.
-\bibitem{freeze}
-invariant\_hunt, \emph{Pre-merger predictive freeze},
-\texttt{docs/MILESTONE\_PREMERGER\_PREDICTIVE\_FREEZE.md}, Jul.~2026.
+companion note, Jun.~2026.
+\bibitem{sm}
+A.~Kinder, \emph{SM Particle Content from Gauged Hopf Lattice Modes},
+companion note (Paper~III), Jul.~2026.
+\bibitem{grav}
+A.~Kinder, \emph{Emergent Gravity from the Gauged Hopf Lattice},
+companion note (Paper~IV), Jul.~2026.
 \end{thebibliography}
 
 \end{document}
