@@ -50,7 +50,7 @@ Flags include: low approx pass frac, sign flip under mass jitter, high corr(r,τ
 
 Artifact: `outputs/systematics/falsify_systematics_latest.json`.
 
-## GW170809 result (first deep-dive)
+## GW170809 result (strong +α FALSIFY)
 
 | Probe | Outcome |
 |-------|---------|
@@ -60,15 +60,39 @@ Artifact: `outputs/systematics/falsify_systematics_latest.json`.
 | corr(r,τ) H1 | 0.37 (**soft** flag only — expected for loud τ projection) |
 | **Gate S-1** | **ROBUST_ANOMALY** |
 
-Interpretation: residual preference for the locked template is **not** removed by
-approximant/jitter/draws. That strengthens the case for a **different mapping**
-(new pre-registration), while the **universal α-band SUCCESS claim stays demoted**
-(α remains ≫ band). Soft high corr does not alone reclassify as SYSTEMATICS_RISK
-when hard flags are empty.
+## GW151012 result (sign − FALSIFY)
+
+```bash
+python scripts/premerger_falsify_systematics.py --event GW151012 --n-draws 8 --plot
+```
+
+| Probe | Outcome |
+|-------|---------|
+| Approximants | **3/4** Gate P PASS (SEOBNRv4_opt **fail**, Δχ²=3.45); α ≈ (−4.6…−8.0)×10^{-5} |
+| ln B_10 | Mixed: +0.8 / −2.0 / +0.7 / −0.3 (not “very_strong”) |
+| PE jitter (6/6) | PASS; α stays **negative**; mass jitter deepens |α| |
+| PE draws | 7/8 PASS; mean α ≈ −1.1×10^{-4}; frac(+)=0.25 |
+| corr(r,τ) | |corr| ≲ 0.02 (low) |
+| **Gate S-1** | **ROBUST_ANOMALY** (hard flags empty; majority approx + jitter + draws) |
+
+### Joint reading (both FALSIFY events)
+
+| Event | Sign | |α| vs band | BF | S-1 |
+|-------|------|------------|-----|-----|
+| GW170809 | **+** | ≫ upper | huge | ROBUST_ANOMALY |
+| GW151012 | **−** | wrong sign | marginal | ROBUST_ANOMALY |
+| GW170729 | + (near band) | — | favors GR | Gate P **NULL** (no S-1 needed) |
+
+Interpretation:
+
+1. **Universal positive band** remains **demoted** (opposite signs on two robust held-outs).  
+2. Residual–τ coupling is **not** wiped by PE approximant/jitter alone on either FALSIFY.  
+3. The two robust anomalies **disagree in sign** → argues against a single universal α, and against treating either as SUCCESS.  
+4. Next mapping (if any) must be a **new pre-registered** form; soft SEOBNR weakness on GW151012 is a caveat for that design.
 
 ## Next after S-1
 
-1. If SYSTEMATICS_RISK on FALSIFY events → document; no new mapping.  
-2. If ROBUST_ANOMALY → design **new** pre-registered template + freeze cycle.  
-3. Run S-1 on GW151012 (sign-FALSIFY) for comparison.  
-4. Archival / narrative close-out remains lower urgency.  
+1. ~~S-1 on GW170809~~ → ROBUST_ANOMALY  
+2. ~~S-1 on GW151012~~ → ROBUST_ANOMALY (negative α)  
+3. **New pre-registered mapping** only if designed to handle sign structure / not revive demoted band  
+4. Archival / narrative close-out  

@@ -79,6 +79,16 @@ Artifact (last run overwrites): `outputs/predictions/premerger_core_prediction.j
 > 1 NULL on true held-outs. Core locks and Phases 1–3 scaffolds are not reopened  
 > by this demotion alone.
 
+## Gate S-1 follow-up (PE systematics)
+
+| Event | S-1 verdict | Implication |
+|-------|-------------|-------------|
+| GW170809 | ROBUST_ANOMALY | Large +α not killed by multi-approx/jitter/draws |
+| GW151012 | ROBUST_ANOMALY | −α mostly stable; SEOBNR weak; BF marginal |
+
+Opposite signs under ROBUST_ANOMALY ⇒ single universal α is untenable; any
+revision needs a **new pre-registration**, not band widening.
+
 ## Related
 
 - `docs/PREDICTION_MODE.md`  
