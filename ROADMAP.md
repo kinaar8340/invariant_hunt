@@ -80,8 +80,10 @@ See `docs/CAMPAIGN_ECHO_MAPPING.md`.
 2. ~~Injection recovery (Gate B-P)~~  
 3. ~~PE approximant robustness~~ (GW150914)  
 4. ~~Expanded multi-event + PE draws~~ — P-D **PASS** 4/7  
-5. ~~Follow-up draws/B-P~~ — 814 & 608 draw-stable; **818 demoted** (4/8)  
-6. B-P on 608; approximant check on 814; then β on draw-stable core only
+5. ~~Follow-up draws/B-P~~ — 814 core; **818 demoted**  
+6. ~~GW170608 scrutiny~~ — **demoted** (high corr(r,τ), approx Δχ² swing, mass sign flip)  
+7. ~~Core lock + forward band~~ — α ∈ [2.9e-5, 1.2e-4]; GW170823 → NULL  
+8. Next held-out BBH scoring; optional PE draws on more events
 
 See `docs/PREMERGER_PHASE.md`.
 

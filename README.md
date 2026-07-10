@@ -116,6 +116,7 @@ python scripts/premerger_mass_scale.py
 python scripts/premerger_expand_events.py --plot --n-draws 10
 # Follow-up PE draws on passers + B-P on second event
 python scripts/premerger_followup_passers.py --plot --n-draws 8 --inject-events GW170814
+python scripts/premerger_core_predict.py --predict-event GW170823
 ```
 
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  

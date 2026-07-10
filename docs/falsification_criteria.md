@@ -175,16 +175,28 @@ H1/L1 same sign when both are significant.
 ### Gate P-D
 Gate P on ≥ 2 BBHs with **same sign** of network \(\hat\alpha\).
 
+### Core lock (after systematics)
+
+**Credible core:** GW150914 + GW170814 only.  
+**Demoted:** GW170608 (high corr(r,τ), mass sign flip), GW170818 (draws 4/8).
+
+**Forward band** (3×width): \(\hat\alpha \in [2.88\times10^{-5},\,1.15\times10^{-4}]\) (positive).
+
 ```bash
-python scripts/premerger_phase_scan.py --event GW150914 --plot
-python scripts/premerger_injection_recovery.py --event GW150914 --plot
+python scripts/premerger_core_predict.py
+python scripts/premerger_core_predict.py --predict-event <NEW_BBH>
 ```
+
+**SUCCESS:** next Gate-P-pass event with \(\hat\alpha\) in band.  
+**FALSIFY:** Gate-P-pass with \(\hat\alpha\) outside band or significantly negative.  
+**NULL:** Gate P fail (not a counterexample).
 
 ### Gate B-P — pre-merger injection recovery
 
 - Background α_inj=0: false Gate P rate should be low  
 - Injected α above thr recovered with frac ∈ [0.5, 1.5] and Gate P pass  
-- Real |α| compared to thr and residual–τ correlation (systematics)
+- Real |α| compared to thr and residual–τ correlation (systematics);  
+  **corr(r,τ) ≳ 0.1 flags PE-systematics risk** (as on demoted GW170608)
 
 Docs: `docs/PREMERGER_PHASE.md`
 
