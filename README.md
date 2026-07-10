@@ -114,6 +114,8 @@ python scripts/premerger_pe_robustness.py --event GW150914 --plot
 python scripts/premerger_mass_scale.py
 # Expanded multi-event + PE posterior draws
 python scripts/premerger_expand_events.py --plot --n-draws 10
+# Follow-up PE draws on passers + B-P on second event
+python scripts/premerger_followup_passers.py --plot --n-draws 8 --inject-events GW170814
 ```
 
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  

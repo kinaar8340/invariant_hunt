@@ -79,9 +79,9 @@ See `docs/CAMPAIGN_ECHO_MAPPING.md`.
 1. ~~Form + Gate P + scanner~~  
 2. ~~Injection recovery (Gate B-P)~~  
 3. ~~PE approximant robustness~~ (GW150914)  
-4. ~~Expanded multi-event + PE draws~~ — P-D **PASS** 4/7 same + sign; draws 9/10  
-5. PE draws on GW170608/814/818; B-P on a second event; high-Δχ² scrutiny  
-6. Only then: mass-scaled β or form refinements
+4. ~~Expanded multi-event + PE draws~~ — P-D **PASS** 4/7  
+5. ~~Follow-up draws/B-P~~ — 814 & 608 draw-stable; **818 demoted** (4/8)  
+6. B-P on 608; approximant check on 814; then β on draw-stable core only
 
 See `docs/PREMERGER_PHASE.md`.
 

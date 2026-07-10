@@ -53,4 +53,8 @@ Re-run `premerger_mass_scale.py` on the four Gate-P passers for exploratory β c
 | PE posterior draws (GW150914) | **9/10 pass** |
 | P-D multi-event (expanded) | **PASS** (4/7, same + sign) |
 
-**Still not a discovery claim.** It is the first time multi-event sign-consistent Gate P clears under pre-registered rules. Required follow-ups: PE draws on GW170608/814/818, injection recovery on at least one more event, and scrutiny of high-Δχ² light systems.
+**Still not a discovery claim.** Follow-up (`MILESTONE_PREMERGER_FOLLOWUP.md`):
+
+- PE draws: **GW170814 & GW170608** 7/8 pass; **GW170818 only 4/8 → demote**  
+- B-P on GW170814: noise FP clean  
+- Credible core ≈ GW150914 + GW170814 (± GW170608 with high-Δχ² caution)
