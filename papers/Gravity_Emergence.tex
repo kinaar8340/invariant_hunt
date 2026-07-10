@@ -1,0 +1,121 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,booktabs}
+\usepackage{hyperref}
+
+\title{Emergent Gravity from the Gauged Hopf Lattice\\
+\large Weak-Field Limit and $G_N$ Schema\\
+\normalsize (Phase~3 --- invariant\_hunt)}
+\author{Aaron Kinder \\ Independent Researcher}
+\date{July 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We record the continuum gravity scaffold of the gauged Hopf lattice: effective
+stress-energy from holonomy and twist gradients, Einstein--Hilbert structure with
+Newton constant fixed by frozen locks via
+$G_N\sim 8\pi\lambda\Delta\omega/(\kappa W_g^2)$, and the Newtonian weak-field limit.
+Gate~GR-1 enforces structural consistency; Gate~GR-2 checks analytic GR targets
+with matched $G$. No claim of full nonlinear GR equivalence or new observational
+discovery is made. Pre-merger GW freeze remains independent.
+\end{abstract}
+
+\section{Discipline and locks}
+
+Frozen:
+\[
+W_g=\frac{350}{\pi},\qquad \kappa\approx 0.85,\qquad \phi_b^\star\approx 0.8145.
+\]
+Unified action~\cite{lag,rel} includes
+$S_{\mathrm{grav}}= (16\pi G_N)^{-1}\int\sqrt{-g}\,R+\cdots$.
+Pre-merger freeze: \texttt{premerger\_core\_predict.py}.
+
+\section{$G_N$ schema}
+
+\begin{equation}
+G_{\mathrm{schema}}
+=\frac{8\pi\,\lambda\,\Delta\omega\,f(\langle\Theta\rangle)}{\kappa\,W_g^{2}}.
+\label{eq:GN-schema}
+\end{equation}
+Default continuum matching normalizes $G_{\mathrm{SI}}\to G_{\mathrm{CODATA}}$ at
+reference locks so that drifts in $\lambda,\Delta\omega,f$ (locks fixed) are testable.
+Absolute SI matching without that normalization is \textbf{not} claimed as precision.
+
+\section{Effective stress-energy}
+
+From the free-energy density of the twist/holonomy sector,
+\begin{equation}
+\rho_{\mathrm{eff}}
+\sim \frac{D}{8}|\nabla\Theta|^{2}
++\frac{\kappa}{2}\bar\Theta^{2},
+\label{eq:rho-eff}
+\end{equation}
+with isotropic pressure scaffold $p\sim\tfrac13\rho_{\mathrm{grad}}$ for the gradient piece.
+Trace $T=\rho-3p$ sources an effective curvature scalar
+\begin{equation}
+R_{\mathrm{eff}}\sim 8\pi G_{\mathrm{schema}}\,T.
+\label{eq:R-eff}
+\end{equation}
+
+\section{Einstein limit (structure)}
+
+\begin{equation}
+G_{\mu\nu}+\Lambda g_{\mu\nu}=8\pi G_N T_{\mu\nu},
+\label{eq:einstein}
+\end{equation}
+with $T_{\mu\nu}$ identified with holonomy/twist continuum stress (defects, bursts as
+localized sources). Full metric PDE solutions are later work.
+
+\section{Newtonian / weak-field limit}
+
+\begin{equation}
+\nabla^{2}\Phi=4\pi G\rho,
+\qquad
+\Phi=-\frac{GM}{r}.
+\label{eq:newton}
+\end{equation}
+Linearized metric:
+$g_{00}\approx -(1+2\Phi)$, $g_{ij}\approx (1-2\Phi)\delta_{ij}$ ($c=1$).
+
+\section{Analytic precision targets (Gate~GR-2)}
+
+With matched $G$: solar light deflection $\delta=4GM_\odot/(c^{2}R_\odot)\approx 1.75''$;
+Mercury perihelion $\approx 43''$/cy; Shapiro scale $2GM_\odot/c^{3}\approx 9.85\,\mu\mathrm{s}$.
+These validate the weak-field module structure, not a new ephemeris campaign.
+
+\section{Gates}
+
+\begin{verbatim}
+python scripts/gravity_emergence_check.py --gates GR-1,GR-2 --plot
+\end{verbatim}
+
+\begin{center}
+\begin{tabular}{@{}llp{0.4\textwidth}@{}}
+\toprule
+Gate & Status & Role \\
+\midrule
+GR-1 & PASS & $G_N$ schema, $\rho_{\mathrm{eff}}$, Newton limit, locks \\
+GR-2 & PASS & Analytic GR targets with matched $G$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{What is not claimed}
+
+Full nonlinear Einstein equivalence, cosmology, or SI $G_N$ without continuum matching.
+FAIL demotes the gravity mapping, not the core locks.
+
+\begin{thebibliography}{9}
+\bibitem{lag}
+A.~Kinder, \emph{Unified Action Principle},
+\texttt{papers/Lagrangian\_Derivation.tex}, Jul.~2026.
+\bibitem{rel}
+A.~Kinder, \emph{Relativistic Completion},
+\texttt{papers/Relativistic\_Completion.tex}, Jul.~2026.
+\bibitem{ms}
+invariant\_hunt, \texttt{docs/GRAVITY\_EMERGENCE.md}, Jul.~2026.
+\end{thebibliography}
+
+\end{document}

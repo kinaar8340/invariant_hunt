@@ -142,6 +142,9 @@ python scripts/sm_gate_check.py --gates SM-2 --yukawa --require SM-2
 # Phase 2.3 — one-loop SM gauge RG (Gate SM-3 complete)
 python scripts/sm_rg_flow.py --plot
 python scripts/sm_gate_check.py --gates SM-3 --require SM-3
+
+# Phase 3 — emergent gravity (Gates GR-1 / GR-2)
+python scripts/gravity_emergence_check.py --gates GR-1,GR-2 --plot
 ```
 
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  
@@ -168,28 +171,25 @@ invariant_hunt/
 │   ├── sm_mapping.py         # Phase 2.1 SM representations + Gate SM-*
 │   ├── sm_yukawa.py          # Phase 2.2 topological Yukawa + χ²
 │   ├── sm_rg.py              # Phase 2.3 one-loop SM gauge RG
+│   ├── gravity_emergence.py  # Phase 3 G_N + weak field + GR gates
 │   ├── positional.py         # 350/π as phase / lattice site
 │   ├── predictions.py        # InvariantSet → PredictionRecord
 │   ├── conduit.py            # RubikConeConduit (seeded from toe)
 │   ├── config.py
 │   └── relaxation_survival.py
 ├── scripts/
-│   ├── action_principle_check.py     # Gate A-P runner
-│   ├── sm_mapping.py / sm_gate_check.py / sm_yukawa_ansatz.py / sm_rg_flow.py
+│   ├── action_principle_check.py / sm_* / gravity_emergence_check.py
 │   ├── meta_optimize_invariants.py   # --locks-fixed / --sm-mode / --yukawa
 │   ├── premerger_core_predict.py     # held-out SUCCESS/FALSIFY/NULL
-│   ├── pde_relaxation.py             # twist PDE (+ optional gauge_flux)
-│   └── …
+│   └── pde_relaxation.py
 ├── docs/
-│   ├── MILESTONE_SM_PARTICLE_MAPPING.md
-│   ├── MILESTONE_SM_YUKAWA.md
-│   ├── MILESTONE_SM_RG.md
+│   ├── GRAVITY_EMERGENCE.md
+│   ├── MILESTONE_SM_*.md
 │   ├── MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md
 │   └── falsification_criteria.md
 ├── papers/
-│   ├── Lagrangian_Derivation.tex
-│   ├── Relativistic_Completion.tex
-│   ├── SM_Derivation.tex
+│   ├── Lagrangian_Derivation.tex / Relativistic_Completion.tex
+│   ├── SM_Derivation.tex / Gravity_Emergence.tex
 │   └── GW_Burst_Threshold.tex
 ├── ROADMAP.md
 └── vendor/SEED.md
@@ -219,10 +219,10 @@ falsify the core invariants. Full write-up:
 [docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md](docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md).
 
 **Phase 1 action scaffolding complete** (Gates A-P + H-S).  
-**Phase 2 SM content complete** (Gates SM-1, SM-2 mass, SM-3 anomaly+RG).
-Locks frozen; no unification/gravity claim.
-[docs/MILESTONE_SM_PARTICLE_MAPPING.md](docs/MILESTONE_SM_PARTICLE_MAPPING.md) ·
-[docs/MILESTONE_SM_YUKAWA.md](docs/MILESTONE_SM_YUKAWA.md) ·
+**Phase 2 SM content complete** (SM-1 / SM-2 mass / SM-3).  
+**Phase 3 gravity scaffolding complete** (GR-1 / GR-2 analytic). Locks frozen;
+no full-GR or SI-\(G_N\)-from-first-principles over-claim.
+[docs/GRAVITY_EMERGENCE.md](docs/GRAVITY_EMERGENCE.md) ·
 [docs/MILESTONE_SM_RG.md](docs/MILESTONE_SM_RG.md).
 
 Next phase: other observables or analytic invariant→signal derivation
