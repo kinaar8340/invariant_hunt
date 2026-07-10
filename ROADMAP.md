@@ -154,6 +154,9 @@ Band and core locks **not** re-fit. See `docs/MILESTONE_HELD_OUT_TRUE_BBH.md`.
 
 Active: optional PE systematics on FALSIFY events; new pre-registered mapping only under fresh freeze cycle.  
 
+Bayes factor complement (no band re-fit): `scripts/premerger_bayes_factor.py`  
+→ `docs/PREMERGER_BAYES_FACTOR.md`  
+
 ### Later
 
 - Matched-filter post-merger at \(f_{\mathrm{phys}}(M)\) with \(10^{-6}\) relative amp  

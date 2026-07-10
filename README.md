@@ -231,6 +231,10 @@ python scripts/integration_status.py --run-gates
 python scripts/premerger_core_predict.py --predict-event GW170809
 python scripts/premerger_core_predict.py --predict-event GW170729
 python scripts/premerger_core_predict.py --predict-event GW151012
+
+# Bayes factor B_10 = Z(topo)/Z(GR) — complement to Δχ² (prior σ_α=1e-3)
+python scripts/premerger_bayes_factor.py --event GW150914 --calibrate
+python scripts/premerger_bayes_factor.py --events GW170809,GW170729,GW151012
 ```
 
 See `docs/PREDICTION_MODE.md`. True held-outs: **0 SUCCESS / 2 FALSIFY / 1 NULL**  

@@ -194,6 +194,19 @@ python scripts/premerger_core_predict.py --predict-event <NEW_BBH>
 **Freeze:** in-catalog campaign closed at this rule —  
 `docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md`. Reopen only for a true new held-out BBH or roadmap “later” items.
 
+True held-out scorecard (GW170809 FALSIFY, GW170729 NULL, GW151012 FALSIFY) **demoted**
+the universal α-band SUCCESS claim. Band not re-fit.
+
+### Bayes factor complement (Gate-style diagnostic)
+
+```bash
+python scripts/premerger_bayes_factor.py --events GW170809,GW170729,GW151012
+```
+
+\(B_{10}=Z(\mathrm{GR}+\alpha\tau)/Z(\mathrm{GR})\) with pre-registered \(\alpha\sim\mathcal{N}(0,10^{-3})\).  
+Complements \(\Delta\chi^2\); does **not** restore the demoted band or free locks.  
+Doc: `docs/PREMERGER_BAYES_FACTOR.md`.
+
 ### Gate B-P — pre-merger injection recovery
 
 - Background α_inj=0: false Gate P rate should be low  
