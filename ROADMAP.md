@@ -77,10 +77,11 @@ See `docs/CAMPAIGN_ECHO_MAPPING.md`.
 ### Active: pre-merger topological phase (Gate P)
 
 1. ~~Form + Gate P + scanner~~  
-2. ~~Injection recovery (Gate B-P)~~ — noise FP clean  
-3. ~~PE approximant robustness~~ — GW150914 4/4 approximants pass (provisional)  
-4. ~~Mass-scaled P-D~~ — blocked (only 1/3 events pass Gate P)  
-5. More events or PE posterior draws; if still single-event: class B–D forms
+2. ~~Injection recovery (Gate B-P)~~  
+3. ~~PE approximant robustness~~ (GW150914)  
+4. ~~Expanded multi-event + PE draws~~ — P-D **PASS** 4/7 same + sign; draws 9/10  
+5. PE draws on GW170608/814/818; B-P on a second event; high-Δχ² scrutiny  
+6. Only then: mass-scaled β or form refinements
 
 See `docs/PREMERGER_PHASE.md`.
 

@@ -110,6 +110,58 @@ GW170104 = PublicGWEvent(
     ),
 )
 
+GW170608 = PublicGWEvent(
+    name="GW170608",
+    gps=1180922494.5,
+    mass_final_solar=17.8,
+    mass1_solar=11.0,
+    mass2_solar=7.6,
+    f_ring_hz=round(_f_ring_scale(17.8), 1),
+    detectors=("H1", "L1"),
+    f_low_hz=30.0,
+    f_high_hz=100.0,  # pre-merger phase band still 20-100; catalog high for ring
+    notes="Light BBH, network SNR≈15.4. Good for multi-event Gate P.",
+)
+
+GW170814 = PublicGWEvent(
+    name="GW170814",
+    gps=1186741861.5,
+    mass_final_solar=53.2,
+    mass1_solar=30.6,
+    mass2_solar=25.2,
+    f_ring_hz=round(_f_ring_scale(53.2), 1),
+    detectors=("H1", "L1"),
+    f_low_hz=50.0,
+    f_high_hz=350.0,
+    notes="Three-detector BBH; H1+L1 used for Gate P. SNR≈17.2.",
+)
+
+GW170818 = PublicGWEvent(
+    name="GW170818",
+    gps=1187058327.1,
+    mass_final_solar=59.4,
+    mass1_solar=35.4,
+    mass2_solar=26.7,
+    f_ring_hz=round(_f_ring_scale(59.4), 1),
+    detectors=("H1", "L1"),
+    f_low_hz=50.0,
+    f_high_hz=300.0,
+    notes="BBH SNR≈11.3.",
+)
+
+GW170823 = PublicGWEvent(
+    name="GW170823",
+    gps=1187529256.5,
+    mass_final_solar=65.4,
+    mass1_solar=39.5,
+    mass2_solar=29.0,
+    f_ring_hz=round(_f_ring_scale(65.4), 1),
+    detectors=("H1", "L1"),
+    f_low_hz=50.0,
+    f_high_hz=300.0,
+    notes="Heavy BBH SNR≈11.5; mass similar to GW150914.",
+)
+
 GW170817 = PublicGWEvent(
     name="GW170817",
     gps=1187008882.4,
@@ -126,8 +178,23 @@ CATALOG: dict[str, PublicGWEvent] = {
     GW150914.name: GW150914,
     GW151226.name: GW151226,
     GW170104.name: GW170104,
+    GW170608.name: GW170608,
+    GW170814.name: GW170814,
+    GW170818.name: GW170818,
+    GW170823.name: GW170823,
     GW170817.name: GW170817,
 }
+
+# Preferred multi-event Gate P set (H1+L1 BBHs)
+GATE_P_EVENTS: tuple[str, ...] = (
+    "GW150914",
+    "GW170104",
+    "GW151226",
+    "GW170608",
+    "GW170814",
+    "GW170818",
+    "GW170823",
+)
 
 
 def get_event(name: str) -> PublicGWEvent:
@@ -173,6 +240,50 @@ GWOSC_32S: dict[str, dict[str, Any]] = {
             "L1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW170104/v2/L-L1_GWOSC_4KHZ_R1-1167559921-32.hdf5",
         },
         "gps_start": 1167559921,
+        "duration": 32,
+        "sample_rate": 4096,
+    },
+    "GW170608": {
+        "H1": "H-H1_GWOSC_4KHZ_R1-1180922479-32.hdf5",
+        "L1": "L-L1_GWOSC_4KHZ_R1-1180922479-32.hdf5",
+        "urls": {
+            "H1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW170608/v3/H-H1_GWOSC_4KHZ_R1-1180922479-32.hdf5",
+            "L1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW170608/v3/L-L1_GWOSC_4KHZ_R1-1180922479-32.hdf5",
+        },
+        "gps_start": 1180922479,
+        "duration": 32,
+        "sample_rate": 4096,
+    },
+    "GW170814": {
+        "H1": "H-H1_GWOSC_4KHZ_R1-1186741846-32.hdf5",
+        "L1": "L-L1_GWOSC_4KHZ_R1-1186741846-32.hdf5",
+        "urls": {
+            "H1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW170814/v3/H-H1_GWOSC_4KHZ_R1-1186741846-32.hdf5",
+            "L1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW170814/v3/L-L1_GWOSC_4KHZ_R1-1186741846-32.hdf5",
+        },
+        "gps_start": 1186741846,
+        "duration": 32,
+        "sample_rate": 4096,
+    },
+    "GW170818": {
+        "H1": "H-H1_GWOSC_4KHZ_R1-1187058312-32.hdf5",
+        "L1": "L-L1_GWOSC_4KHZ_R1-1187058312-32.hdf5",
+        "urls": {
+            "H1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW170818/v1/H-H1_GWOSC_4KHZ_R1-1187058312-32.hdf5",
+            "L1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW170818/v1/L-L1_GWOSC_4KHZ_R1-1187058312-32.hdf5",
+        },
+        "gps_start": 1187058312,
+        "duration": 32,
+        "sample_rate": 4096,
+    },
+    "GW170823": {
+        "H1": "H-H1_GWOSC_4KHZ_R1-1187529241-32.hdf5",
+        "L1": "L-L1_GWOSC_4KHZ_R1-1187529241-32.hdf5",
+        "urls": {
+            "H1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW170823/v1/H-H1_GWOSC_4KHZ_R1-1187529241-32.hdf5",
+            "L1": "https://gwosc.org/eventapi/json/GWTC-1-confident/GW170823/v1/L-L1_GWOSC_4KHZ_R1-1187529241-32.hdf5",
+        },
+        "gps_start": 1187529241,
         "duration": 32,
         "sample_rate": 4096,
     },

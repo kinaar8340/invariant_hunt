@@ -25,6 +25,10 @@ PE_URLS: dict[str, str] = {
     "GW150914": "https://dcc.ligo.org/public/0157/P1800370/005/GW150914_GWTC-1.hdf5",
     "GW151226": "https://dcc.ligo.org/public/0157/P1800370/005/GW151226_GWTC-1.hdf5",
     "GW170104": "https://dcc.ligo.org/public/0157/P1800370/005/GW170104_GWTC-1.hdf5",
+    "GW170608": "https://dcc.ligo.org/public/0157/P1800370/005/GW170608_GWTC-1.hdf5",
+    "GW170814": "https://dcc.ligo.org/public/0157/P1800370/005/GW170814_GWTC-1.hdf5",
+    "GW170818": "https://dcc.ligo.org/public/0157/P1800370/005/GW170818_GWTC-1.hdf5",
+    "GW170823": "https://dcc.ligo.org/public/0157/P1800370/005/GW170823_GWTC-1.hdf5",
 }
 
 PE_DATASET_PREFERRED = "Overall_posterior"
@@ -140,6 +144,75 @@ def load_pe_medians(
         n_samples=int(post.shape[0]),
         source=str(path),
     )
+
+
+def _row_to_params(
+    event: str,
+    row: np.void,
+    *,
+    dataset: str,
+    source: str,
+    n_samples: int,
+    approximant: str = "IMRPhenomD",
+) -> PEParams:
+    m1 = float(row["m1_detector_frame_Msun"])
+    m2 = float(row["m2_detector_frame_Msun"])
+    if m2 > m1:
+        m1, m2 = m2, m1
+    s1z = float(row["spin1"] * row["costilt1"])
+    s2z = float(row["spin2"] * row["costilt2"])
+    return PEParams(
+        event=event,
+        mass1=m1,
+        mass2=m2,
+        distance_mpc=float(row["luminosity_distance_Mpc"]),
+        spin1z=s1z,
+        spin2z=s2z,
+        ra=float(row["right_ascension"]),
+        dec=float(row["declination"]),
+        costheta_jn=float(row["costheta_jn"]),
+        approximant=approximant,
+        posterior_dataset=dataset,
+        n_samples=n_samples,
+        source=source,
+    )
+
+
+def load_pe_posterior_draws(
+    event: str,
+    *,
+    n_draws: int = 16,
+    seed: int = 42,
+    pe_dir: Path | None = None,
+    dataset: str = PE_DATASET_PREFERRED,
+    approximant: str = "IMRPhenomD",
+) -> list[PEParams]:
+    """Random draws from the public GWTC-1 posterior (without replacement)."""
+    import h5py
+
+    path = download_pe_samples(event, pe_dir=pe_dir)
+    with h5py.File(path, "r") as f:
+        if dataset not in f:
+            keys = [k for k in f.keys() if "posterior" in k.lower()]
+            if not keys:
+                raise KeyError(f"No posterior dataset in {path}")
+            dataset = keys[0]
+        post = f[dataset][:]
+    n = int(post.shape[0])
+    n_draws = min(int(n_draws), n)
+    rng = np.random.default_rng(seed)
+    idx = rng.choice(n, size=n_draws, replace=False)
+    return [
+        _row_to_params(
+            event,
+            post[i],
+            dataset=dataset,
+            source=f"{path}#draw{i}",
+            n_samples=n,
+            approximant=approximant,
+        )
+        for i in idx
+    ]
 
 
 def generate_imr_polarizations(

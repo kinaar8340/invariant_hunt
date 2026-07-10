@@ -112,6 +112,8 @@ python scripts/premerger_phase_scan.py --events GW150914,GW170104,GW151226
 python scripts/premerger_injection_recovery.py --event GW150914 --plot
 python scripts/premerger_pe_robustness.py --event GW150914 --plot
 python scripts/premerger_mass_scale.py
+# Expanded multi-event + PE posterior draws
+python scripts/premerger_expand_events.py --plot --n-draws 10
 ```
 
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  

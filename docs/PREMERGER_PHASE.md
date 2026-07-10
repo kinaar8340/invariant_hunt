@@ -61,7 +61,10 @@ python scripts/premerger_injection_recovery.py --event GW150914 --plot
 python scripts/premerger_pe_robustness.py --event GW150914 --plot
 
 # Mass-scaled multi-event (only helps if ≥2 events pass Gate P)
-python scripts/premerger_mass_scale.py --events GW150914,GW170104,GW151226
+python scripts/premerger_mass_scale.py --events GW150914,GW170608,GW170814,GW170818
+
+# Expanded event set + PE posterior draws
+python scripts/premerger_expand_events.py --plot --n-draws 10
 ```
 
 ## Relation to analytics
