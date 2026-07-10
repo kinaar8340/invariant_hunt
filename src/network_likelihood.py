@@ -147,12 +147,15 @@ def fit_pe_whitened(
     lag_max: float = 0.05,
     fit_t_min: float = -0.15,
     fit_t_max: float = 0.05,
+    approximant: str | None = None,
 ) -> tuple[np.ndarray, float, float, float, float, float, np.ndarray]:
     """Fit PE IMR in whitened domain.
 
     Returns residual_w, lag, Ap, Ac, chi2, snr, template_w.
     """
-    hp, hc, _ = generate_imr_polarizations(params, sample_rate=sample_rate)
+    hp, hc, _ = generate_imr_polarizations(
+        params, sample_rate=sample_rate, approximant=approximant
+    )
     lag_step = 1.0 / sample_rate
     lags = np.arange(lag_min, lag_max + 0.5 * lag_step, lag_step)
     fit_mask = (t_rel >= fit_t_min) & (t_rel <= fit_t_max)
@@ -231,6 +234,7 @@ def prepare_detector(
     duration_post_s: float = 0.20,
     psd_pre_end: float = -0.05,
     psd_duration_s: float = 8.0,
+    approximant: str | None = None,
 ) -> DetectorWhitened:
     """Load → PSD from long pre-merger stretch → whiten → PE residual.
 
@@ -272,6 +276,7 @@ def prepare_detector(
         fs,
         f_low=f_low,
         f_high=f_high,
+        approximant=approximant,
     )
     return DetectorWhitened(
         detector=detector,

@@ -259,12 +259,38 @@ def prepare_premerger_network(
     duration_post_s: float = 0.05,
     f_low: float = 20.0,
     f_high: float = 100.0,
+    approximant: str | None = None,
+    params: "PEParams | None" = None,
 ) -> tuple[PublicGWEvent, list[DetectorWhitened]]:
-    """Long pre-merger window for inspiral phase analysis."""
+    """Long pre-merger window for inspiral phase analysis.
+
+    ``approximant`` overrides the PE waveform family (e.g. IMRPhenomD,
+    SEOBNRv4_opt, IMRPhenomXAS). ``params`` allows PE mass/distance jitter.
+    """
+    from .pe_waveform import PEParams  # local import for type
+
     event = get_event(event_name)
     pe_dir = project_root / "data" / "pe"
     cache = project_root / "data" / "gwosc"
-    params = pe_params_for_event(event.name, pe_dir=pe_dir)
+    if params is None:
+        params = pe_params_for_event(event.name, pe_dir=pe_dir)
+    if approximant is not None:
+        # dataclass may be frozen-like; PEParams is not frozen
+        params = PEParams(
+            event=params.event,
+            mass1=params.mass1,
+            mass2=params.mass2,
+            distance_mpc=params.distance_mpc,
+            spin1z=params.spin1z,
+            spin2z=params.spin2z,
+            ra=params.ra,
+            dec=params.dec,
+            costheta_jn=params.costheta_jn,
+            approximant=approximant,
+            posterior_dataset=params.posterior_dataset,
+            n_samples=params.n_samples,
+            source=params.source,
+        )
     dets = [
         prepare_detector(
             event,
@@ -277,6 +303,7 @@ def prepare_premerger_network(
             duration_post_s=duration_post_s,
             psd_pre_end=-0.5,  # PSD from earlier than inspiral fit end
             psd_duration_s=8.0,
+            approximant=approximant or params.approximant,
         )
         for det in detectors
     ]

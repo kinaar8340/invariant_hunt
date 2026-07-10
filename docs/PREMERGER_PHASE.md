@@ -56,6 +56,12 @@ python scripts/premerger_phase_scan.py --events GW150914,GW170104,GW151226
 
 # Gate B-P: α injection recovery + residual–τ correlation + time cuts
 python scripts/premerger_injection_recovery.py --event GW150914 --plot
+
+# PE approximant / mass-distance jitter robustness
+python scripts/premerger_pe_robustness.py --event GW150914 --plot
+
+# Mass-scaled multi-event (only helps if ≥2 events pass Gate P)
+python scripts/premerger_mass_scale.py --events GW150914,GW170104,GW151226
 ```
 
 ## Relation to analytics
