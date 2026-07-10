@@ -66,14 +66,14 @@ python scripts/premerger_core_predict.py --predict-event GW151012
 Universal α-band claim **demoted**. Band **not** re-fit.  
 Full scorecard: `docs/MILESTONE_HELD_OUT_TRUE_BBH.md`.
 
-### Gate S-1 on FALSIFY events
+### Gate S-1 on FALSIFY events (canonical n_draws≥12)
 
 | Event | Gate S-1 | Notes |
 |-------|----------|--------|
-| GW170809 | **ROBUST_ANOMALY** | +α ≫ band; multi-approx + draws stable |
-| GW151012 | **ROBUST_ANOMALY** | −α; 3/4 approx PASS; SEOBNR fail; weak BF |
+| GW170809 | **ROBUST_ANOMALY** | +α ≫ band; multi-approx + 12/12 draws stable |
+| GW151012 | **SYSTEMATICS_RISK** | −α; 3/4 approx PASS; PE draws 5/12 (n=12); n=8 had flattered ROBUST_ANOMALY |
 
-Opposite robust signs reinforce demotion of a single universal band.  
+Only one robust anomaly (GW170809). GW151012 PE-draw instability → systematics narrative.  
 See `docs/MILESTONE_FALSIFY_SYSTEMATICS.md`.
 
 ## Artifacts

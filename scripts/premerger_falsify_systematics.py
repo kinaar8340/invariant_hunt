@@ -42,7 +42,12 @@ def main() -> int:
         "--approximants",
         default=",".join(DEFAULT_APPROXIMANTS),
     )
-    p.add_argument("--n-draws", type=int, default=12)
+    p.add_argument(
+        "--n-draws",
+        type=int,
+        default=12,
+        help="PE posterior draws (default 12; use ≥12 for Gate S-1 claims)",
+    )
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--skip-draws", action="store_true")
     p.add_argument("--skip-jitter", action="store_true")

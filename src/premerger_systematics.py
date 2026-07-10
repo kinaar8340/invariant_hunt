@@ -416,7 +416,11 @@ def deep_dive_event(
     skip_jitter: bool = False,
     duration_pre_s: float = 4.0,
 ) -> dict[str, Any]:
-    """Full Gate S-1 deep dive for one event."""
+    """Full Gate S-1 deep dive for one event.
+
+    Prefer ``n_draws >= 12`` for verdict claims (GW151012 flips ROBUST↔SYSTEMATICS
+    between 8 and 12 draws).
+    """
     detectors = detectors or ["H1", "L1"]
     approximants = approximants or list(DEFAULT_APPROXIMANTS)
     inv = InvariantSet()
