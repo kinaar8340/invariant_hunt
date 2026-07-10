@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Phase 3 — Emergent gravity Gate GR-1 / GR-2 runner.
+Phase 3 — Emergent gravity Gate GR-1 / GR-2 / GR-3 runner.
 
 Usage:
   python scripts/gravity_emergence_check.py
-  python scripts/gravity_emergence_check.py --gates GR-1,GR-2 --plot
+  python scripts/gravity_emergence_check.py --gates GR-1,GR-2,GR-3 --plot
+  python scripts/gravity_emergence_check.py --gates GR-3 --nx 48 --require GR-3
 """
 
 from __future__ import annotations
@@ -23,11 +24,14 @@ from src.gravity_emergence import (  # noqa: E402
     G_CODATA,
     M_SUN_KG,
     GravityParams,
+    continuum_matching_scale,
     gate_gr1_report,
     gate_gr2_report,
+    gate_gr3_report,
     g_n_schema,
     g_n_si_matched,
     gravity_full_report,
+    lattice_metric_pde,
     newtonian_potential,
 )
 from src.invariants import DEFAULT_BRAIDING, DEFAULT_KAPPA, LOCKED_WG  # noqa: E402
@@ -36,7 +40,7 @@ OUTPUT_DIR = project_root / "outputs" / "gravity"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def maybe_plot(out_base: Path) -> Path | None:
+def maybe_plot(out_base: Path, *, nx: int = 32, seed: int = 0) -> Path | None:
     try:
         import matplotlib.pyplot as plt
         import numpy as np
@@ -49,23 +53,36 @@ def maybe_plot(out_base: Path) -> Path | None:
     r_au = np.linspace(0.3, 5.0, 50) * 1.496e11
     Phis = [newtonian_potential(M_SUN_KG, float(r))["Phi"] for r in r_au]
 
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4.5))
-    ax = axes[0]
+    pde = lattice_metric_pde(nx=nx, seed=seed)
+    fields = pde["_fields"]
+
+    fig, axes = plt.subplots(2, 2, figsize=(10, 9))
+    ax = axes[0, 0]
     ax.plot(lams, Gs, color="C0")
     ax.set_xlabel(r"$\lambda_\sigma$")
     ax.set_ylabel(r"$G_{\mathrm{schema}}$")
     ax.set_title(r"$G_N$ schema vs $\lambda$ (locks frozen)")
     ax.grid(True, alpha=0.3)
 
-    ax2 = axes[1]
+    ax2 = axes[0, 1]
     ax2.plot(r_au / 1.496e11, Phis, color="C1")
     ax2.set_xlabel("r [AU]")
     ax2.set_ylabel(r"$\Phi$ [J/kg]")
     ax2.set_title("Newtonian potential (Sun, matched G)")
     ax2.grid(True, alpha=0.3)
 
+    ax3 = axes[1, 0]
+    im3 = ax3.imshow(fields["rho_si"].T, origin="lower", cmap="magma")
+    ax3.set_title(r"Lattice $\rho_{\mathrm{eff}}$ (defects)")
+    fig.colorbar(im3, ax=ax3, fraction=0.046)
+
+    ax4 = axes[1, 1]
+    im4 = ax4.imshow(fields["Phi"].T, origin="lower", cmap="RdBu_r")
+    ax4.set_title(r"Poisson $\Phi$ (metric potential)")
+    fig.colorbar(im4, ax=ax4, fraction=0.046)
+
     fig.suptitle(
-        f"Phase 3 gravity — W_g={LOCKED_WG:.3f}, κ={DEFAULT_KAPPA}, φ_b={DEFAULT_BRAIDING}"
+        f"Phase 3 gravity GR-1–3 — W_g={LOCKED_WG:.3f}, κ={DEFAULT_KAPPA}, φ_b={DEFAULT_BRAIDING}"
     )
     fig.tight_layout()
     path = out_base.with_suffix(".png")
@@ -76,9 +93,11 @@ def maybe_plot(out_base: Path) -> Path | None:
 
 def main() -> int:
     p = argparse.ArgumentParser(description="Phase 3 emergent gravity gates")
-    p.add_argument("--gates", type=str, default="GR-1,GR-2")
-    p.add_argument("--require", type=str, default="GR-1")
+    p.add_argument("--gates", type=str, default="GR-1,GR-2,GR-3")
+    p.add_argument("--require", type=str, default="GR-1,GR-3")
     p.add_argument("--plot", action="store_true")
+    p.add_argument("--nx", type=int, default=32, help="Lattice metric PDE grid size")
+    p.add_argument("--seed", type=int, default=0)
     p.add_argument("--out", type=Path, default=None)
     args = p.parse_args()
 
@@ -91,9 +110,12 @@ def main() -> int:
 
     schema = g_n_schema()
     matched = g_n_si_matched()
-    print("\n--- G_N schema ---")
+    bridge = continuum_matching_scale()
+    print("\n--- G_N schema + SI bridge ---")
     print(f"  G_schema = {schema['G_schema']:.6e}  ({schema['formula']})")
-    print(f"  G_SI_matched / G_CODATA = {matched['ratio_to_codata']:.6f}")
+    print(f"  G_SI / G_CODATA = {matched['ratio_to_codata']:.12f}")
+    print(f"  m_* = {bridge['m_star_kg']:.6e} kg  E_* = {bridge['E_star_GeV']:.6e} GeV")
+    print(f"  bridge round-trip rel err = {bridge['round_trip_rel_err']:.3e}")
     print(f"  {matched['matching_note']}")
 
     results: dict[str, dict] = {}
@@ -125,6 +147,17 @@ def main() -> int:
             f"(target {r['shapiro']['target_us']} µs)"
         )
 
+    if "GR-3" in want:
+        r = gate_gr3_report(nx=args.nx, seed=args.seed)
+        results["GR-3"] = r
+        print(f"\nGate GR-3: {'PASS' if r['pass'] else 'FAIL'}")
+        for k, v in r["criteria"].items():
+            print(f"  {k}: {v}")
+        pde = r["lattice_metric_pde"]
+        print(f"  Poisson residual_rel = {pde['poisson']['residual_rel']:.3e}")
+        print(f"  ρ–Φ correlation = {pde['rho_Phi_correlation']:.4f}")
+        print(f"  Φ_min = {pde['poisson']['Phi_min']:.6e}")
+
     payload = {
         "schema": "invariant_hunt.gravity_check.v1",
         "created_utc": datetime.now(timezone.utc).isoformat(),
@@ -132,12 +165,16 @@ def main() -> int:
         "gates_required": sorted(require),
         "G_schema": schema,
         "G_matched": matched,
+        "si_bridge": bridge,
         "results": {
             k: {"pass": v["pass"], "criteria": v["criteria"], "gate": v.get("gate")}
             for k, v in results.items()
         },
-        "full": gravity_full_report() if want >= {"GR-1", "GR-2"} else None,
-        "detail": results,
+        "full": gravity_full_report() if want >= {"GR-1", "GR-2", "GR-3"} else None,
+        "detail": {
+            k: ({kk: vv for kk, vv in v.items() if kk != "_fields"})
+            for k, v in results.items()
+        },
     }
 
     ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
@@ -151,7 +188,7 @@ def main() -> int:
     print(f"  wrote {latest}")
 
     if args.plot:
-        plot_path = maybe_plot(out)
+        plot_path = maybe_plot(out, nx=args.nx, seed=args.seed)
         if plot_path:
             print(f"  plot {plot_path}")
 

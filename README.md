@@ -143,8 +143,8 @@ python scripts/sm_gate_check.py --gates SM-2 --yukawa --require SM-2
 python scripts/sm_rg_flow.py --plot
 python scripts/sm_gate_check.py --gates SM-3 --require SM-3
 
-# Phase 3 — emergent gravity (Gates GR-1 / GR-2)
-python scripts/gravity_emergence_check.py --gates GR-1,GR-2 --plot
+# Phase 3 — emergent gravity (Gates GR-1 / GR-2 / GR-3)
+python scripts/gravity_emergence_check.py --gates GR-1,GR-2,GR-3 --plot
 ```
 
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  

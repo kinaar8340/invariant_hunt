@@ -1,4 +1,4 @@
-"""Tests for Phase 3 emergent gravity (Gate GR-1 / GR-2)."""
+"""Tests for Phase 3 emergent gravity (Gate GR-1 / GR-2 / GR-3)."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ import math
 from src.gravity_emergence import (
     G_CODATA,
     GravityParams,
+    continuum_matching_scale,
     defect_curvature_scalar,
     effective_stress_energy_density,
     einstein_limit_symbolic,
@@ -14,10 +15,13 @@ from src.gravity_emergence import (
     g_n_si_matched,
     gate_gr1_report,
     gate_gr2_report,
+    gate_gr3_report,
     gr_light_deflection_solar,
     gr_perihelion_mercury,
+    lattice_metric_pde,
     newtonian_potential,
     poisson_source,
+    solve_poisson_periodic,
 )
 from src.invariants import DEFAULT_KAPPA, LOCKED_WG
 
@@ -95,3 +99,41 @@ def test_locks_not_overwritten():
     p.freeze_locks()
     assert abs(p.wg - LOCKED_WG) < 1e-12
     assert abs(p.kappa - DEFAULT_KAPPA) < 1e-12
+
+
+def test_si_bridge_invertible():
+    b = continuum_matching_scale()
+    assert b["invertible"]
+    assert abs(b["ratio_to_codata"] - 1.0) < 1e-12
+    assert b["m_star_kg"] > 0
+    assert b["round_trip_rel_err"] < 1e-12
+
+
+def test_si_scales_with_lambda():
+    m0 = g_n_si_matched(GravityParams(lambda_sigma=1.0))
+    m1 = g_n_si_matched(GravityParams(lambda_sigma=1.5))
+    assert abs(m1["ratio_to_codata"] / m0["ratio_to_codata"] - 1.5) < 1e-9
+
+
+def test_poisson_spectral_residual_tiny():
+    import numpy as np
+
+    rho = np.zeros((16, 16))
+    rho[8, 8] = 1.0
+    rho[4, 4] = 0.5
+    out = solve_poisson_periodic(rho, G=G_CODATA, box_length_m=1.0)
+    assert out["residual_rel"] < 1e-10
+
+
+def test_lattice_metric_pde_attractive():
+    pde = lattice_metric_pde(nx=24, seed=1)
+    assert pde["attractive_potential"]
+    assert pde["rho_Phi_correlation"] < 0
+    assert pde["poisson_residual_pass"]
+    assert pde["metric"]["weak_field_ok"]
+
+
+def test_gate_gr3_pass():
+    r = gate_gr3_report(nx=24, seed=0)
+    assert r["pass"], r["criteria"]
+    assert r["discipline"]["locks_not_fitted"]

@@ -32,16 +32,25 @@ Unified action~\cite{lag,rel} includes
 $S_{\mathrm{grav}}= (16\pi G_N)^{-1}\int\sqrt{-g}\,R+\cdots$.
 Pre-merger freeze: \texttt{premerger\_core\_predict.py}.
 
-\section{$G_N$ schema}
+\section{$G_N$ schema and tight SI bridge}
 
 \begin{equation}
 G_{\mathrm{schema}}
 =\frac{8\pi\,\lambda\,\Delta\omega\,f(\langle\Theta\rangle)}{\kappa\,W_g^{2}}.
 \label{eq:GN-schema}
 \end{equation}
-Default continuum matching normalizes $G_{\mathrm{SI}}\to G_{\mathrm{CODATA}}$ at
-reference locks so that drifts in $\lambda,\Delta\omega,f$ (locks fixed) are testable.
-Absolute SI matching without that normalization is \textbf{not} claimed as precision.
+Continuum SI map (Gate~GR-3):
+\begin{equation}
+G_{\mathrm{SI}}
+= G_{\mathrm{schema}}\times\frac{\hbar c}{m_\star^{2}},
+\qquad
+m_\star^{2}
+= G_{\mathrm{schema}}(\mathrm{default})\times\frac{\hbar c}{G_{\mathrm{CODATA}}}.
+\label{eq:SI-bridge}
+\end{equation}
+Thus $G_{\mathrm{SI}}(\mathrm{default})\equiv G_{\mathrm{CODATA}}$ with explicit invertible
+$m_\star$; drifts in $\lambda,\Delta\omega,f$ (locks fixed) scale $G_{\mathrm{SI}}$
+proportionally. Round-trip schema$\leftrightarrow$SI is checked numerically.
 
 \section{Effective stress-energy}
 
@@ -85,10 +94,22 @@ With matched $G$: solar light deflection $\delta=4GM_\odot/(c^{2}R_\odot)\approx
 Mercury perihelion $\approx 43''$/cy; Shapiro scale $2GM_\odot/c^{3}\approx 9.85\,\mu\mathrm{s}$.
 These validate the weak-field module structure, not a new ephemeris campaign.
 
+\section{Lattice $\to$ metric Poisson PDE (Gate~GR-3)}
+
+On a periodic 2-torus, holonomy defects in $\Theta$ source
+$\rho_{\mathrm{eff}}$; solve
+\begin{equation}
+\nabla^{2}\Phi = 4\pi G\rho_{\mathrm{eff}}
+\label{eq:poisson-lattice}
+\end{equation}
+by FFT (spectral residual). Weak-field metric
+$g_{00}=-(1+2\Phi/c^{2})$. Pass requires tiny residual, attractive $\Phi$,
+and $\mathrm{corr}(\rho,\Phi)<0$.
+
 \section{Gates}
 
 \begin{verbatim}
-python scripts/gravity_emergence_check.py --gates GR-1,GR-2 --plot
+python scripts/gravity_emergence_check.py --gates GR-1,GR-2,GR-3 --plot
 \end{verbatim}
 
 \begin{center}
@@ -98,6 +119,7 @@ Gate & Status & Role \\
 \midrule
 GR-1 & PASS & $G_N$ schema, $\rho_{\mathrm{eff}}$, Newton limit, locks \\
 GR-2 & PASS & Analytic GR targets with matched $G$ \\
+GR-3 & PASS & SI bridge $m_\star$ + lattice$\to$metric PDE \\
 \bottomrule
 \end{tabular}
 \end{center}

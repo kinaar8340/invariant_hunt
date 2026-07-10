@@ -137,8 +137,9 @@ Core locks frozen; pre-merger freeze closed.
 
 1. ~~**3.1–3.2** Stress-energy + Einstein scaffold + \(G_N\) schema + Newtonian limit (Gate GR-1)~~  
 2. ~~**3.3** Analytic precision targets (Gate GR-2 structure)~~  
+3. ~~**3.4** Tight SI bridge + lattice→metric Poisson PDE (Gate GR-3)~~  
    → `docs/GRAVITY_EMERGENCE.md`, `src/gravity_emergence.py`  
-3. **Later:** tighter continuum SI matching; lattice→metric PDE demos; dataset χ² packs  
+4. **Later:** 3D coupled twist–metric evolution; dataset χ² packs  
 
 ### Later
 

@@ -288,13 +288,14 @@ Paper: `papers/SM_Derivation.tex`.
 ## VI. Emergent gravity (Gates GR-1 / GR-2) — Phase 3
 
 ```bash
-python scripts/gravity_emergence_check.py --gates GR-1,GR-2 --plot
+python scripts/gravity_emergence_check.py --gates GR-1,GR-2,GR-3 --plot
 ```
 
 | Gate | Pass condition |
 |------|----------------|
 | **GR-1** | \(G_{\mathrm{schema}}>0\); locks frozen; \(\rho_{\mathrm{eff}}\ge 0\); Newton \(\Phi<0\); Einstein scaffold; matched-\(G\) log ratio OK |
 | **GR-2** | Analytic solar deflection / Mercury perihelion / Shapiro scale within loose tolerances with matched \(G\); GR-1 pass |
+| **GR-3** | Invertible SI bridge (\(G_{\mathrm{SI}}=G_{\mathrm{schema}}\hbar c/m_\star^2\)); default ratio 1; \(\propto\lambda\); lattice Poisson residual; \(\Phi\) attractive |
 
 **Fail ⇒ demote** gravity mapping / matching (not core locks; not pre-merger freeze).  
 Milestone: `docs/GRAVITY_EMERGENCE.md`.  

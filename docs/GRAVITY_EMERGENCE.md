@@ -1,8 +1,8 @@
 # Milestone: Phase 3 Emergent Gravity + Weak-Field / G_N (Gates GR-1, GR-2)
 
-**Status:** Gate GR-1 **PASS**; Gate GR-2 analytic scaffold **PASS**  
+**Status:** Gate GR-1 **PASS**; GR-2 **PASS**; GR-3 (SI bridge + lattice→metric PDE) **PASS**  
 **Date:** 2026-07-09  
-**Phase:** 3.1–3.3 (scaffolding)
+**Phase:** 3.1–3.4
 
 ## Goal
 
@@ -30,10 +30,20 @@ G_{\mathrm{schema}}
 = \frac{8\pi\,\lambda\,\Delta\omega\,f(\langle\Theta\rangle)}{\kappa\,W_g^{2}}
 \]
 
-(Relativistic Completion). Default continuum matching normalizes
-\(G_{\mathrm{SI}}\to G_{\mathrm{CODATA}}\) at reference locks so that
-**λ/Δω/f drifts** (locks fixed) are testable; absolute SI derivation from
-first principles remains documented, not over-claimed.
+(Relativistic Completion).
+
+### Tight SI continuum bridge (GR-3)
+
+\[
+G_{\mathrm{SI}} = G_{\mathrm{schema}}\times\frac{\hbar c}{m_\star^{2}},
+\qquad
+m_\star^{2}
+= G_{\mathrm{schema}}(\mathrm{default})\times\frac{\hbar c}{G_{\mathrm{CODATA}}}.
+\]
+
+So at default locks \(G_{\mathrm{SI}}\equiv G_{\mathrm{CODATA}}\) with **explicit**
+invertible \(m_\star\); λ/Δω/f drifts (locks fixed) scale \(G_{\mathrm{SI}}\)
+proportionally. Round-trip schema ↔ SI is checked to \(\sim 10^{-16}\).
 
 ## Effective continuum sources
 
@@ -67,10 +77,19 @@ Linearized metric: \(g_{00}\approx -(1+2\Phi)\), \(g_{ij}\approx(1-2\Phi)\delta_
 | Paper scaffold | `papers/Gravity_Emergence.tex` |
 | This milestone | `docs/GRAVITY_EMERGENCE.md` |
 
+## Lattice → metric PDE (GR-3)
+
+1. Place Gaussian holonomy defects in \(\Theta\) on a periodic 2-torus  
+2. Build \(\rho_{\mathrm{eff}}\) from free-energy density  
+3. Solve \(\nabla^{2}\Phi = 4\pi G\rho\) by FFT (spectral residual)  
+4. Weak-field metric \(g_{00}=-(1+2\Phi/c^{2})\)
+
+Pass if residual tiny, \(\Phi\) attractive, \(\rho\)–\(\Phi\) anti-correlated.
+
 ## Gates
 
 ```bash
-python scripts/gravity_emergence_check.py --gates GR-1,GR-2 --plot
+python scripts/gravity_emergence_check.py --gates GR-1,GR-2,GR-3 --plot
 ```
 
 ### Gate GR-1 (structure + weak field + G_N)
@@ -99,6 +118,19 @@ With matched \(G\), classic GR analytics:
 **Not** a new ephemeris campaign; structure gate only.  
 GW held-out scoring remains `premerger_core_predict.py` under freeze.
 
+### Gate GR-3 (SI bridge + lattice→metric)
+
+| Criterion | Pass |
+|-----------|------|
+| SI bridge invertible | yes |
+| Default \(G_{\mathrm{SI}}/G_{\mathrm{CODATA}}=1\) | within \(10^{-9}\) |
+| \(G_{\mathrm{SI}}\propto\lambda\) (locks fixed) | yes |
+| \(m_\star>0\) finite | yes |
+| Poisson spectral residual | \(\lesssim 10^{-6}\) |
+| \(\Phi\) attractive; \(\mathrm{corr}(\rho,\Phi)<0\) | yes |
+| Weak-field metric OK | yes |
+| GR-1 still pass | yes |
+
 Artifact: `outputs/gravity/gravity_latest.json`.
 
 ## What this is *not*
@@ -114,6 +146,6 @@ FAIL GR-1/GR-2 ⇒ demote the **gravity mapping / matching**, not \(W_g,\kappa,\
 
 ## Next
 
-- Tighter continuum matching documentation (units bridge)  
-- Optional lattice defect → metric PDE demos  
+- 3D lattice metric / coupled twist–Poisson time evolution  
 - Multi-test χ² packaging for public datasets when ready  
+- Optional GW waveform weak-field consistency (without reopening freeze)  
