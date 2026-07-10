@@ -83,12 +83,14 @@ See `docs/CAMPAIGN_ECHO_MAPPING.md`.
 5. ~~Follow-up draws/B-P~~ — 814 core; **818 demoted**  
 6. ~~GW170608 scrutiny~~ — **demoted** (high corr(r,τ), approx Δχ² swing, mass sign flip)  
 7. ~~Core lock + forward band~~ — α ∈ [2.9e-5, 1.2e-4]; GW170823 → NULL  
-8. Next held-out BBH scoring; optional PE draws on more events
+8. ~~**Predictive freeze**~~ — SUCCESS/FALSIFY/NULL pre-registered; in-catalog closed  
+   → `docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md`
 
 See `docs/PREMERGER_PHASE.md`.
 
 ### Later
 
+- True held-out BBH (new catalog event) via `premerger_core_predict.py`  
 - Matched-filter post-merger at \(f_{\mathrm{phys}}(M)\) with \(10^{-6}\) relative amp  
 - Falsifier watch on sync branch (relative amp \(\gg 10^{-5}\))  
 

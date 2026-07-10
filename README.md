@@ -106,7 +106,7 @@ python scripts/amp_structure_scan.py --plot
 # Analytic: when/whether echoes are expected (Hopf + observer sync)
 python scripts/evaluate_echo_expectation.py
 
-# Pre-merger topological phase (Gate P) — active next phase
+# Pre-merger topological phase (Gate P) — predictive freeze
 python scripts/premerger_phase_scan.py --event GW150914 --plot
 python scripts/premerger_phase_scan.py --events GW150914,GW170104,GW151226
 python scripts/premerger_injection_recovery.py --event GW150914 --plot
@@ -116,12 +116,15 @@ python scripts/premerger_mass_scale.py
 python scripts/premerger_expand_events.py --plot --n-draws 10
 # Follow-up PE draws on passers + B-P on second event
 python scripts/premerger_followup_passers.py --plot --n-draws 8 --inject-events GW170814
+# Locked core band + held-out scoring (SUCCESS / FALSIFY / NULL)
+python scripts/premerger_core_predict.py
 python scripts/premerger_core_predict.py --predict-event GW170823
 ```
 
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  
 Campaign close-out: [`docs/CAMPAIGN_ECHO_MAPPING.md`](docs/CAMPAIGN_ECHO_MAPPING.md).  
-Analytic prediction: [`docs/ANALYTIC_ECHO_PREDICTION.md`](docs/ANALYTIC_ECHO_PREDICTION.md).
+Analytic prediction: [`docs/ANALYTIC_ECHO_PREDICTION.md`](docs/ANALYTIC_ECHO_PREDICTION.md).  
+Pre-merger freeze: [`docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md`](docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md).
 
 Full conduit evaluation (from TOE):
 

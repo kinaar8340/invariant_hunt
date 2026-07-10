@@ -1,6 +1,7 @@
 # Pre-merger topological phase signatures
 
-**Status:** active phase (post-merger echo-ladder campaign closed)  
+**Status:** predictive freeze (in-catalog closed) — see  
+`MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md`  
 **Why:** Observer sync suppresses loud post-merger amplitudes; inspiral offers  
 cumulative **phase** over many orbits, farther from \(\theta_{\mathrm{crit}}\).
 
@@ -80,6 +81,9 @@ python scripts/premerger_mass_scale.py --events GW150914,GW170814
 | GW170818 | **Demoted** — PE draws 4/8 |
 
 Forward band: \(\hat\alpha \in [2.88\times10^{-5},\,1.15\times10^{-4}]\) (positive).
+
+**Scoring:** SUCCESS / FALSIFY / NULL via `scripts/premerger_core_predict.py`  
+(pre-registered; freeze milestone above). In-catalog held-out GW170823 → NULL.
 
 ## Relation to analytics
 

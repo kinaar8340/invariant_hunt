@@ -191,6 +191,9 @@ python scripts/premerger_core_predict.py --predict-event <NEW_BBH>
 **FALSIFY:** Gate-P-pass with \(\hat\alpha\) outside band or significantly negative.  
 **NULL:** Gate P fail (not a counterexample).
 
+**Freeze:** in-catalog campaign closed at this rule —  
+`docs/MILESTONE_PREMERGER_PREDICTIVE_FREEZE.md`. Reopen only for a true new held-out BBH or roadmap “later” items.
+
 ### Gate B-P — pre-merger injection recovery
 
 - Background α_inj=0: false Gate P rate should be low  
