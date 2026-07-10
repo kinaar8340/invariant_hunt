@@ -38,8 +38,8 @@ python scripts/multi_event_network.py --events GW150914,GW170104,GW151226 --plot
 
 ## Follow-ups
 
-1. Network injection recovery on GW151226 (same as GW150914 Gate B-net)  
-2. Band robustness for GW151226 (narrower bands around \(f_{\mathrm{ring}}\))  
-3. Amplitude-structure mapping if multi-event remains mixed/null  
+1. ~~GW151226 stress test~~ — **does not hold** (off-band 50–300 Hz also passes with larger Δχ²; see `MILESTONE_GW151226_STRESS.md`)  
+2. Amplitude-structure mapping (or other observables) — next physics-side lever  
+3. Expand event sample only after mapping revision  
 
 Outputs: `outputs/benchmarks/multi_event_network_summary.json` and per-event `*_whitened_network.json`.

@@ -93,7 +93,8 @@ Using `scripts/network_injection_recovery.py` on whitened residuals:
 - Runner: `python scripts/multi_event_network.py`
 
 **Status (GW150914, GW170104, GW151226):** Gate C strict **1/3** → **Gate D FAIL**.  
-See `docs/MILESTONE_MULTI_EVENT.md`.
+GW151226 stress test (**band systematics + injections**): **does not hold** — off-band 50–300 Hz also passes with larger Δχ² (broadband systematics, not ringdown-localized).  
+See `docs/MILESTONE_MULTI_EVENT.md`, `docs/MILESTONE_GW151226_STRESS.md`.
 
 ### Gate E — Mapping revision triggers
 

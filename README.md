@@ -96,12 +96,16 @@ python scripts/network_injection_recovery.py --into noise --plot
 
 # Multi-event Gate C / D
 python scripts/multi_event_network.py --events GW150914,GW170104,GW151226 --plot
+
+# Outlier stress test (injections + band systematics)
+python scripts/event_stress_test.py --event GW151226 --plot
 ```
 
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  
 Milestones: [`docs/MILESTONE_GW150914_v2.md`](docs/MILESTONE_GW150914_v2.md),  
 [`docs/MILESTONE_WHITENED_NETWORK.md`](docs/MILESTONE_WHITENED_NETWORK.md),  
-[`docs/MILESTONE_MULTI_EVENT.md`](docs/MILESTONE_MULTI_EVENT.md).
+[`docs/MILESTONE_MULTI_EVENT.md`](docs/MILESTONE_MULTI_EVENT.md),  
+[`docs/MILESTONE_GW151226_STRESS.md`](docs/MILESTONE_GW151226_STRESS.md).
 
 Full conduit evaluation (from TOE):
 
