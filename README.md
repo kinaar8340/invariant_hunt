@@ -158,9 +158,13 @@ See `docs/positional_350_pi.md` for the phase/lattice reading of bursts.
 
 ## Status
 
-Early scaffold: formalized invariants, positional framing, prediction schema,
-forward GW toy signal, synthetic benchmark. Next: real datasets and paper-grade
-mappings. Track progress in [ROADMAP.md](ROADMAP.md).
+**Echo-mapping campaign closed.** Gated multi-event tests constrain the
+post-merger geometric echo-ladder translation of the locks; they do **not**
+falsify the core invariants. Full write-up:
+[docs/CAMPAIGN_ECHO_MAPPING.md](docs/CAMPAIGN_ECHO_MAPPING.md).
+
+Next phase: other observables or analytic invariant→signal derivation
+(see [ROADMAP.md](ROADMAP.md)).
 
 ## License
 

@@ -57,17 +57,25 @@ Each prediction carries a `falsify_if` string. Example checkpoints:
 | Peak frequency | No feature within 10% of \(f_{\mathrm{peak}}\) | `scale_hz` / winding map |
 | Meta lock | Best \(w_{g,\mathrm{base}}\) far from 350 under wide priors | Island loss / conduit |
 
-## Immediate next actions
+## Campaign status
 
-1. ~~PE residual on GW150914~~ — near-null (Gate A fail; constructive)
-2. ~~Residual diagnostics + injection recovery~~ (Gate B pass)
-3. ~~Coherent complex amp + delay-scale scan with LEE~~ (`coherent_echo_scan.py`)
-4. ~~Whitened H1+L1 network likelihood~~ (`network_whiten_scan.py`, Gate C)
-5. ~~Multi-event Gate D~~ (`multi_event_network.py`) — **FAIL** (1/3 strict)
-6. ~~GW151226 stress test~~ — does **not** hold (off-band excess)
-7. ~~Amplitude-structure mapping~~ — low leverage (all structures Gate D fail)
-8. New observable domain / analytic invariant→signal map
-9. Port analytic sections from TOE papers into `src/predictions.py`
+**Positional post-merger echo-ladder mapping: closed** — constrained, not supported under gated multi-event analysis.  
+See `docs/CAMPAIGN_ECHO_MAPPING.md`.
+
+| Done | Outcome |
+|------|---------|
+| PE residual, coherent, LEE | Marginal / fail Gate A on H1 |
+| Whitened H1+L1 + injections | Sensitive (B-net pass); C strict mostly fail |
+| Multi-event Gate D | **Fail** (1/3; GW151226 fails band stress) |
+| Amp-structure v3 | Low leverage; Gate D still fail |
+
+### Next phase (pick one)
+
+1. **New observable domain** — pre-register gates; reuse whitening/network/injection stack where applicable  
+2. **Analytic invariant → observable derivation** — mass/band conditions for any echo-like signature  
+3. Port analytic sections from TOE papers into `src/predictions.py` once a target observable is defined  
+
+Core locks \(W_g\), \(\kappa\), braiding attractor remain available for other translations.
 
 See `docs/falsification_criteria.md`.
 
