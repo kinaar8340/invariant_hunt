@@ -144,7 +144,9 @@ def fit_premerger_phase_single(
         f_low=f_low,
         f_high=f_high,
         pe_snr=det.pe_snr_proxy,
-        gate_p_pass=dchi >= gate_dchi2 and abs(alpha_hat) > 2.0 * alpha_sigma,
+        gate_p_pass=bool(
+            dchi >= gate_dchi2 and abs(alpha_hat) > 2.0 * alpha_sigma
+        ),
         model=model.to_dict(),
         notes=notes,
     )
@@ -242,7 +244,7 @@ def fit_premerger_phase_network(
         f_low=f_low,
         f_high=f_high,
         pe_snr=float(np.mean(pe_snrs)),
-        gate_p_pass=gate,
+        gate_p_pass=bool(gate),
         model=model.to_dict(),
         notes=notes,
     )

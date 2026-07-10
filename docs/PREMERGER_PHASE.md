@@ -46,8 +46,9 @@ Basis template: \(\tau = \partial h/\partial\alpha|_{\alpha=0} = -K\,\Phi_{\math
 1. Whiten long pre-merger window (Welch PSD)  
 2. Subtract PE IMRPhenomD (lag + A₊,Aₓ)  
 3. Fit \(\alpha\) on inspiral residual \(t < t_{\mathrm{end}}\)  
-4. Gate P: \(\Delta\chi^2\ge 6\) and \(|\alpha|>2\sigma\)  
-5. Multi-event: same-sign \(\alpha\) on ≥2 events  
+4. Gate P: \(\Delta\chi^2\ge 6\), \(|\alpha|>2\sigma\), **and H1/L1 same sign**  
+5. Multi-event Gate P-D: ≥2 events pass with **same-sign** network \(\alpha\)  
+6. Injection recovery before any detection claim
 
 ```bash
 python scripts/premerger_phase_scan.py --event GW150914 --plot
