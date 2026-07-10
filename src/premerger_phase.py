@@ -281,3 +281,195 @@ def prepare_premerger_network(
         for det in detectors
     ]
     return event, dets
+
+
+def _clone_with_residual(det: DetectorWhitened, residual_w: np.ndarray) -> DetectorWhitened:
+    return DetectorWhitened(
+        detector=det.detector,
+        t_rel=det.t_rel,
+        strain_raw=det.strain_raw,
+        strain_w=det.strain_w,
+        residual_w=residual_w,
+        pe_template_w=det.pe_template_w,
+        psd=det.psd,
+        whiten_scale=det.whiten_scale,
+        pe_lag_s=det.pe_lag_s,
+        pe_a_plus=det.pe_a_plus,
+        pe_a_cross=det.pe_a_cross,
+        pe_chi2=det.pe_chi2,
+        pe_snr_proxy=det.pe_snr_proxy,
+        sample_rate=det.sample_rate,
+        path=det.path,
+    )
+
+
+def network_tau_templates(
+    dets: list[DetectorWhitened],
+    inv: InvariantSet | None = None,
+    *,
+    t_end: float = GATE_P_T_END,
+) -> tuple[list[np.ndarray], PremergerPhaseModel]:
+    """Per-detector full-window phase basis τ (same length as residual_w)."""
+    inv = inv or InvariantSet()
+    model = PremergerPhaseModel.from_invariants(inv)
+    taus = []
+    for det in dets:
+        phi_orb = orbital_phase_from_strain(
+            det.pe_template_w, det.sample_rate, t_rel=det.t_rel, t_ref=0.0
+        )
+        taus.append(phase_basis_template(det.pe_template_w, phi_orb, model))
+    return taus, model
+
+
+def residual_tau_correlation(
+    dets: list[DetectorWhitened],
+    inv: InvariantSet | None = None,
+    *,
+    t_end: float = GATE_P_T_END,
+) -> dict[str, Any]:
+    """Systematics diagnostic: corr(residual, τ) and energy fraction in τ direction."""
+    inv = inv or InvariantSet()
+    model = PremergerPhaseModel.from_invariants(inv)
+    out: dict[str, Any] = {"detectors": {}, "model_K": model.coupling_kernel()}
+    for det in dets:
+        mask = _inspiral_mask(det.t_rel, t_end)
+        phi = orbital_phase_from_strain(
+            det.pe_template_w, det.sample_rate, t_rel=det.t_rel, t_ref=0.0
+        )
+        tau = phase_basis_template(det.pe_template_w, phi, model)[mask]
+        r = det.residual_w[mask]
+        if np.std(r) < 1e-30 or np.std(tau) < 1e-30:
+            corr = 0.0
+        else:
+            corr = float(np.corrcoef(r, tau)[0, 1])
+        # fraction of residual power along τ
+        den = float(np.sum(tau * tau)) + 1e-60
+        a = float(np.sum(r * tau) / den)
+        frac = float(np.sum((a * tau) ** 2) / (np.sum(r**2) + 1e-60))
+        out["detectors"][det.detector] = {
+            "corr_r_tau": corr,
+            "power_frac_along_tau": frac,
+            "alpha_proj": a,
+        }
+    return out
+
+
+def premerger_injection_recovery(
+    dets: list[DetectorWhitened],
+    event: PublicGWEvent,
+    *,
+    alpha_injs: list[float] | None = None,
+    t_end: float = GATE_P_T_END,
+    f_low: float = 20.0,
+    f_high: float = 100.0,
+    gate_dchi2: float = GATE_P_DELTA_CHI2,
+    inv: InvariantSet | None = None,
+    into: str = "residual",
+    seed: int = 42,
+) -> dict[str, Any]:
+    """Inject known α into whitened residuals; recover α_hat and Gate P.
+
+    into='residual': PE residual + α·τ (realistic background)
+    into='noise': unit Gaussian + α·τ (ideal recovery)
+    """
+    inv = inv or InvariantSet()
+    taus, model = network_tau_templates(dets, inv, t_end=t_end)
+    if alpha_injs is None:
+        alpha_injs = [0.0, 2e-5, 5e-5, 7e-5, 1e-4, 2e-4, 5e-4]
+
+    rng = np.random.default_rng(seed)
+    rows = []
+    thr = None
+    for a_inj in alpha_injs:
+        clones = []
+        for det, tau in zip(dets, taus):
+            if into == "noise":
+                base = rng.standard_normal(det.residual_w.shape)
+            elif into == "residual":
+                base = det.residual_w.copy()
+            else:
+                raise ValueError(into)
+            # coherent injection: same α on both detectors
+            clones.append(_clone_with_residual(det, base + float(a_inj) * tau))
+
+        fit = fit_premerger_phase_network(
+            clones,
+            event,
+            t_end=t_end,
+            f_low=f_low,
+            f_high=f_high,
+            gate_dchi2=gate_dchi2,
+            inv=inv,
+        )
+        bias = fit.alpha_hat - float(a_inj)
+        frac = (
+            fit.alpha_hat / float(a_inj)
+            if abs(a_inj) > 1e-15
+            else float("nan")
+        )
+        row = {
+            "alpha_inj": float(a_inj),
+            "alpha_hat": fit.alpha_hat,
+            "alpha_sigma": fit.alpha_sigma,
+            "delta_chi2": fit.delta_chi2,
+            "gate_p_pass": fit.gate_p_pass,
+            "bias": bias,
+            "recovered_frac": frac,
+            "sign_ok": fit.gate_p_pass or abs(a_inj) < 1e-15,
+        }
+        rows.append(row)
+        if thr is None and a_inj > 0 and fit.gate_p_pass:
+            thr = float(a_inj)
+
+    bg = rows[0] if rows and abs(rows[0]["alpha_inj"]) < 1e-15 else None
+    return {
+        "schema": "invariant_hunt.premerger_injection.v1",
+        "into": into,
+        "event": event.name,
+        "detectors": [d.detector for d in dets],
+        "model_K": model.coupling_kernel(),
+        "gate_dchi2": gate_dchi2,
+        "detection_threshold_alpha": thr,
+        "background": bg,
+        "rows": rows,
+        "note": (
+            "Coherent α·τ injection on both detectors. Gate P includes H1/L1 "
+            "sign consistency. Background α_inj=0 measures false-positive rate."
+        ),
+    }
+
+
+def time_cut_robustness(
+    dets: list[DetectorWhitened],
+    event: PublicGWEvent,
+    *,
+    t_ends: list[float] | None = None,
+    f_low: float = 20.0,
+    f_high: float = 100.0,
+    gate_dchi2: float = GATE_P_DELTA_CHI2,
+    inv: InvariantSet | None = None,
+) -> dict[str, Any]:
+    """Systematics: Gate P vs inspiral end-time cut."""
+    if t_ends is None:
+        t_ends = [-0.20, -0.10, -0.05, -0.02]
+    rows = []
+    for te in t_ends:
+        fit = fit_premerger_phase_network(
+            dets,
+            event,
+            t_end=te,
+            f_low=f_low,
+            f_high=f_high,
+            gate_dchi2=gate_dchi2,
+            inv=inv,
+        )
+        rows.append(
+            {
+                "t_end": te,
+                "alpha_hat": fit.alpha_hat,
+                "alpha_sigma": fit.alpha_sigma,
+                "delta_chi2": fit.delta_chi2,
+                "gate_p_pass": fit.gate_p_pass,
+            }
+        )
+    return {"t_ends": rows}

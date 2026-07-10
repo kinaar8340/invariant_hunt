@@ -177,7 +177,14 @@ Gate P on ≥ 2 BBHs with **same sign** of network \(\hat\alpha\).
 
 ```bash
 python scripts/premerger_phase_scan.py --event GW150914 --plot
+python scripts/premerger_injection_recovery.py --event GW150914 --plot
 ```
+
+### Gate B-P — pre-merger injection recovery
+
+- Background α_inj=0: false Gate P rate should be low  
+- Injected α above thr recovered with frac ∈ [0.5, 1.5] and Gate P pass  
+- Real |α| compared to thr and residual–τ correlation (systematics)
 
 Docs: `docs/PREMERGER_PHASE.md`
 

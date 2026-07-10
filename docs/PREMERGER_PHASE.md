@@ -53,6 +53,9 @@ Basis template: \(\tau = \partial h/\partial\alpha|_{\alpha=0} = -K\,\Phi_{\math
 ```bash
 python scripts/premerger_phase_scan.py --event GW150914 --plot
 python scripts/premerger_phase_scan.py --events GW150914,GW170104,GW151226
+
+# Gate B-P: α injection recovery + residual–τ correlation + time cuts
+python scripts/premerger_injection_recovery.py --event GW150914 --plot
 ```
 
 ## Relation to analytics

@@ -76,9 +76,10 @@ See `docs/CAMPAIGN_ECHO_MAPPING.md`.
 
 ### Active: pre-merger topological phase (Gate P)
 
-1. ~~Form + Gate P + scanner~~ (`src/premerger_*.py`, `scripts/premerger_phase_scan.py`)  
-2. Run GW150914 → multi-event; injection recovery for \(\alpha\)  
-3. If Gate P-D fails: polarization / class B modulation forms  
+1. ~~Form + Gate P + scanner~~  
+2. ~~Injection recovery (Gate B-P)~~ — noise FP clean; real α above thr but P-D fail  
+3. PE approximant / band systematics; only then mass-scaled multi-event  
+4. If still null/incoherent: class B–D pre-merger forms
 
 See `docs/PREMERGER_PHASE.md`.
 

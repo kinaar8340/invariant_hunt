@@ -109,6 +109,7 @@ python scripts/evaluate_echo_expectation.py
 # Pre-merger topological phase (Gate P) — active next phase
 python scripts/premerger_phase_scan.py --event GW150914 --plot
 python scripts/premerger_phase_scan.py --events GW150914,GW170104,GW151226
+python scripts/premerger_injection_recovery.py --event GW150914 --plot
 ```
 
 Falsification gates: [`docs/falsification_criteria.md`](docs/falsification_criteria.md).  
