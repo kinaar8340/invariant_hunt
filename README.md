@@ -253,3 +253,5 @@ Next phase: other observables or analytic invariant→signal derivation
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+X: [@kinaar8340](https://x.com/kinaar8340)
