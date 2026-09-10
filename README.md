@@ -1,9 +1,11 @@
 # Invariant Hunt
 
+Satellite behind the portal — an **Observation / probe**, not a peer demo. Not a QGA result.
+
 **From locked topological/geometric invariants to falsifiable predictions.**
 
 Seeded from [kinaar8340/toe](https://github.com/kinaar8340/toe) (Flux Flywheels, Gauged Hopf Lattice).
-This repo focuses the TOE machinery on a single scientific path:
+This repo focuses that **Model** machinery on a single scientific path:
 
 1. **Hunt** robust invariants (meta-optimization, sweeps, PDE relaxation)
 2. **Interpret** \(W_g \approx 350/\pi\) as a **positional/phase** lattice coordinate
